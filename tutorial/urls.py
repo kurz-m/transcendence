@@ -19,7 +19,7 @@ from django.urls import include, path
 from rest_framework import routers
 from leaderboard.views import LeaderboardViewSet
 from players import views
-from remoteauth.views import callbackCode
+from remoteauth.views import callbackCode, authorizeCall
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -30,6 +30,7 @@ router.register(r'player', views.PlayerViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/auth/authorize/', authorizeCall.as_view(), name='auth-authorizeRequest'),
     path('api/auth/callback/', callbackCode.as_view(), name='auth-callback'),
     path('', include(router.urls)),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework'))

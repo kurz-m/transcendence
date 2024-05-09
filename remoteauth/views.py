@@ -5,9 +5,9 @@ import requests
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from players.models import Players
 from django.contrib.auth.models import User
+from remoteauth.utils import authorize
 
 load_dotenv()
-
 
 def get_user_info(access_token):
     url = 'https://api.intra.42.fr/v2/me'
@@ -33,10 +33,23 @@ def create_player_from_user_info(user_info):
     email = user_info.get('email', '')
     profile_img_uri = user_info.get('image', {}).get('link', '')
     forty_two_student = True
-    
-    user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email)
-    player = Players.objects.create(user=user, profile_img_uri=profile_img_uri, forty_two_student=forty_two_student)
-    return player
+
+    existing_user = User.objects.filter(username=username).first() or User.objects.filter(email=email).first()
+
+    if existing_user:
+        print("user already exists")
+        player = Players.objects.filter(user=existing_user).first()
+        return player
+    else:
+        user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email)
+        player = Players.objects.create(user=user, profile_img_uri=profile_img_uri, forty_two_student=forty_two_student)
+        return player
+
+
+class authorizeCall(APIView):
+    def get(self, request, format=None):
+        return HttpResponseRedirect(authorize())
+
 
 class callbackCode(APIView):
     def get(self, request, format=None):
