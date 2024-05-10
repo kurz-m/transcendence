@@ -25,7 +25,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 class PlayerViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows players to be viewd and edited
+    API endpoint that allows players to be view and edited
     """
     queryset = Players.objects.all().order_by('-user__date_joined')
     serializer_class = PlayerSerializer
