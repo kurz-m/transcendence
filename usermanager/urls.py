@@ -22,8 +22,6 @@ from players import views
 from remoteauth.views import callbackCode, authorizeCall
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
 router.register(r'leaderboard', LeaderboardViewSet)
 router.register(r'player', views.PlayerViewSet)
 
