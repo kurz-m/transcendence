@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group, User
 from rest_framework import permissions, viewsets
 from players.serializers import GroupSerializer, UserSerializer, PlayerSerializer
 from players.models import Players
+from rest_framework.response import Response
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -28,3 +29,8 @@ class PlayerViewSet(viewsets.ModelViewSet):
     """
     queryset = Players.objects.all().order_by('-user__date_joined')
     serializer_class = PlayerSerializer
+
+    def retrieve_player(self, request, pk=None):
+        player = self.get_object()
+        serializer = self.get_serializer(player)
+        return Response(serializer.data)

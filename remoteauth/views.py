@@ -1,13 +1,17 @@
-from rest_framework.views import APIView
 import os
-from dotenv import load_dotenv
 import requests
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from dotenv import load_dotenv
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from players.models import Players
 from django.contrib.auth.models import User
 from remoteauth.utils import authorize
+from django.contrib.auth import login
+from players.serializers import PlayerSerializer
 
 load_dotenv()
+
 
 def get_user_info(access_token):
     url = 'https://api.intra.42.fr/v2/me'
@@ -18,9 +22,9 @@ def get_user_info(access_token):
     if response.status_code == 200:
         print("I reached here")
         user_info = response.json()
-        create_player_from_user_info(user_info=user_info)
-        print(user_info)
-        return True
+        player = create_player_from_user_info(user_info=user_info)
+        print(player)
+        return player
     else:
         print(f"Request failed with status code {response.status_code}")
         return None
@@ -70,13 +74,14 @@ class callbackCode(APIView):
             response = requests.post(token_url, data=data)
             if response.status_code == 200:
                 access_token = response.json().get('access_token')
-                print("access token: ", access_token)
-                if get_user_info(access_token=access_token) is True:
-                    return HttpResponseRedirect("http://127.0.01:8000/admin")
+                player = get_user_info(access_token=access_token)
+                if player:
+                    login(request, player.user)
+                    serializer = PlayerSerializer(player, context={'request': request})
+                    return Response(serializer.data)
                 else:
                     return HttpResponseRedirect("http://127.0.01:8000/error")
             else:
                 return HttpResponseBadRequest("Failed to obtain access token")
         else:
-            print("Code not found")
             return HttpResponseBadRequest("Missing 'code' or 'state' parameter")

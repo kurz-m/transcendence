@@ -1,5 +1,5 @@
 """
-URL configuration for tutorial project.
+URL configuration for usermanager project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -26,12 +26,12 @@ router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'leaderboard', LeaderboardViewSet)
 router.register(r'player', views.PlayerViewSet)
-# router.register(r'api/auth/callback/', callbackCode)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include(router.urls)),
+    path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
     path('api/auth/authorize/', authorizeCall.as_view(), name='auth-authorizeRequest'),
     path('api/auth/callback/', callbackCode.as_view(), name='auth-callback'),
-    path('', include(router.urls)),
-    path('api-auth', include('rest_framework.urls', namespace='rest_framework'))
+    path('api/player/<int:pk>/', views.PlayerViewSet.as_view({'get': 'retrieve_player'}), name='player-detail'),
 ]
