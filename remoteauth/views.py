@@ -69,7 +69,7 @@ class callbackCode(APIView):
                 'client_id': os.getenv("CLIENT_ID"),
                 'client_secret': os.getenv("CLIENT_SECRET"),
                 'code': code,
-                'redirect_uri': "http://localhost:8000/api/auth/callback",
+                'redirect_uri': os.getenv("REDIRECT_URI"),
             }
             response = requests.post(token_url, data=data)
             if response.status_code == 200:
