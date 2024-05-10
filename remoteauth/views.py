@@ -23,7 +23,6 @@ def get_user_info(access_token):
         print("I reached here")
         user_info = response.json()
         player = create_player_from_user_info(user_info=user_info)
-        print(player)
         return player
     else:
         print(f"Request failed with status code {response.status_code}")
@@ -77,6 +76,8 @@ class callbackCode(APIView):
                 player = get_user_info(access_token=access_token)
                 if player:
                     login(request, player.user)
+                    player.online_status = True
+                    player.save()
                     serializer = PlayerSerializer(player, context={'request': request})
                     return Response(serializer.data)
                 else:

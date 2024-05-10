@@ -24,6 +24,7 @@ from remoteauth.views import callbackCode, authorizeCall
 router = routers.DefaultRouter()
 router.register(r'leaderboard', LeaderboardViewSet)
 router.register(r'player', views.PlayerViewSet)
+router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
