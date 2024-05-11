@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
@@ -45,6 +46,10 @@ INSTALLED_APPS = [
     'players',
     'remoteauth',
     'rest_framework_simplejwt',
+    # 'django_otp',
+    # 'django_otp.plugins.otp_static',
+    # 'django_otp.plugins.otp_totp',
+    # 'two_factor',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django_otp.middleware.OTPMiddleware',
 ]
 
 ROOT_URLCONF = 'usermanager.urls'
@@ -137,3 +143,11 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+
+
+SECRET_KEY = 'your_secret_key_here'
+
+SIMPLE_JWT = {
+    'SIGNING_KEY': os.getenv("JWT_SECRET_KEY"),
+}
+# LOGIN_URL = 'two_factor:login'

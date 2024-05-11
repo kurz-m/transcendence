@@ -2,16 +2,14 @@ import os
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from rest_framework import status
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from players.models import Players
 from django.contrib.auth.models import User
 from remoteauth.utils import authorize
 from django.contrib.auth import login
 from players.serializers import PlayerSerializer
-import json
-
-
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 def get_user_info(access_token):
@@ -22,9 +20,6 @@ def get_user_info(access_token):
 
     if response.status_code == 200:
         user_info = response.json()
-        with open("my.json", 'w') as json_file:
-            json.dump(user_info, json_file)
-
         player = create_player_from_user_info(user_info=user_info)
         return player
     else:
@@ -82,11 +77,17 @@ class callbackCode(APIView):
                     login(request, player.user)
                     player.online_status = True
                     player.save()
+                    refresh = RefreshToken.for_user(player.user)
                     serializer = PlayerSerializer(player, context={'request': request})
-                    return Response(serializer.data)
+                    response_data = {
+                        'refresh': str(refresh),
+                        'access': str(refresh.access_token),
+                        'player_data': serializer.data
+                    }
+                    return Response(response_data)
                 else:
-                    return HttpResponseRedirect("http://127.0.01:8000/error")
+                    return Response({'message': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return HttpResponseBadRequest("Failed to obtain access token")
+                return Response({'message': 'Failed to Obtain Access Token'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return HttpResponseBadRequest("Missing 'code' or 'state' parameter")
+            return Response({'Missing code or state parameter'}, status=status.HTTP_400_BAD_REQUEST)

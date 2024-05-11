@@ -34,7 +34,7 @@ urlpatterns = [
     path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/auth/token/verify', TokenVerifyView.as_view(), name='token_verify'),
-    path('api/auth/authorize/', authorizeCall.as_view(), name='auth-authorizeRequest'),
+    path('api/auth/login/', authorizeCall.as_view(), name='auth-authorizeRequest'),
     path('api/auth/callback/', callbackCode.as_view(), name='auth-callback'),
     path('api/player/<int:pk>/', views.PlayerViewSet.as_view({'get': 'retrieve_player'}), name='player-detail'),
 ]
