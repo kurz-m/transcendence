@@ -1,3 +1,4 @@
 djangorestframework
 requests
 python-dotenv
+djangorestframework-simplejwt

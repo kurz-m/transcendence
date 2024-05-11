@@ -1,8 +1,4 @@
 import os
-from dotenv import load_dotenv
-
-
-load_dotenv()
 
 TOKEN_URL = "https://api.intra.42.fr/oauth/token"
 

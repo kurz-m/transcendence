@@ -20,6 +20,7 @@ from rest_framework import routers
 from leaderboard.views import LeaderboardViewSet
 from players import views
 from remoteauth.views import callbackCode, authorizeCall
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 router = routers.DefaultRouter()
 router.register(r'leaderboard', LeaderboardViewSet)
@@ -30,6 +31,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/auth/token/verify', TokenVerifyView.as_view(), name='token_verify'),
     path('api/auth/authorize/', authorizeCall.as_view(), name='auth-authorizeRequest'),
     path('api/auth/callback/', callbackCode.as_view(), name='auth-callback'),
     path('api/player/<int:pk>/', views.PlayerViewSet.as_view({'get': 'retrieve_player'}), name='player-detail'),

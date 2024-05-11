@@ -2,15 +2,16 @@ import os
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from dotenv import load_dotenv
+
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from players.models import Players
 from django.contrib.auth.models import User
 from remoteauth.utils import authorize
 from django.contrib.auth import login
 from players.serializers import PlayerSerializer
+import json
 
-load_dotenv()
+
 
 
 def get_user_info(access_token):
@@ -20,8 +21,10 @@ def get_user_info(access_token):
     response = requests.get(url, headers=header)
 
     if response.status_code == 200:
-        print("I reached here")
         user_info = response.json()
+        with open("my.json", 'w') as json_file:
+            json.dump(user_info, json_file)
+
         player = create_player_from_user_info(user_info=user_info)
         return player
     else:
@@ -70,6 +73,7 @@ class callbackCode(APIView):
                 'code': code,
                 'redirect_uri': os.getenv("REDIRECT_URI"),
             }
+            print(data)
             response = requests.post(token_url, data=data)
             if response.status_code == 200:
                 access_token = response.json().get('access_token')
