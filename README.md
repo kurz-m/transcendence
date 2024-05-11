@@ -45,4 +45,4 @@
    ```
 
 9. Open a web browser and navigate to [http://127.0.0.1:8000/](http://127.0.0.1:8000/) to view the project.
-Open [http://127.0.0.1:8000/api/auth/authorize](http://127.0.0.1:8000/api/auth/authorize) to initiate authentication with 42 account.
+Open [http://127.0.0.1:8000/api/auth/login](http://127.0.0.1:8000/api/auth/login) to initiate authentication with 42 account.
