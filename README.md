@@ -46,3 +46,5 @@
 
 9. Open a web browser and navigate to [http://127.0.0.1:8000/](http://127.0.0.1:8000/) to view the project.
 Open [http://127.0.0.1:8000/api/auth/login](http://127.0.0.1:8000/api/auth/login) to initiate authentication with 42 account.
+
+You can get CLIENT_ID and CLIENT_SECRET from your intra->settings->API->Your Application->Register New Application. 
