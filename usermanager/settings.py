@@ -47,10 +47,6 @@ INSTALLED_APPS = [
     'remoteauth',
     'rest_framework_simplejwt',
     'psycopg'
-    # 'django_otp',
-    # 'django_otp.plugins.otp_static',
-    # 'django_otp.plugins.otp_totp',
-    # 'two_factor',
 ]
 
 MIDDLEWARE = [
@@ -61,7 +57,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django_otp.middleware.OTPMiddleware',
 ]
 
 ROOT_URLCONF = 'usermanager.urls'

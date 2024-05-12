@@ -3,3 +3,7 @@ requests
 python-dotenv
 djangorestframework-simplejwt
 psycopg[binary,pool]
+pyotp
+
+#for testing mfa qr
+Pillow

@@ -1,0 +1,112 @@
+import pyotp
+from players.models import Players
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from django.utils.http import urlencode
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
+import qrcode
+
+
+# To generate and test MFA QR
+def generate_qr_code_png(url, filename):
+    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
+    qr.add_data(url)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+    img.save(filename)
+
+
+def generate_jwt_token(user):
+    refresh = RefreshToken.for_user(user)
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
+
+
+def generate_secret_key():
+    return pyotp.random_base32()
+
+
+def generate_qrcode_url(username, mfa_secret_key):
+    params = {
+        'secret': mfa_secret_key,
+        'issuer': 'Transcendence',
+        'algorithm': 'SHA1',
+        'digits': 6,
+        'period': 30,
+        'label': username
+    }
+    url = 'otpauth://totp/{}?{}'.format(username, urlencode(params))
+    generate_qr_code_png(url, 'mfa_qr.png')
+    return url
+
+
+def verify_token(user, token):
+    player = Players.objects.filter(user=user).first()
+    secret_key = player.mfa_secret_key
+    totp = pyotp.TOTP(secret_key)
+    return totp.verify(token)
+
+
+class EnableMFA(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        player = Players.objects.filter(user=user).first()
+        mfa_secret_key = generate_secret_key()
+        player.mfa_secret_key = mfa_secret_key
+        player.two_factor = True
+        player.save()
+        mfa_qr_url = generate_qrcode_url(player.user.username, player.mfa_secret_key)
+        return Response({'secret_key': mfa_secret_key, 'mfa_qr_url': mfa_qr_url})
+
+
+class UpdateMFA(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        player = Players.objects.filter(user=user).first()
+        new_secret_key = generate_secret_key()
+        player.mfa_secret_key = new_secret_key
+        player.two_factor = True
+        player.save()
+        mfa_qr_url = generate_qrcode_url(player.user.username, player.mfa_secret_key)
+        return Response({'secret_key': new_secret_key, 'mfa_qr_url': mfa_qr_url})
+
+
+class DisableMFA(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        player = Players.objects.filter(user=user).first()
+        player.mfa_secret_key = ""
+        player.two_factor = False
+        player.save()
+        return Response({'message': 'MFA disabled successfully.'})
+
+
+class VerifyMFA(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        token = request.data.get('token')
+        user = request.user
+        player = Players.objects.filter(user=user).first()
+        if player.two_factor is False:
+            return Response({'message': 'MFA is disabled for user'})
+        is_valid = verify_token(user, token=token)
+
+        if is_valid:
+            token = generate_jwt_token(user)
+            return Response({'token': token})
+        else:
+            return Response({'message': 'Invalid MFA token'}, status=status.HTTP_400_BAD_REQUEST)

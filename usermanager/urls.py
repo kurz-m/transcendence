@@ -21,6 +21,7 @@ from leaderboard.views import LeaderboardViewSet
 from players import views
 from remoteauth.views import callbackCode, authorizeCall
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from remoteauth.mfa import EnableMFA, UpdateMFA, VerifyMFA, DisableMFA
 
 router = routers.DefaultRouter()
 router.register(r'leaderboard', LeaderboardViewSet)
@@ -37,4 +38,8 @@ urlpatterns = [
     path('api/auth/login/', authorizeCall.as_view(), name='auth-authorizeRequest'),
     path('api/auth/callback/', callbackCode.as_view(), name='auth-callback'),
     path('api/player/<int:pk>/', views.PlayerViewSet.as_view({'get': 'retrieve_player'}), name='player-detail'),
+    path('api/mfa/enable', EnableMFA.as_view(), name='enable_mfa'),
+    path('api/mfa/disable', DisableMFA.as_view(), name='disable_mfa'),
+    path('api/mfa/update', UpdateMFA.as_view(), name='update_mfa'),
+    path('api/mfa/verify', VerifyMFA.as_view(), name='verify_mfa')
 ]

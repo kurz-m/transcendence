@@ -73,11 +73,11 @@ class callbackCode(APIView):
             if response.status_code == 200:
                 access_token = response.json().get('access_token')
                 player = get_user_info(access_token=access_token)
-                if player:
+                refresh = RefreshToken.for_user(player.user)
+                if player and player.two_factor is False:
                     login(request, player.user)
                     player.online_status = True
                     player.save()
-                    refresh = RefreshToken.for_user(player.user)
                     serializer = PlayerSerializer(player, context={'request': request})
                     response_data = {
                         'refresh': str(refresh),
@@ -85,6 +85,8 @@ class callbackCode(APIView):
                         'player_data': serializer.data
                     }
                     return Response(response_data)
+                elif player and player.two_factor is True:
+                    return Response({'message': 'MFA Enabled', 'refresh': str(refresh), 'access': str(refresh.access_token)})
                 else:
                     return Response({'message': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
             else:
