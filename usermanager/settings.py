@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'players',
     'remoteauth',
     'rest_framework_simplejwt',
+    'psycopg'
     # 'django_otp',
     # 'django_otp.plugins.otp_static',
     # 'django_otp.plugins.otp_totp',
@@ -87,10 +88,21 @@ WSGI_APPLICATION = 'usermanager.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

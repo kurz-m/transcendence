@@ -2,6 +2,4 @@ djangorestframework
 requests
 python-dotenv
 djangorestframework-simplejwt
-django-two-factor-auth
-django_otp
-django-two-factor-auth[phonenumbers]
+psycopg[binary,pool]

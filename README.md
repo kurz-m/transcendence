@@ -34,6 +34,10 @@
    - Create a copy of the `.env.example` file and rename it to `.env`.
    - Modify the `.env` file to configure settings such as credentials, secret key, etc.
 
+## POSTGRES CONTAINER
+   - Run postgress container from postgresql docker compose file.
+   - command: docker compose build && docker compose up -d
+
 7. Run migrations to apply database changes (if applicable):
    ```bash
    python manage.py migrate
@@ -47,4 +51,6 @@
 9. Open a web browser and navigate to [http://127.0.0.1:8000/](http://127.0.0.1:8000/) to view the project.
 Open [http://127.0.0.1:8000/api/auth/login](http://127.0.0.1:8000/api/auth/login) to initiate authentication with 42 account.
 
-You can get CLIENT_ID and CLIENT_SECRET from your intra->settings->API->Your Application->Register New Application. 
+## You can get CLIENT_ID and CLIENT_SECRET from your intra->settings->API->Your Application->Register New Application.
+
+
