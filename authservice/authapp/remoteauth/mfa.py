@@ -106,7 +106,8 @@ class VerifyMFA(APIView):
         is_valid = verify_token(user, token=token)
 
         if is_valid:
-            token = generate_jwt_token(user)
-            return Response({'token': token})
+            return Response({'message': 'MFA Token verified successfully'}, status=status.HTTP_200_OK)
+            # token = generate_jwt_token(user)
+            # return Response({'token': token})
         else:
             return Response({'message': 'Invalid MFA token'}, status=status.HTTP_400_BAD_REQUEST)
