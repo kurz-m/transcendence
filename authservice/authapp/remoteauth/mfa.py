@@ -1,4 +1,7 @@
+import os
 import pyotp
+import qrcode
+from datetime import datetime
 from players.models import Players
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -6,12 +9,22 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.utils.http import urlencode
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+from django.http import HttpResponse, Http404
 
 
-import qrcode
+class ServeMedia(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, filename):
+        file_path = os.path.join(settings.MEDIA_ROOT, filename)
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as f:
+                return HttpResponse(f.read(), content_type='image/jpeg')
+        else:
+            raise Http404
 
 
-# To generate and test MFA QR
 def generate_qr_code_png(url, filename):
     qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
     qr.add_data(url)
@@ -33,7 +46,7 @@ def generate_secret_key():
     return pyotp.random_base32()
 
 
-def generate_qrcode_url(username, mfa_secret_key):
+def generate_qrcode_url(username, mfa_secret_key, filename):
     params = {
         'secret': mfa_secret_key,
         'issuer': 'Transcendence',
@@ -43,7 +56,7 @@ def generate_qrcode_url(username, mfa_secret_key):
         'label': username
     }
     url = 'otpauth://totp/{}?{}'.format(username, urlencode(params))
-    generate_qr_code_png(url, 'mfa_qr.png')
+    generate_qr_code_png(url, f"./media/{filename}")
     return url
 
 
@@ -64,8 +77,12 @@ class EnableMFA(APIView):
         player.mfa_secret_key = mfa_secret_key
         player.two_factor = True
         player.save()
-        mfa_qr_url = generate_qrcode_url(player.user.username, player.mfa_secret_key)
-        return Response({'secret_key': mfa_secret_key, 'mfa_qr_url': mfa_qr_url})
+        current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        filename = f"mfa_qr-{player.user.username}-{current_datetime}.png"
+        mfa_qr_url = generate_qrcode_url(player.user.username, player.mfa_secret_key, filename)
+        qr_image_path = f"../media/{filename}"
+        api_media_url = request.build_absolute_uri('/api/media/' + qr_image_path)
+        return Response({'secret_key': mfa_secret_key, 'mfa_qr_url': mfa_qr_url, 'mfa_qrimage_url': api_media_url})
 
 
 class UpdateMFA(APIView):
@@ -79,6 +96,7 @@ class UpdateMFA(APIView):
         player.two_factor = True
         player.save()
         mfa_qr_url = generate_qrcode_url(player.user.username, player.mfa_secret_key)
+
         return Response({'secret_key': new_secret_key, 'mfa_qr_url': mfa_qr_url})
 
 

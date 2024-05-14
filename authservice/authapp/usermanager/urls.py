@@ -14,14 +14,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import include, path
-from rest_framework import routers
-from leaderboard.views import LeaderboardViewSet
 from players import views
+from django.contrib import admin
+from rest_framework import routers
+from django.conf import settings
+from django.conf.urls.static import static
+from django.urls import include, path
+from leaderboard.views import LeaderboardViewSet
 from remoteauth.views import callbackCode, authorizeCall
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from remoteauth.mfa import EnableMFA, UpdateMFA, VerifyMFA, DisableMFA
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from remoteauth.mfa import ServeMedia
 
 router = routers.DefaultRouter()
 router.register(r'leaderboard', LeaderboardViewSet)
@@ -41,5 +44,9 @@ urlpatterns = [
     path('api/mfa/enable', EnableMFA.as_view(), name='enable_mfa'),
     path('api/mfa/disable', DisableMFA.as_view(), name='disable_mfa'),
     path('api/mfa/update', UpdateMFA.as_view(), name='update_mfa'),
-    path('api/mfa/verify', VerifyMFA.as_view(), name='verify_mfa')
+    path('api/mfa/verify', VerifyMFA.as_view(), name='verify_mfa'),
+    path('api/media/<path:filename>/', ServeMedia.as_view(), name='serve_media'),
 ]
+
+if not settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

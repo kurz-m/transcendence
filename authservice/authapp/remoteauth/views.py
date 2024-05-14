@@ -12,6 +12,7 @@ from players.serializers import PlayerSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
+
 def get_user_info(access_token):
     url = 'https://api.intra.42.fr/v2/me'
     header = {'Authorization': f'Bearer {access_token}'}

@@ -158,3 +158,6 @@ SIMPLE_JWT = {
     'SIGNING_KEY': os.getenv("JWT_SECRET_KEY"),
 }
 # LOGIN_URL = 'two_factor:login'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
