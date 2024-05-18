@@ -21,7 +21,7 @@ services:
     container_name: authservice
     restart: always
     depends_on:
-      - db
+      - authdb
     ports:
       - "8000:8000"
     env_file:
