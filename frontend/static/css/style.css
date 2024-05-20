@@ -1,0 +1,11 @@
+#dropdown-menu {
+    display: none; /* Hide by default */
+    position: absolute; /* Position it relative to its container */
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  #dropdown-menu.show {
+    display: block; /* Show when the 'show' class is added */
+  }
+  /* Add more styles as needed to customize the appearance */

@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/style.css">
     <title>Transcendence</title>
 </head>
 <body>
-    <nav class="nav">
-        <a href="/" class="nav__link" data-link>Dashboard</a>
-        <a href="/login" class="nav__link" data-link>Login</a>
-        <a href="/pong" class="nav__link" data-link>Pong</a>
-        <a href="/friends" class="nav__link" data-link>Friends</a>
-    </nav>
+    <div id="dropdown">
+        <button id="menu-button">Menu</button>
+        <div id="dropdown-menu">
+            <a href="/login" class="nav__link" data-link>Login</a>
+            <a href="/friends" class="nav__link" data-link>Friends</a>
+        </div>
+    </div>
     <div id="app"></div>
     <script type="module" src="/static/js/index.js"></script>
+    <script src="/static/js/menu.js"></script>
 </body>
 </html>
 
