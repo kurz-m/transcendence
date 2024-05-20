@@ -75,7 +75,6 @@ class EnableMFA(APIView):
         player = Players.objects.filter(user=user).first()
         mfa_secret_key = generate_secret_key()
         player.mfa_secret_key = mfa_secret_key
-        player.two_factor = True
         player.save()
         current_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"mfa_qr-{player.user.username}-{current_datetime}.png"
@@ -93,7 +92,6 @@ class UpdateMFA(APIView):
         player = Players.objects.filter(user=user).first()
         new_secret_key = generate_secret_key()
         player.mfa_secret_key = new_secret_key
-        player.two_factor = True
         player.save()
         mfa_qr_url = generate_qrcode_url(player.user.username, player.mfa_secret_key)
 
@@ -119,13 +117,10 @@ class VerifyMFA(APIView):
         token = request.data.get('token')
         user = request.user
         player = Players.objects.filter(user=user).first()
-        if player.two_factor is False:
-            return Response({'message': 'MFA is disabled for user'})
         is_valid = verify_token(user, token=token)
-
         if is_valid:
+            player.two_factor = True
+            player.save()
             return Response({'message': 'MFA Token verified successfully'}, status=status.HTTP_200_OK)
-            # token = generate_jwt_token(user)
-            # return Response({'token': token})
         else:
             return Response({'message': 'Invalid MFA token'}, status=status.HTTP_400_BAD_REQUEST)

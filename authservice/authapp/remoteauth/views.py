@@ -39,7 +39,6 @@ def create_player_from_user_info(user_info):
     existing_user = User.objects.filter(username=username).first() or User.objects.filter(email=email).first()
 
     if existing_user:
-        print("user already exists")
         player = Players.objects.filter(user=existing_user).first()
         return player
     else:
@@ -76,7 +75,6 @@ class callbackCode(APIView):
                 player = get_user_info(access_token=access_token)
                 refresh = RefreshToken.for_user(player.user)
                 if player and player.two_factor is False:
-                    login(request, player.user)
                     player.online_status = True
                     player.save()
                     serializer = PlayerSerializer(player, context={'request': request})
@@ -85,11 +83,9 @@ class callbackCode(APIView):
                         'access': str(refresh.access_token),
                         'player_data': serializer.data
                     }
-                    return Response(response_data)
+                    return Response(response_data, status=status.HTTP_201_CREATED)
                 elif player and player.two_factor is True:
                     return Response({'message': 'MFA Enabled', 'refresh': str(refresh), 'access': str(refresh.access_token)})
-                else:
-                    return Response({'message': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message': 'Failed to Obtain Access Token'}, status=status.HTTP_400_BAD_REQUEST)
         else:
