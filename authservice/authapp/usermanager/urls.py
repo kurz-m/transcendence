@@ -25,6 +25,7 @@ from remoteauth.views import callbackCode, authorizeCall
 from remoteauth.mfa import EnableMFA, UpdateMFA, VerifyMFA, DisableMFA
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from remoteauth.mfa import ServeMedia
+from remoteauth.jwt import CustomTokenVerifyView
 
 router = routers.DefaultRouter()
 router.register(r'leaderboard', LeaderboardViewSet)
@@ -37,7 +38,7 @@ urlpatterns = [
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
     path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/auth/token/verify', TokenVerifyView.as_view(), name='token_verify'),
+    path('api/auth/token/verify', CustomTokenVerifyView.as_view(), name='token_verify'),
     path('api/auth/login/', authorizeCall.as_view(), name='auth-authorizeRequest'),
     path('api/auth/callback/', callbackCode.as_view(), name='auth-callback'),
     path('api/player/<int:pk>/', views.PlayerViewSet.as_view({'get': 'retrieve_player'}), name='player-detail'),

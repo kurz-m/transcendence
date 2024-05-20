@@ -18,6 +18,23 @@ services:
     networks:
       - authnetwork
   
+  gameplaydb:
+    image: postgres:12-alpine
+    container_name: gameplaydb
+    restart: always
+    environment:
+      POSTGRES_DB: ${GDB_NAME}
+      POSTGRES_USER: ${GDB_USER}
+      POSTGRES_PASSWORD: ${GDB_PASSWORD}
+    volumes:
+      - gameplay_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - "5433:5432"
+    networks:
+      - authnetwork
+  
   authservice:
     build: ./authservice/
     container_name: authservice
@@ -30,9 +47,23 @@ services:
       - .env
     networks:
       - authnetwork
+  
+  gameplayservice:
+    build: ./gameplayservice/
+    container_name: gameplayservice
+    restart: always
+    depends_on:
+      - authdb
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    networks:
+      - authnetwork
 
 volumes:
   postgres_data:
+  gameplay_data:
 
 networks:
   authnetwork:
