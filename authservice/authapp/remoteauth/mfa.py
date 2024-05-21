@@ -121,6 +121,12 @@ class VerifyMFA(APIView):
         if is_valid:
             player.two_factor = True
             player.save()
-            return Response({'message': 'MFA Token verified successfully'}, status=status.HTTP_200_OK)
+            oauth_response = HttpResponse("oauth")
+            oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=False)
+            oauth_response.set_cookie('user', player.user, httponly=True, secure=False)
+            oauth_response.set_cookie('2fa', player.two_factor, httponly=True, secure=False)
+            oauth_response.set_cookie('user-id', player.user.id, httponly=True, secure=False)
+            return oauth_response
+            # return Response({'message': 'MFA Token verified successfully'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'Invalid MFA token'}, status=status.HTTP_400_BAD_REQUEST)
