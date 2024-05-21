@@ -3,7 +3,7 @@ import Login from "./views/Login.js";
 import Pong from "./views/Pong.js";
 import Friends from "./views/Friends.js";
 
-const navigateTo = url => {
+export const navigateTo = url => {
     history.pushState(null, null, url);
     router();
 }
@@ -49,7 +49,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
     router();
 })
-
-function dropdown() {
-    document.getElementById("dropdown").classList.toggle("show");
-}

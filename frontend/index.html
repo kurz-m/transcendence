@@ -8,15 +8,17 @@
 </head>
 <body>
     <div id="dropdown">
-        <button id="menu-button">Menu</button>
-        <div id="dropdown-menu">
-            <a href="/login" class="nav__link" data-link>Login</a>
+        <button id="loginButton">Login with 42</button>
+        <div id="dropdownMenu">
             <a href="/friends" class="nav__link" data-link>Friends</a>
+            <a href="/match-history" class="nav__link" data-link>Match History</a>
+            <a href="/account" class="nav__link" data-link>Account</a>
+            <button id="logoutButton">Logout</button>
         </div>
     </div>
     <div id="app"></div>
     <script type="module" src="/static/js/index.js"></script>
-    <script src="/static/js/menu.js"></script>
+    <script type="module" src="/static/js/menu.js"></script>
 </body>
 </html>
 
