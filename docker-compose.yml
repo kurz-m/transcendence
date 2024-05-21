@@ -68,7 +68,8 @@ services:
     container_name: nginx
     restart: always
     depends_on:
-      - authservice
+      certbot:
+        condition: service_healthy
     ports:
       - "80:80"
       - "443:443"
@@ -81,17 +82,35 @@ services:
       - certbot_conf:/etc/nginx/ssl/:ro
       - static_files:${STATIC_DIRECTORY}
 
+  nginx-validation:
+    build: ./nginx-validation/
+    image: "nginx-validation:latest"
+    container_name: nginx-validation
+    restart: "no"
+    ports:
+      - "80:80"
+    networks:
+      - authnetwork
+    volumes:
+      - certbot_www:/var/www/certbot/:ro
+      - certbot_conf:/etc/nginx/ssl/:ro
+
   certbot:
     build: ./certbot/
     container_name: certbot
     restart: always
-    depends_on:
-      - nginx
     networks:
       - authnetwork
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /healthy ]"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     volumes:
       - certbot_www:/var/www/certbot/:rw
       - certbot_conf:/etc/letsencrypt/:rw
+      - /var/run/docker.sock:/var/run/docker.sock:rw
 
 volumes:
   postgres_data:

@@ -2,6 +2,8 @@
 
 set -eux
 
+rm -f /healthy
+
 python3 -m venv .venv
 source .venv/bin/activate
 pip install certbot certbot-nginx
@@ -20,7 +22,22 @@ if [ -f "$CERT_FILE" ]; then
     fi
 else
     # create certificates with certbot
-    certbot certonly --webroot --webroot-path /var/www/certbot/ -d transcendence.myprojekt.tech
+    until certbot certonly \
+        --webroot \
+        --webroot-path /var/www/certbot/ \
+        --non-interactive \
+        --agree-tos \
+        -m flauer@student.42heilbronn.de \
+        -d transcendence.myprojekt.tech \
+        --cert-name transcendence.myprojekt.tech \
+        --test-cert
+    do
+        sleep 2
+    done
+    docker stop nginx-validation
+    docker rm nginx-validation
+    touch /healthy
 fi
-sleep 3600
+# sleep for 10 minutes
+sleep 36000
 done
