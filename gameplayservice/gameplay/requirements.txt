@@ -3,3 +3,4 @@ requests
 python-dotenv
 djangorestframework-simplejwt
 psycopg[binary,pool]
+gunicorn

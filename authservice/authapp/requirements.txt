@@ -4,6 +4,7 @@ python-dotenv
 djangorestframework-simplejwt
 psycopg[binary,pool]
 pyotp
+gunicorn
 
 #for testing mfa qr
 Pillow
