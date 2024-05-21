@@ -1,8 +1,9 @@
+import AbstractView from "./views/AbstractView.js";
 import Dashboard from "./views/Dashboard.js";
 import Account from "./views/Account.js";
 import Pong from "./views/Pong.js";
 import Friends from "./views/Friends.js";
-import { handleAuthenticationCallback } from "./authentication.js";
+import { handleAuthenticationCallback, loginCallback } from "./authentication.js";
 
 
 export const navigateTo = url => {
@@ -16,7 +17,7 @@ const router = async () => {
         { path: "/account", view: Account },
         { path: "/pong", view: Pong },
         { path: "/friends", view: Friends },
-        { path: "/api/auth/callback", handler: handleAuthenticationCallback },
+        { path: "/callback", handler: handleAuthenticationCallback },
     ];
 
     const potentialMatches = routes.map(route => {
@@ -28,7 +29,7 @@ const router = async () => {
 
     let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch);
 
-    if (match.route.handler) {
+    if (match.route.path === "/callback") {
         console.log(match.route);
         await handleAuthenticationCallback();
         navigateTo('/');
@@ -50,8 +51,17 @@ const router = async () => {
 window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.body.addEventListener("click", e => {
-        if (e.target.matches("[data-link]")) {
+    const loginButton = document.getElementById('loginButton');
+    const isLoggedIn = AbstractView.prototype.checkLoginStatus();
+    if (isLoggedIn) {
+        loginButton.textContent = 'User Name';
+    } else {
+        loginButton.textContent = 'Login with 42';
+    }
+
+    loginButton.addEventListener('click', loginCallback);
+    document.body.addEventListener('click', e => {
+        if (e.target.matches('[data-link]')) {
             e.preventDefault();
             navigateTo(e.target.href);
         }
