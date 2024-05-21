@@ -1,7 +1,9 @@
 import Dashboard from "./views/Dashboard.js";
-import Login from "./views/Login.js";
+import Account from "./views/Account.js";
 import Pong from "./views/Pong.js";
 import Friends from "./views/Friends.js";
+import { handleAuthenticationCallback } from "./authentication.js";
+
 
 export const navigateTo = url => {
     history.pushState(null, null, url);
@@ -11,9 +13,10 @@ export const navigateTo = url => {
 const router = async () => {
     const routes = [
         { path: "/", view: Dashboard },
-        { path: "/login", view: Login },
+        { path: "/account", view: Account },
         { path: "/pong", view: Pong },
         { path: "/friends", view: Friends },
+        { path: "/api/auth/callback", handler: handleAuthenticationCallback },
     ];
 
     const potentialMatches = routes.map(route => {
@@ -24,6 +27,13 @@ const router = async () => {
     });
 
     let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch);
+
+    if (match.route.handler) {
+        console.log(match.route);
+        await handleAuthenticationCallback();
+        navigateTo('/');
+        return;
+    }
 
     if (!match) {
         match = {

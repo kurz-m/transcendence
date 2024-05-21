@@ -7,6 +7,7 @@ export default class extends AbstractView {
     }
 
     async getHtml() {
+        console.log(this.isLoggedIn);
         return `
         <h1>Welcome back, Test</h1>
         <p>
