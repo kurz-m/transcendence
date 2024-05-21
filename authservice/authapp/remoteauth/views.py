@@ -49,7 +49,7 @@ def create_player_from_user_info(user_info):
 
 class authorizeCall(APIView):
     def get(self, request, format=None):
-        return HttpResponseRedirect(authorize())
+        return Response({'location': authorize()}, status=status.HTTP_200_OK)
 
 
 class callbackCode(APIView):
