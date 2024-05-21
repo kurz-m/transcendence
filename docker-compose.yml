@@ -13,8 +13,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - .env
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     networks:
       - authnetwork
   
@@ -30,8 +30,8 @@ services:
       - gameplay_data:/var/lib/postgresql/data
     env_file:
       - .env
-    ports:
-      - "5433:5432"
+    expose:
+      - "5432"
     networks:
       - authnetwork
   
@@ -41,10 +41,12 @@ services:
     restart: always
     depends_on:
       - authdb
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     env_file:
       - .env
+    volumes:
+      - static_files:${STATIC_DIRECTORY}
     networks:
       - authnetwork
   
@@ -54,16 +56,31 @@ services:
     restart: always
     depends_on:
       - authdb
-    ports:
-      - "8001:8001"
+    expose:
+      - "8000"
     env_file:
       - .env
     networks:
       - authnetwork
 
+  nginx:
+    image: "nginx:1.25.5-alpine"
+    container_name: nginx
+    depends_on:
+      - authservice
+    ports:
+      - "8080:80"
+    networks:
+      - authnetwork
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./html:/var/www/html
+      - static_files:${STATIC_DIRECTORY}
+
 volumes:
   postgres_data:
   gameplay_data:
+  static_files:
 
 networks:
   authnetwork:
