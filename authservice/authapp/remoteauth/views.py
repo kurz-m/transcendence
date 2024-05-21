@@ -3,14 +3,14 @@ import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from players.models import Players
 from django.contrib.auth.models import User
 from remoteauth.utils import authorize
 from django.contrib.auth import login
 from players.serializers import PlayerSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from django.shortcuts import redirect
 
 
 def get_user_info(access_token):
@@ -75,17 +75,23 @@ class callbackCode(APIView):
                 player = get_user_info(access_token=access_token)
                 refresh = RefreshToken.for_user(player.user)
                 if player and player.two_factor is False:
+                    oauth_response = HttpResponse("oauth")
+                    # response = redirect('/dashboard')
+                    oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=False)
+                    oauth_response.set_cookie('user', player.user, httponly=True, secure=False)
+                    oauth_response.set_cookie('2fa', player.two_factor, httponly=True, secure=False)
+                    oauth_response.set_cookie('user-id', player.user.id, httponly=True, secure=False)
                     player.online_status = True
                     player.save()
-                    serializer = PlayerSerializer(player, context={'request': request})
-                    response_data = {
-                        'refresh': str(refresh),
-                        'access': str(refresh.access_token),
-                        'player_data': serializer.data
-                    }
-                    return Response(response_data, status=status.HTTP_201_CREATED)
-                elif player and player.two_factor is True:
-                    return Response({'message': 'MFA Enabled', 'refresh': str(refresh), 'access': str(refresh.access_token)})
+                    # serializer = PlayerSerializer(player, context={'request': request})
+                    # response_data = {
+                    #     'refresh': str(refresh),
+                    #     'access': str(refresh.access_token),
+                    #     'player_data': serializer.data
+                    # }
+                    return oauth_response
+                # elif player and player.two_factor is True:
+                #     return Response({'message': 'MFA Enabled', 'refresh': str(refresh), 'access': str(refresh.access_token)})
             else:
                 return Response({'message': 'Failed to Obtain Access Token'}, status=status.HTTP_400_BAD_REQUEST)
         else:

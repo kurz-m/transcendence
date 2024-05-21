@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 import os
 
 load_dotenv()
@@ -159,6 +160,10 @@ SECRET_KEY = 'your_secret_key_here'
 
 SIMPLE_JWT = {
     'SIGNING_KEY': os.getenv("JWT_SECRET_KEY"),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Adjust the time as needed
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Adjust the time as needed
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
 }
 # LOGIN_URL = 'two_factor:login'
 
