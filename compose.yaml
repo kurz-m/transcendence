@@ -1,0 +1,21 @@
+services:
+  express:
+    image: express
+    container_name: express
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5501:5501"
+    volumes:
+      - express:/var/www/html
+
+volumes:
+  express:
+    name: express
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /Users/makurz/Documents/Private_Git/transcendence
