@@ -6,7 +6,7 @@ from players.models import Players
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'first_name', 'last_name', 'password', 'email']
+        fields = ['username', 'first_name', 'last_name', 'email']
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
@@ -20,7 +20,7 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Players
-        fields = ['user', 'profile_img_uri', 'forty_two_student', 'two_factor', 'online_status']
+        fields = ['user', 'profile_img_uri', 'two_factor', 'online_status']
     
     def create(self, validated_data):
         user_data = validated_data.pop('user')

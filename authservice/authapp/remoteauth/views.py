@@ -56,6 +56,16 @@ class loggedIn(APIView):
     def get(self, request, format=None):
         return Response({'detail': 'Successful operation. user is logged in.'})
 
+class logOut(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request, format=None):
+        oauth_response = HttpResponse("Successful operation. User logged out and cookies cleared.")
+        oauth_response.set_cookie('access_token', '', httponly=True, secure=True)
+        oauth_response.set_cookie('user', '', httponly=False, secure=True)
+        oauth_response.set_cookie('2fa', '', httponly=False, secure=True)
+        oauth_response.set_cookie('user_id', '', httponly=False, secure=True)
+        oauth_response.status_code = 200
+        return oauth_response
 
 class callbackCode(APIView):
     def get(self, request, format=None):
@@ -85,8 +95,6 @@ class callbackCode(APIView):
                     oauth_response.set_cookie('user', player.user, httponly=False, secure=True)
                     oauth_response.set_cookie('2fa', player.two_factor, httponly=False, secure=True)
                     oauth_response.set_cookie('user_id', player.user.id, httponly=False, secure=True)
-                    player.online_status = True
-                    player.save()
                     return oauth_response
             else:
                 return HttpResponseBadRequest('Invalid Authorization Request to 42 oauth.')

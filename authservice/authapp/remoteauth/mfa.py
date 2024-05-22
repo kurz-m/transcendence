@@ -107,7 +107,7 @@ class DisableMFA(APIView):
         player.mfa_secret_key = ""
         player.two_factor = False
         player.save()
-        return Response({'message': 'MFA disabled successfully.'})
+        return Response({'detail': 'Successful operation. 2FA disabled'})
 
 
 class VerifyMFA(APIView):
@@ -122,11 +122,12 @@ class VerifyMFA(APIView):
             player.two_factor = True
             player.save()
             refresh = RefreshToken.for_user(player.user)
-            oauth_response = HttpResponse("oauth")
+            oauth_response = HttpResponse("Successful operation. 2FA code is valid.")
             oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=True)
             oauth_response.set_cookie('user', player.user, httponly=False, secure=True)
             oauth_response.set_cookie('2fa', player.two_factor, httponly=False, secure=True)
-            oauth_response.set_cookie('user-id', player.user.id, httponly=False, secure=True)
+            oauth_response.set_cookie('user_id', player.user.id, httponly=False, secure=True)
+            oauth_response.status_code = 200
             return oauth_response
         else:
-            return Response({'message': 'Invalid MFA token'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Bad request. Invalid or missing 2FA code.'}, status=status.HTTP_400_BAD_REQUEST)
