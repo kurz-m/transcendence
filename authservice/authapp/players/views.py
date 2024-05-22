@@ -20,7 +20,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all().order_by('name')
     serializer_class = GroupSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class PlayerViewSet(viewsets.ModelViewSet):
@@ -29,7 +29,8 @@ class PlayerViewSet(viewsets.ModelViewSet):
     """
     queryset = Players.objects.all().order_by('-user__date_joined')
     serializer_class = PlayerSerializer
-
+    permission_classes = [permissions.IsAuthenticated]
+    
     def retrieve_player(self, request, pk=None):
         player = self.get_object()
         serializer = self.get_serializer(player)

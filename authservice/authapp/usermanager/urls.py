@@ -28,25 +28,25 @@ from remoteauth.mfa import ServeMedia
 from remoteauth.jwt import CustomTokenVerifyView
 
 router = routers.DefaultRouter()
-router.register(r'leaderboard', LeaderboardViewSet)
+# router.register(r'leaderboard', LeaderboardViewSet)
 router.register(r'player', views.PlayerViewSet)
 router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/auth/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/auth/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/auth/token/verify', CustomTokenVerifyView.as_view(), name='token_verify'),
-    path('api/auth/login/', authorizeCall.as_view(), name='auth-authorizeRequest'),
+    path('api/auth/login', authorizeCall.as_view(), name='auth-authorizeRequest'),
     path('api/auth/callback', callbackCode.as_view(), name='auth-callback'),
-    path('api/player/<int:pk>/', views.PlayerViewSet.as_view({'get': 'retrieve_player'}), name='player-detail'),
+    path('api/player/<int:pk>', views.PlayerViewSet.as_view({'get': 'retrieve_player'}), name='player-detail'),
     path('api/mfa/enable', EnableMFA.as_view(), name='enable_mfa'),
     path('api/mfa/disable', DisableMFA.as_view(), name='disable_mfa'),
     path('api/mfa/update', UpdateMFA.as_view(), name='update_mfa'),
     path('api/mfa/verify', VerifyMFA.as_view(), name='verify_mfa'),
-    path('api/media/<path:filename>/', ServeMedia.as_view(), name='serve_media'),
+    path('api/media/<path:filename>', ServeMedia.as_view(), name='serve_media'),
 ]
 
 if not settings.DEBUG:

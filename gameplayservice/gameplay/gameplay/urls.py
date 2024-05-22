@@ -24,7 +24,8 @@ router.register(r'tournament', TournamentViewSet)
 router.register(r'participant', ParticipantViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api-game/', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
+    # path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
+    path('api-game/tournament/<int:pk>', TournamentViewSet.as_view({'get': 'retrieve_tournament'}), name='tournament-detail'),
 ]

@@ -17,3 +17,8 @@ class ParticipantViewSet(viewsets.ModelViewSet):
     """
     queryset = Participants.objects.all()
     serializer_class = ParticipantsSerializer
+
+    def retrieve_tournament(self, request, pk=None):
+        tournament = self.get_object()
+        serializer = self.get_serializer(tournament)
+        return Response(serializer.data)

@@ -170,7 +170,7 @@ SIMPLE_JWT = {
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-ALLOWED_HOSTS = ['authservice', 'localhost', '127.0.0.1', '159.223.18.127']
+ALLOWED_HOSTS = ['authservice', 'localhost', '127.0.0.1', '159.223.18.127', 'transcendence.myprojekt.tech']
 
 # CORS_ALLOWED_ORIGINS = [
 #     'http://127.0.0.1:5500',

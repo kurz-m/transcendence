@@ -19,7 +19,7 @@ class RemoteJWTAUthentication(BaseAuthentication):
             response.raise_for_status()
             data = response.json()
             user_id = data.get('user_id')
-            user_info_url = f'http://authservice:8000/users/{user_id}/'
+            user_info_url = f'http://authservice:8000/users/{user_id}'
             user_response = user_response = requests.get(user_info_url, headers={'Authorization': f'Bearer {token}'})
             user_response.raise_for_status()
             user_data = user_response.json()
