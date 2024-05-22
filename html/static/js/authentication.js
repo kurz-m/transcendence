@@ -1,22 +1,22 @@
 import { getCookie } from "./shared.js";
-import AbstractView from "./views/AbstractView.js";
 
 let isLoggedIn = false;
 let username = null;
 
 export const getLoggedIn = () => isLoggedIn;
-export const setLoggedIn = (bool) => {
+export const setLoggedIn = bool => {
     isLoggedIn = bool;
 }
 export const getUsername = () => username;
-export const setUsername = (name) => {
+export const setUsername = name => {
     username = name;
 }
 
 
-const jwtAPI = 'https://transcendence.myprojekt.tech/api/auth/login';
+const loginAPI = 'https://transcendence.myprojekt.tech/api/auth/login';
 const jwtCallback = 'https://transcendence.myprojekt.tech/api/auth/callback';
-const loginAPI = 'https://transcendence.myprojekt.tech/api/auth/loggedin'
+const checkLoginStatusAPI = 'https://transcendence.myprojekt.tech/api/auth/loggedin'
+const logoutAPI = 'https://transcendence.myprojekt.tech/api/auth/logout';
 
 
 export const handleAuthenticationCallback = async () => {
@@ -46,19 +46,17 @@ export const handleAuthenticationCallback = async () => {
 
 export const loginCallback = async () => {
     const dropdownMenu = document.getElementById('dropdownMenu');
-    let userProfile = null;
 
-    const isLoggedIn = await AbstractView.prototype.checkLoginStatus();
-
-    if (isLoggedIn) {
-        document.getElementById('loginButton').textContent = getUsername();
+    if (getLoggedIn()) {
         dropdownMenu.classList.toggle('show');
     } else {
         try {
-            const response = await fetch(jwtAPI);
-            // console.log(response.data);
+            const response = await fetch(loginAPI, {
+                method: 'POST',
+            });
             if (response.ok) {
                 const data = await response.json();
+                // maybe change to data.detail
                 window.location.href = data.location;
             } else {
                 console.error('Authentication failed:', response.statusText);
@@ -69,9 +67,29 @@ export const loginCallback = async () => {
     }
 }
 
+export const logoutCallback = async () => {
+    try {
+        const response = await fetch(logoutAPI, {
+            method: 'POST',
+        });
+
+        if (response.ok) {
+            document.getElementById('loginButton').textContent = 'Login with 42';
+            isLoggedIn = false;
+            username = null;
+            window.location.href('/');
+        } else {
+            console.error('Could not logout the user');
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 export const checkLoginStatus = async () => {
     try {
-        const response = await fetch(loginAPI)
+        const response = await fetch(checkLoginStatusAPI)
         isLoggedIn = response.ok;
 
         if (isLoggedIn) {
