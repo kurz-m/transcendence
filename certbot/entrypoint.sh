@@ -20,6 +20,7 @@ if [ -f "$CERT_FILE" ]; then
     if [ $delta -lt 86400 ]; then
         certbot renew
     fi
+    touch /healthy
 else
     # create certificates with certbot
     until certbot certonly \
