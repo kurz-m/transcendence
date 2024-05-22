@@ -4,6 +4,7 @@ import Account from "./views/Account.js";
 import Pong from "./views/Pong.js";
 import Friends from "./views/Friends.js";
 import { handleAuthenticationCallback, loginCallback } from "./authentication.js";
+import { getCookie } from "./shared.js";
 
 
 export const navigateTo = url => {
@@ -53,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginButton = document.getElementById('loginButton');
     AbstractView.prototype.checkLoginStatus().then(isLoggedIn => {
         if (isLoggedIn) {
-            loginButton.textContent = 'User Name';
+            loginButton.textContent = getCookie('user');
         } else {
             loginButton.textContent = 'Login with 42';
         }

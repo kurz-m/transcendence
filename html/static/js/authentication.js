@@ -1,9 +1,9 @@
 import { getCookie } from "./shared.js";
 import AbstractView from "./views/AbstractView.js";
 
-const jwtAPI = 'https://transcendence.myprojekt.de/api/auth/login/';
-const jwtCallback = 'https://transcendence.myprojekt.de/api/auth/callback';
-// const loginAPI = 'https://transcendence.myprojekt.de/api/auth/loggedin';
+const jwtAPI = 'https://transcendence.myprojekt.tech/api/auth/login';
+const jwtCallback = 'https://transcendence.myprojekt.tech/api/auth/callback';
+// const loginAPI = 'https://transcendence.myprojekt.tech/api/auth/loggedin';
 
 export async function handleAuthenticationCallback() {
     try {
@@ -17,7 +17,9 @@ export async function handleAuthenticationCallback() {
                     'Content-Type': 'application/json',
                 },
             });
-            if (!response.ok) {
+            if (response.ok) {
+                document.getElementById('loginButton').textContent = getCookie('user');
+            } else {
                 console.error('Authentication failed:', response.statusText);
             }
         } else {
@@ -36,7 +38,6 @@ export async function loginCallback() {
 
     if (isLoggedIn) {
         document.getElementById('loginButton').textContent = getCookie('user');
-        await updateUserProfile();
         dropdownMenu.classList.toggle('show');
     } else {
         try {
@@ -45,8 +46,6 @@ export async function loginCallback() {
             if (response.ok) {
                 const data = await response.json();
                 window.location.href = data.location;
-
-                checkLoginStatus();
             } else {
                 console.error('Authentication failed:', response.statusText);
             }
