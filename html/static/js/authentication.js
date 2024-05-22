@@ -1,11 +1,25 @@
 import { getCookie } from "./shared.js";
 import AbstractView from "./views/AbstractView.js";
 
+let isLoggedIn = false;
+let username = null;
+
+export const getLoggedIn = () => isLoggedIn;
+export const setLoggedIn = (bool) => {
+    isLoggedIn = bool;
+}
+export const getUsername = () => username;
+export const setUsername = (name) => {
+    username = name;
+}
+
+
 const jwtAPI = 'https://transcendence.myprojekt.tech/api/auth/login';
 const jwtCallback = 'https://transcendence.myprojekt.tech/api/auth/callback';
-// const loginAPI = 'https://transcendence.myprojekt.tech/api/auth/loggedin';
+const loginAPI = 'https://transcendence.myprojekt.tech/api/auth/loggedin'
 
-export async function handleAuthenticationCallback() {
+
+export const handleAuthenticationCallback = async () => {
     try {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('code')) {
@@ -30,14 +44,14 @@ export async function handleAuthenticationCallback() {
     }
 }
 
-export async function loginCallback() {
+export const loginCallback = async () => {
     const dropdownMenu = document.getElementById('dropdownMenu');
     let userProfile = null;
 
     const isLoggedIn = await AbstractView.prototype.checkLoginStatus();
 
     if (isLoggedIn) {
-        document.getElementById('loginButton').textContent = getCookie('user');
+        document.getElementById('loginButton').textContent = getUsername();
         dropdownMenu.classList.toggle('show');
     } else {
         try {
@@ -53,21 +67,17 @@ export async function loginCallback() {
             console.error('Error:', error);
         }
     }
-
-    // async function updateUserProfile() {
-    //     if (!userProfile) {
-    //         try {
-    //             const response = await fetch(loginAPI);
-
-    //             if (response.ok) {
-    //                 userProfile = await response.json();
-    //                 document.getElementById('loginButton').textContent = userProfile.username;
-    //             } else {
-    //                 console.error('Failed to fetch user profile:', response.status);
-    //             }
-    //         } catch (error) {
-    //             console.error('Error fetching user profile:', error);
-    //         }
-    //     }
-    // }
 }
+
+export const checkLoginStatus = async () => {
+    try {
+        const response = await fetch(loginAPI)
+        isLoggedIn = response.ok;
+
+        if (isLoggedIn) {
+            username = getCookie('user');
+        }
+    } catch (error) {
+        console.error('error:', error);
+    }
+};

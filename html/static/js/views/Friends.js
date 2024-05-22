@@ -6,7 +6,7 @@ export default class extends AbstractView {
         this.setTitle("Friends");
     }
 
-    async getHtml() {
+    getHtml = async () => {
         if (this.isLoggedIn) {
             return `
             <h1>You sure have friends</h1>
