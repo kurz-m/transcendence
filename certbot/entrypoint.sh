@@ -13,6 +13,9 @@ CERT_FILE="/etc/letsencrypt/live/transcendence.myprojekt.tech/fullchain.pem"
 while true
 do
 if [ -f "$CERT_FILE" ]; then
+    # stop running validation container
+    docker stop nginx-validation
+    docker rm nginx-validation
     # check modify date and renew if older than 24h
     modsecs=$(date --utc --reference="$CERT_FILE" +%s)
     nowsecs=$(date +%s)
