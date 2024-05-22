@@ -3,18 +3,20 @@ import AbstractView from "./AbstractView.js";
 export default class extends AbstractView {
     constructor() {
         super();
-        this.setTitle("Dashboard");
+        this.setTitle("Transcendence");
     }
 
     async getHtml() {
         return `
-        <h1>Welcome back, Test</h1>
-        <p>
-            This is whatever we want.
-        </p>
-        <p>
-            <a href="/login" data-link>Login</a>
-        </p>
+        <div class="window">
+        <div class="menu-topbar">
+          <div class="title">Menu</div>
+        </div>
+        <div class="content">
+          <button class="large-button">Pong</button>
+          <button class="large-button">Tetris</button>
+        </div>
+      </div>
         `
     }
 }

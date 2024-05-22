@@ -1,7 +1,10 @@
+import AbstractView from "./views/AbstractView.js";
 import Dashboard from "./views/Dashboard.js";
-import Login from "./views/Login.js";
+import Account from "./views/Account.js";
 import Pong from "./views/Pong.js";
 import Friends from "./views/Friends.js";
+import { handleAuthenticationCallback, loginCallback } from "./authentication.js";
+
 
 export const navigateTo = url => {
     history.pushState(null, null, url);
@@ -11,9 +14,10 @@ export const navigateTo = url => {
 const router = async () => {
     const routes = [
         { path: "/", view: Dashboard },
-        { path: "/login", view: Login },
+        { path: "/account", view: Account },
         { path: "/pong", view: Pong },
         { path: "/friends", view: Friends },
+        { path: "/callback", handler: handleAuthenticationCallback },
     ];
 
     const potentialMatches = routes.map(route => {
@@ -24,6 +28,12 @@ const router = async () => {
     });
 
     let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch);
+
+    if (match.route.path === "/callback") {
+        await handleAuthenticationCallback();
+        navigateTo('/');
+        return;
+    }
 
     if (!match) {
         match = {
@@ -40,8 +50,19 @@ const router = async () => {
 window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.body.addEventListener("click", e => {
-        if (e.target.matches("[data-link]")) {
+    const loginButton = document.getElementById('loginButton');
+    AbstractView.prototype.checkLoginStatus().then(isLoggedIn => {
+        console.log(isLoggedIn);
+        if (isLoggedIn) {
+            loginButton.textContent = 'User Name';
+        } else {
+            loginButton.textContent = 'Login with 42';
+        }
+    });
+
+    loginButton.addEventListener('click', loginCallback);
+    document.body.addEventListener('click', e => {
+        if (e.target.matches('[data-link]')) {
             e.preventDefault();
             navigateTo(e.target.href);
         }
