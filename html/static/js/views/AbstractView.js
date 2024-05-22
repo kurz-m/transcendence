@@ -1,11 +1,15 @@
 import { getCookie } from "../shared.js";
-const loginAPI = 'https://transcendence.myprojekt.de/api/auth/loggedin'
+const loginAPI = 'https://transcendence.myprojekt.tech/api/auth/loggedin'
 
 export default class {
     constructor() {
         this.username = 'user';
-        this.isLoggedIn = false;
-        this.checkLoginStatus();
+        if (getCookie('user')) {
+            this.isLoggedIn = true;
+        } else {
+            this.isLoggedIn = false;
+        }
+        // this.checkLoginStatus();
     }
 
     setTitle(title) {
