@@ -52,7 +52,6 @@ window.addEventListener("popstate", router);
 document.addEventListener("DOMContentLoaded", () => {
     const loginButton = document.getElementById('loginButton');
     AbstractView.prototype.checkLoginStatus().then(isLoggedIn => {
-        console.log(isLoggedIn);
         if (isLoggedIn) {
             loginButton.textContent = 'User Name';
         } else {

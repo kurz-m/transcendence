@@ -1,5 +1,9 @@
+import { getCookie } from "../shared.js";
+const loginAPI = 'https://transcendence.myprojekt.de/api/auth/loggedin'
+
 export default class {
     constructor() {
+        this.username = 'user';
         this.isLoggedIn = false;
         this.checkLoginStatus();
     }
@@ -9,14 +13,16 @@ export default class {
     }
 
     async checkLoginStatus() {
-        const tokenCookie = document.cookie.match(/(^|;\s*)access_token=([^;]+)/);
-        const jwtToken = tokenCookie ? tokenCookie[2] : null;
-
-        if (jwtToken) {
-            this.isLoggedIn = true;
-        } else {
-            this.isLoggedIn = false;
-            console.error('User is not logged in');
+        try {
+            const response = await fetch(loginAPI);
+            if (response.ok) {
+                this.username = getCookie('user');
+                this.isLoggedIn = true;
+            } else {
+                this.isLoggedIn = false;
+            }
+        } catch (error) {
+            console.log('Error:', error);
         }
         return this.isLoggedIn;
     }
