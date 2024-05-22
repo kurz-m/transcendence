@@ -30,7 +30,6 @@ const router = async () => {
     let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch);
 
     if (match.route.path === "/callback") {
-        console.log(match.route);
         await handleAuthenticationCallback();
         navigateTo('/');
         return;
@@ -52,12 +51,14 @@ window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", () => {
     const loginButton = document.getElementById('loginButton');
-    const isLoggedIn = AbstractView.prototype.checkLoginStatus();
-    if (isLoggedIn) {
-        loginButton.textContent = 'User Name';
-    } else {
-        loginButton.textContent = 'Login with 42';
-    }
+    AbstractView.prototype.checkLoginStatus().then(isLoggedIn => {
+        console.log(isLoggedIn);
+        if (isLoggedIn) {
+            loginButton.textContent = 'User Name';
+        } else {
+            loginButton.textContent = 'Login with 42';
+        }
+    });
 
     loginButton.addEventListener('click', loginCallback);
     document.body.addEventListener('click', e => {

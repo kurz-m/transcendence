@@ -15,8 +15,10 @@ export default class {
         if (jwtToken) {
             this.isLoggedIn = true;
         } else {
+            this.isLoggedIn = false;
             console.error('User is not logged in');
         }
+        return this.isLoggedIn;
     }
 
     async getHtml() {
