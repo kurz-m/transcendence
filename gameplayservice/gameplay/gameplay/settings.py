@@ -150,3 +150,8 @@ REST_FRAMEWORK = {
 ALLOWED_HOSTS = ['authservice', 'localhost', '127.0.0.1', '159.223.18.127', 'transcendence.myprojekt.tech']
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+
+
+STATIC_URL = 'static-django/'
+STATIC_ROOT = os.getenv("STATIC_DIRECTORY")
