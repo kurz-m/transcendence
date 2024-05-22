@@ -80,7 +80,7 @@ class callbackCode(APIView):
                     oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=False)
                     oauth_response.set_cookie('user', player.user, httponly=True, secure=False)
                     oauth_response.set_cookie('2fa', player.two_factor, httponly=True, secure=False)
-                    oauth_response.set_cookie('user-id', player.user.id, httponly=True, secure=False)
+                    oauth_response.set_cookie('user_id', player.user.id, httponly=True, secure=False)
                     player.online_status = True
                     player.save()
                     # serializer = PlayerSerializer(player, context={'request': request})

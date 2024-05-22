@@ -4,5 +4,5 @@ COPY gameplay /app
 COPY tools/entryscript.sh /app
 RUN chmod +x entryscript.sh
 RUN pip install -r requirements.txt
-EXPOSE 8001
+EXPOSE 8000
 CMD ["./entryscript.sh"]

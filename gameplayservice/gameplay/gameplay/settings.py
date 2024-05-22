@@ -146,3 +146,7 @@ REST_FRAMEWORK = {
         'tournament.authentication.RemoteJWTAUthentication',
     )
 }
+
+ALLOWED_HOSTS = ['authservice', 'localhost', '127.0.0.1', '159.223.18.127', 'transcendence.myprojekt.tech']
+
+CORS_ALLOW_ALL_ORIGINS = True

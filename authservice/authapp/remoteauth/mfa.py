@@ -121,6 +121,7 @@ class VerifyMFA(APIView):
         if is_valid:
             player.two_factor = True
             player.save()
+            refresh = RefreshToken.for_user(player.user)
             oauth_response = HttpResponse("oauth")
             oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=False)
             oauth_response.set_cookie('user', player.user, httponly=True, secure=False)
