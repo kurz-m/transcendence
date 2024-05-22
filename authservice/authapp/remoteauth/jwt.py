@@ -5,6 +5,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework import serializers
+from django.contrib.auth.models import User
 
 class CustomTokenVerifySerializer(TokenVerifySerializer):
     def validate(self, attrs):
@@ -16,10 +17,11 @@ class CustomTokenVerifySerializer(TokenVerifySerializer):
         try:
             access_token = AccessToken(token)
             user_id = access_token.payload['user_id']
-        except TokenError:
-            raise serializers.ValidationError('Invalid token')
+            user = User.objects.get(id=user_id)
+        except (TokenError, User.DoesNotExist):
+            raise serializers.ValidationError('Invalid token or user does not exist')
 
-        attrs['user_id'] = user_id
+        attrs['user'] = user
         return attrs
 
 class CustomTokenVerifyView(APIView):
@@ -28,4 +30,5 @@ class CustomTokenVerifyView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        user = serializer.validated_data['user']
+        return Response({'user_id': user.id, 'username': user.username}, status=status.HTTP_200_OK)

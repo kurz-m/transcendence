@@ -11,7 +11,7 @@ from django.contrib.auth import login
 from players.serializers import PlayerSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import redirect
-
+from rest_framework import permissions
 
 def get_user_info(access_token):
     url = 'https://api.intra.42.fr/v2/me'
@@ -51,6 +51,11 @@ class authorizeCall(APIView):
     def get(self, request, format=None):
         return Response({'location': authorize()}, status=status.HTTP_200_OK)
 
+class loggedIn(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request, format=None):
+        return Response({'detail': 'Successful operation. user is logged in.'})
+
 
 class callbackCode(APIView):
     def get(self, request, format=None):
@@ -59,7 +64,6 @@ class callbackCode(APIView):
         if 'code' in request.GET and 'state' in request.GET:
             if state != os.getenv("STATE"):
                 return HttpResponseBadRequest("Invalid state parameter")
-            print("Code:", code)
             token_url = 'https://api.intra.42.fr/oauth/token'
             data = {
                 'grant_type': 'authorization_code',
@@ -68,31 +72,23 @@ class callbackCode(APIView):
                 'code': code,
                 'redirect_uri': os.getenv("REDIRECT_URI"),
             }
-            print(data)
             response = requests.post(token_url, data=data)
             if response.status_code == 200:
                 access_token = response.json().get('access_token')
+                if not access_token:
+                    return HttpResponseBadRequest('Missing Access Token in response received from 42 oauth.')
                 player = get_user_info(access_token=access_token)
                 refresh = RefreshToken.for_user(player.user)
                 if player and player.two_factor is False:
-                    oauth_response = HttpResponse("oauth")
-                    # response = redirect('/dashboard')
-                    oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=False)
-                    oauth_response.set_cookie('user', player.user, httponly=True, secure=False)
-                    oauth_response.set_cookie('2fa', player.two_factor, httponly=True, secure=False)
-                    oauth_response.set_cookie('user_id', player.user.id, httponly=True, secure=False)
+                    oauth_response = HttpResponse("Successful operation. Cookies set with JWT token, username, and user ID")
+                    oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=True)
+                    oauth_response.set_cookie('user', player.user, httponly=False, secure=True)
+                    oauth_response.set_cookie('2fa', player.two_factor, httponly=False, secure=True)
+                    oauth_response.set_cookie('user_id', player.user.id, httponly=False, secure=True)
                     player.online_status = True
                     player.save()
-                    # serializer = PlayerSerializer(player, context={'request': request})
-                    # response_data = {
-                    #     'refresh': str(refresh),
-                    #     'access': str(refresh.access_token),
-                    #     'player_data': serializer.data
-                    # }
                     return oauth_response
-                # elif player and player.two_factor is True:
-                #     return Response({'message': 'MFA Enabled', 'refresh': str(refresh), 'access': str(refresh.access_token)})
             else:
-                return Response({'message': 'Failed to Obtain Access Token'}, status=status.HTTP_400_BAD_REQUEST)
+                return HttpResponseBadRequest('Invalid Authorization Request to 42 oauth.')
         else:
             return Response({'Missing code or state parameter'}, status=status.HTTP_400_BAD_REQUEST)

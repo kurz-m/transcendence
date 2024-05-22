@@ -13,8 +13,10 @@ services:
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - .env
-    expose:
-      - "5432"
+    # expose:
+    #   - "5432"
+    ports:
+      - "5432:5432"
     networks:
       - authnetwork
   
@@ -30,8 +32,10 @@ services:
       - gameplay_data:/var/lib/postgresql/data
     env_file:
       - .env
-    expose:
-      - "5432"
+    # expose:
+    #   - "5432"
+    ports:
+      - "5433:5432"
     networks:
       - authnetwork
   

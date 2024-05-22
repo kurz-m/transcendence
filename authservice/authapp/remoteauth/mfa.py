@@ -123,11 +123,10 @@ class VerifyMFA(APIView):
             player.save()
             refresh = RefreshToken.for_user(player.user)
             oauth_response = HttpResponse("oauth")
-            oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=False)
-            oauth_response.set_cookie('user', player.user, httponly=True, secure=False)
-            oauth_response.set_cookie('2fa', player.two_factor, httponly=True, secure=False)
-            oauth_response.set_cookie('user-id', player.user.id, httponly=True, secure=False)
+            oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=True)
+            oauth_response.set_cookie('user', player.user, httponly=False, secure=True)
+            oauth_response.set_cookie('2fa', player.two_factor, httponly=False, secure=True)
+            oauth_response.set_cookie('user-id', player.user.id, httponly=False, secure=True)
             return oauth_response
-            # return Response({'message': 'MFA Token verified successfully'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'Invalid MFA token'}, status=status.HTTP_400_BAD_REQUEST)

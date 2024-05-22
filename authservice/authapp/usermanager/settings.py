@@ -151,7 +151,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'remoteauth.customjwt.CookieAccessCodeAuthentication',
     )
 }
 
@@ -176,3 +176,5 @@ ALLOWED_HOSTS = ['authservice', 'localhost', '127.0.0.1', '159.223.18.127', 'tra
 #     'http://127.0.0.1:5500',
 # ]
 CORS_ALLOW_ALL_ORIGINS = True
+
+
