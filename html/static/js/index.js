@@ -3,7 +3,7 @@ import Dashboard from "./views/Dashboard.js";
 import Account from "./views/Account.js";
 import Pong from "./views/Pong.js";
 import Friends from "./views/Friends.js";
-import { checkLoginStatus, getLoggedIn, getUsername, handleAuthenticationCallback, loginCallback } from "./authentication.js";
+import { checkLoginStatus, getLoggedIn, getUsername, handleAuthenticationCallback, loginCallback, logoutCallback } from "./authentication.js";
 
 export const navigateTo = url => {
     history.pushState(null, null, url);
@@ -49,8 +49,9 @@ const router = async () => {
 window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", async () => {
-
     const loginButton = document.getElementById('loginButton');
+    const logoutButton = document.getElementById('logoutButton');
+
     await checkLoginStatus();
     if (getLoggedIn()) {
         loginButton.textContent = getUsername();
@@ -59,6 +60,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     loginButton.addEventListener('click', loginCallback);
+    logoutButton.addEventListener('click', logoutCallback);
+
     document.body.addEventListener('click', e => {
         if (e.target.matches('[data-link]')) {
             e.preventDefault();
