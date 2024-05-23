@@ -32,6 +32,9 @@ export const handleAuthenticationCallback = async () => {
                 },
             });
             if (response.ok) {
+                isLoggedIn = true;
+                document.getElementById('login-button').classList.add('logged-in');
+                document.getElementById('login-button').classList.remove('logged-out');
                 document.getElementById('login-button-field').textContent = getCookie('user');
             } else {
                 console.error('Authentication failed:', response.statusText);
