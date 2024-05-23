@@ -32,7 +32,7 @@ export const handleAuthenticationCallback = async () => {
                 },
             });
             if (response.ok) {
-                document.getElementById('loginButton').textContent = getCookie('user');
+                document.getElementById('login-button-field').textContent = getCookie('user');
             } else {
                 console.error('Authentication failed:', response.statusText);
             }
@@ -74,7 +74,7 @@ export const logoutCallback = async () => {
         });
 
         if (response.ok) {
-            document.getElementById('loginButton').textContent = 'Login with 42';
+            document.getElementById('login-button-field').textContent = 'login with';
             isLoggedIn = false;
             username = null;
             window.location.href('/');
