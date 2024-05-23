@@ -8,7 +8,9 @@ export const getCookie = (name) => {
 export const toggleDropdown = () => {
     const dropdownID = document.getElementById('account-dropdown-id');
     const loginButton = document.getElementById('login-button');
+    const dropdownContent = document.getElementById('dropdown-content-id');
 
+    dropdownContent.classList.toggle('show');
     dropdownID.classList.toggle('show');
     loginButton.classList.toggle('logged-in');
     loginButton.classList.toggle('profile-button');
