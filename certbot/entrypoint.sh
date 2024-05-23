@@ -31,8 +31,7 @@ else
         --agree-tos \
         -m flauer@student.42heilbronn.de \
         -d transcendence.myprojekt.tech \
-        --cert-name transcendence.myprojekt.tech \
-        --test-cert
+        --cert-name transcendence.myprojekt.tech
     do
         sleep 2
     done
