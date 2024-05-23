@@ -12,7 +12,20 @@
 </head>
 <body>
     <div class="background">
-        <div id="dropdown">
+        <div id="account-dropdown-id" class="account-dropdown">
+            <button id="login-button" class="profile-button">
+              <img id="small-profile-pic" class="small-pp" src="../media/profile.jpg" draggable="false" (dragstart)="false;">
+              <div id="login-button-field" class="field">Aaron</div>
+              <img id="login-icon-id" class="login-icon" src="../media/42.svg" alt="42" draggable="false" (dragstart)="false;">
+            </button>
+            <div id="dropdown-content-id" class="dropdown-content">
+              <a class="medium-button" href="/friends" data-link>Friends</a>
+              <a class="medium-button" href="/match-history" data-link>Match History</a>
+              <a class="medium-button" href="/account" data-link>Account</a>
+              <button id="logout-button" class="medium-button-red">logout</button>
+            </div>
+        </div>
+        <!-- <div id="dropdown">
             <button id="loginButton">Login with 42</button>
             <div id="dropdownMenu">
                 <a href="/friends" class="nav__link" data-link>Friends</a>
@@ -20,7 +33,7 @@
                 <a href="/account" class="nav__link" data-link>Account</a>
                 <button id="logoutButton">Logout</button>
             </div>
-        </div>
+        </div> -->
         <div id="app"></div>
     </div>
     <script type="module" src="/static/js/index.js"></script>
@@ -28,4 +41,5 @@
     <script type="module" src="/static/js/shared.js"></script>
 </body>
 </html>
+
 

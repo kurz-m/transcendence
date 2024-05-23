@@ -49,14 +49,15 @@ const router = async () => {
 window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const loginButton = document.getElementById('loginButton');
-    const logoutButton = document.getElementById('logoutButton');
+    const loginButton = document.getElementById('login-button');
+    const loginButtonText = document.getElementById('login-button-field');
+    const logoutButton = document.getElementById('logout-button');
 
     await checkLoginStatus();
     if (getLoggedIn()) {
-        loginButton.textContent = getUsername();
+        loginButtonText.textContent = getUsername();
     } else {
-        loginButton.textContent = 'Login with 42';
+        loginButtonText.textContent = 'login with';
     }
 
     loginButton.addEventListener('click', loginCallback);
