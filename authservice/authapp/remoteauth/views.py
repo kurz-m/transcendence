@@ -34,7 +34,6 @@ def create_player_from_user_info(user_info):
     last_name = user_info.get('last_name', '')
     email = user_info.get('email', '')
     profile_img_uri = user_info.get('image', {}).get('link', '')
-    forty_two_student = True
 
     existing_user = User.objects.filter(username=username).first() or User.objects.filter(email=email).first()
 
@@ -43,7 +42,7 @@ def create_player_from_user_info(user_info):
         return player
     else:
         user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email)
-        player = Players.objects.create(user=user, profile_img_uri=profile_img_uri, forty_two_student=forty_two_student)
+        player = Players.objects.create(user=user, profile_img_uri=profile_img_uri)
         return player
 
 
