@@ -16,7 +16,7 @@ services:
     # expose:
     #   - "5432"
     ports:
-      - "5432:5432"
+      - "5654:5432"
     networks:
       - authnetwork
   
@@ -35,7 +35,7 @@ services:
     # expose:
     #   - "5432"
     ports:
-      - "5433:5432"
+      - "5653:5432"
     networks:
       - authnetwork
   

@@ -48,7 +48,7 @@ def create_player_from_user_info(user_info):
 
 
 class authorizeCall(APIView):
-    def get(self, request, format=None):
+    def post(self, request, format=None):
         return Response({'location': authorize()}, status=status.HTTP_200_OK)
 
 class loggedIn(APIView):
@@ -58,12 +58,12 @@ class loggedIn(APIView):
 
 class logOut(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    def get(self, request, format=None):
+    def post(self, request, format=None):
         oauth_response = HttpResponse("Successful operation. User logged out and cookies cleared.")
-        oauth_response.set_cookie('access_token', '', httponly=True, secure=True)
-        oauth_response.set_cookie('user', '', httponly=False, secure=True)
-        oauth_response.set_cookie('2fa', '', httponly=False, secure=True)
-        oauth_response.set_cookie('user_id', '', httponly=False, secure=True)
+        oauth_response.delete_cookie('access_token', path='/', domain=None)
+        oauth_response.delete_cookie('user', path='/', domain=None)
+        oauth_response.delete_cookie('2fa', path='/', domain=None)
+        oauth_response.delete_cookie('user_id', path='/', domain=None)
         oauth_response.status_code = 200
         return oauth_response
 
