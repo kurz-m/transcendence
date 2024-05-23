@@ -1,4 +1,4 @@
-import { getCookie } from "./shared.js";
+import { getCookie, toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
 
 let isLoggedIn = false;
 let username = null;
@@ -45,10 +45,8 @@ export const handleAuthenticationCallback = async () => {
 }
 
 export const loginCallback = async () => {
-    const dropdownMenu = document.getElementById('dropdownMenu');
-
     if (getLoggedIn()) {
-        dropdownMenu.classList.toggle('show');
+        toggleDropdown();
     } else {
         try {
             const response = await fetch(loginAPI, {
@@ -74,6 +72,7 @@ export const logoutCallback = async () => {
         });
 
         if (response.ok) {
+            toggleLoginButtonStyle();
             document.getElementById('login-button-field').textContent = 'login with';
             isLoggedIn = false;
             username = null;
