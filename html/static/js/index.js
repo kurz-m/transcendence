@@ -4,6 +4,7 @@ import Account from "./views/Account.js";
 import Pong from "./views/Pong.js";
 import Friends from "./views/Friends.js";
 import { checkLoginStatus, getLoggedIn, getUsername, handleAuthenticationCallback, loginCallback, logoutCallback } from "./authentication.js";
+import { toggleLoginButtonStyle } from "./shared.js";
 
 export const navigateTo = url => {
     history.pushState(null, null, url);
@@ -56,6 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await checkLoginStatus();
     if (getLoggedIn()) {
         loginButtonText.textContent = getUsername();
+        toggleLoginButtonStyle();
     } else {
         loginButtonText.textContent = 'login with';
     }
