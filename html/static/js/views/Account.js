@@ -6,7 +6,7 @@ export default class extends AbstractView {
         this.setTitle("Account");
     }
 
-    async getHtml() {
+    getHtml = async () => {
         return `
         <h1>Here should be the account screen</h1>
         `

@@ -6,7 +6,7 @@ export default class extends AbstractView {
         this.setTitle("Transcendence");
     }
 
-    async getHtml() {
+    getHtml = async () => {
         return `
         <div class="window">
         <div class="menu-topbar">

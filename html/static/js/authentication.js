@@ -1,11 +1,25 @@
 import { getCookie } from "./shared.js";
-import AbstractView from "./views/AbstractView.js";
 
-const jwtAPI = 'https://transcendence.myprojekt.tech/api/auth/login';
+let isLoggedIn = false;
+let username = null;
+
+export const getLoggedIn = () => isLoggedIn;
+export const setLoggedIn = bool => {
+    isLoggedIn = bool;
+}
+export const getUsername = () => username;
+export const setUsername = name => {
+    username = name;
+}
+
+
+const loginAPI = 'https://transcendence.myprojekt.tech/api/auth/login';
 const jwtCallback = 'https://transcendence.myprojekt.tech/api/auth/callback';
-// const loginAPI = 'https://transcendence.myprojekt.tech/api/auth/loggedin';
+const checkLoginStatusAPI = 'https://transcendence.myprojekt.tech/api/auth/loggedin'
+const logoutAPI = 'https://transcendence.myprojekt.tech/api/auth/logout';
 
-export async function handleAuthenticationCallback() {
+
+export const handleAuthenticationCallback = async () => {
     try {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('code')) {
@@ -18,7 +32,7 @@ export async function handleAuthenticationCallback() {
                 },
             });
             if (response.ok) {
-                document.getElementById('loginButton').textContent = getCookie('user');
+                document.getElementById('login-button-field').textContent = getCookie('user');
             } else {
                 console.error('Authentication failed:', response.statusText);
             }
@@ -30,21 +44,19 @@ export async function handleAuthenticationCallback() {
     }
 }
 
-export async function loginCallback() {
+export const loginCallback = async () => {
     const dropdownMenu = document.getElementById('dropdownMenu');
-    let userProfile = null;
 
-    const isLoggedIn = await AbstractView.prototype.checkLoginStatus();
-
-    if (isLoggedIn) {
-        document.getElementById('loginButton').textContent = getCookie('user');
+    if (getLoggedIn()) {
         dropdownMenu.classList.toggle('show');
     } else {
         try {
-            const response = await fetch(jwtAPI);
-            // console.log(response.data);
+            const response = await fetch(loginAPI, {
+                method: 'POST',
+            });
             if (response.ok) {
                 const data = await response.json();
+                // maybe change to data.detail
                 window.location.href = data.location;
             } else {
                 console.error('Authentication failed:', response.statusText);
@@ -53,21 +65,37 @@ export async function loginCallback() {
             console.error('Error:', error);
         }
     }
-
-    // async function updateUserProfile() {
-    //     if (!userProfile) {
-    //         try {
-    //             const response = await fetch(loginAPI);
-
-    //             if (response.ok) {
-    //                 userProfile = await response.json();
-    //                 document.getElementById('loginButton').textContent = userProfile.username;
-    //             } else {
-    //                 console.error('Failed to fetch user profile:', response.status);
-    //             }
-    //         } catch (error) {
-    //             console.error('Error fetching user profile:', error);
-    //         }
-    //     }
-    // }
 }
+
+export const logoutCallback = async () => {
+    try {
+        const response = await fetch(logoutAPI, {
+            method: 'POST',
+        });
+
+        if (response.ok) {
+            document.getElementById('login-button-field').textContent = 'login with';
+            isLoggedIn = false;
+            username = null;
+            window.location.href('/');
+        } else {
+            console.error('Could not logout the user');
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+export const checkLoginStatus = async () => {
+    try {
+        const response = await fetch(checkLoginStatusAPI)
+        isLoggedIn = response.ok;
+
+        if (isLoggedIn) {
+            username = getCookie('user');
+        }
+    } catch (error) {
+        console.error('error:', error);
+    }
+};
