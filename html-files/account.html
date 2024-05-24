@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../css/index.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@100..900"
+    />
+    <title>Account - Transcendence</title>
+  </head>
+  <body>
+    <div class="background">
+      <div class="window">
+        <div class="topbar">
+          <button class="icon-button">
+            <img class="icon" src="../media/back.svg" alt="Back" draggable="false" (dragstart)="false;">
+          </button>
+          <div class="user-header">
+            <img class="large-pp" src="../media/profile.jpg">
+            <div class="username">arabenst</div>
+          </div>
+          <button class="icon-button">
+            <img class="icon" src="../media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;">
+          </button>
+        </div>
+        <div class="content">
+          <div class="account-details">
+            <div class="list-item">
+              <input class="list-field" type="text" value="Aaron" placeholder="First Name" readonly>
+              <button class="clean-button">
+                <img class="small-icon" src="../media/edit.svg">
+              </button>
+            </div>
+            <div class="list-item">
+              <input class="list-field" type="text" value="Rabenstein" placeholder="Last Name" readonly>
+              <button class="clean-button">
+                <img class="small-icon" src="../media/edit.svg" draggable="false" (dragstart)="false;">
+              </button>
+            </div>
+            <!-- Above is the default state. once the edit button is clicked, input is made editable and button becomes checkmark! -->
+            <div class="list-item">
+              <input class="list-field" type="text" value="" placeholder="Email">
+              <button class="clean-button">
+                <img class="small-icon" src="../media/checkmark.svg" draggable="false" (dragstart)="false;">
+              </button>
+            </div>
+            <div class="list-item">
+              <div class="field">2FA</div>
+              <button class="small-button">Enable</button>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

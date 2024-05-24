@@ -486,56 +486,67 @@ body {
 /* INPUT */
 
 .label-field-button {
-  max-width: 100%;
-  background: var(--color-clear);
-  border: 3px solid var(--color-lightgray);
-  border-radius: var(--br);
-  font-family: var(--font);
-  font-size: 40px;
-  font-weight: var(--font-semibold);
-  color: var(--color-white);
-  align-items: center;
-  justify-content: space-between;
-  display: flex;
-  margin-top: 42px;
-  padding: 13px 13px 13px 32px;
-}
+    max-width: 100%;
+    background: var(--color-clear);
+    border: 3px solid var(--color-lightgray);
+    border-radius: var(--br);
+    font-family: var(--font);
+    font-size: 40px;
+    font-weight: var(--font-semibold);
+    color: var(--color-white);
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+    margin-top: 42px;
+    padding: 13px 13px 13px 32px;
+  }
+  
+  .twoFA-input,
+  .text-field,
+  .list-field {
+    background-color: var(--color-clear);
+    border-color: var(--color-clear);
+    color: var(--color-white);
+    font-family: var(--font);
+    margin-right: 13px;
+    outline: 0;
+  }
+  
+  .text-field {
+    width: 100%;
+    max-width: 320px;
+    max-height: 44px;
+    font-size: 40px;
+    border-bottom: 1px dashed var(--color-lightgray);
+  }
+  
+  .list-field {
+    width: 100%;
+    font-weight: var(--font-light);
+    font-size: 32px;
+    outline: 0;
+  }
+  
+  .twoFA-input {
+    margin-top: 21px;
+    width: 100%;
+    max-width: 160px;
+    max-height: 44px;
+    font-size: 40px;
+    border-bottom: 1px dashed var(--color-lightgray);
+  }
+  
+  .twoFA-input:focus,
+  .text-field:focus {
+    border-bottom: 1px dashed var(--color-white);
+  }
 
-.text-field,
-.list-field {
-  background-color: var(--color-clear);
-  border-color: var(--color-clear);
-  color: var(--color-white);
-  font-family: var(--font);
-  margin-right: 13px;
-  outline: 0;
-}
-
-.text-field {
-  width: 100%;
-  max-width: 320px;
-  max-height: 44px;
-  font-size: 40px;
-  border-bottom: 1px dashed var(--color-lightgray);
-}
-
-.list-field {
-  width: 100%;
-  font-weight: var(--font-light);
-  font-size: 32px;
-  outline: 0;
-}
-
-.text-field:focus {
-  border-bottom: 1px dashed var(--color-white);
-}
-
-:where([autocomplete=one-time-code]) {
+/* :where([autocomplete=one-time-code]) {
   --otp-digits: 6;
   --otp-ls: 60px;
   --otp-gap: 1.25;
 
-  /* private consts */
+  private consts
   --_otp-bgsz: calc(var(--otp-ls) + 1ch);
   --_otp-digit: 0;
 
@@ -548,8 +559,8 @@ body {
     var(--otp-bg, #EEE) calc(var(--otp-gap) * var(--otp-ls)),
     transparent 0
   );
-  /* border: 3px solid var(--color-dimgray);
-  border-radius: var(--br); */
+   border: 3px solid var(--color-dimgray);
+  border-radius: var(--br);
   background-position: calc(var(--_otp-digit) * var(--_otp-bgsz)) 0, 0 0;
   background-repeat: no-repeat, repeat-x;
   background-size: var(--_otp-bgsz) 100%;
@@ -562,7 +573,7 @@ body {
   letter-spacing: var(--otp-ls);
   padding-block: var(--otp-pb, 1ch);
   padding-inline-start: calc(((var(--otp-ls) - 1ch) / 2) * var(--otp-gap));
-}
+} */
 
 
 /* IMAGES */
@@ -647,133 +658,163 @@ body {
 /* TEXT */
 
 .title {
-  font-size: 64px;
-  margin: 0px 32px;
-  font-weight: var(--font-semibold);
-}
+    font-size: 64px;
+    margin: 0px 32px;
+    font-weight: var(--font-semibold);
+  }
+  
+  .label {
+    white-space: nowrap;
+    height: 47px;
+    align-items: center;
+    display: flex;
+    margin-right: 11px;
+  }
+  
+  .field {
+    font-family: var(--font);
+    font-size: 32px;
+    font-weight: var(--font-light);
+    color: var(--color-white);
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
+  .subheading {
+    width: 100%;
+    font-size: 40px;
+    font-weight: var(--font-semibold);
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
+  .large-text {
+    font-size: 40px;
+  }
+  
+  .small-text {
+    font-size: 20px;
+    text-align: left;
+    max-width: 528px;
+  }
+  
+  .small-text-bold {
+    font-size: 20px;
+    text-align: left;
+    font-weight: var(--font-semibold);
+  }
+  
+  .countdown {
+    font-size: 164px;
+    font-weight: var(--font-semibold);
+    width: 130px;
+    height: 151px;
+    line-height: 175px;
+  }
+  
+  .stepper-text-inc {
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 15px;
+    color: var(--color-white);
+    height: 22px;
+  }
+  
+  .stepper-text-dec {
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 10px;
+    color: var(--color-white);
+    height: 22px;
+  }
+  
+  .match-date {
+    font-weight: var(--font-light);
+    width: 222px;
+    margin-right: 21px;
+    text-align: left;
+  }
+  
+  .match-text {
+    font-weight: var(--font-light);
+  }
+  
+  .match-icon {
+    height: 38px;
+    width: 38px;
+    background: var(--color-dimgray);
+    border: 3px solid var(--color-lightgray);
+    border-radius: var(--br);
+    font-family: var(--font);
+    font-size: 25px;
+    font-weight: var(--font-semibold);
+    color: var(--color-white);
+    line-height: 32px;
+    box-sizing: border-box;
+    margin-right: 21px;
+    text-align: center;
+  }
+  
+  .left-player {
+   width: 100%;
+   text-align: right;
+   text-overflow: ellipsis;
+   overflow: hidden;
+   white-space: nowrap;
+  }
+  
+  .left-score {
+    width: 32px;
+    font-weight: var(--font-semibold);
+    margin-left: 5px;
+    text-align: right;
+  }
+  
+  .score-colon {
+    width: 8.5px;
+    font-weight: var(--font-semibold);
+  }
+  
+  .right-score {
+    width: 32px;
+    font-weight: var(--font-semibold);
+    margin-right: 5px;
+    text-align: left;
+  }
+  
+  .right-player {
+    width: 100%;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
+  .tournament-place {
+   font-weight: var(--font-semibold);
+   margin-right: 8px;
+  }
+  
+  .tournament-players {
+    font-weight: var(--font-semibold);
+    margin: 0px 8px;
+  }
 
-.label {
-  white-space: nowrap;
-  height: 47px;
-  align-items: center;
-  display: flex;
-  margin-right: 11px;
-}
-
-.field {
-  font-family: var(--font);
-  font-size: 32px;
-  font-weight: var(--font-light);
-  color: var(--color-white);
-  text-align: left;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.subheading {
-  font-size: 40px;
-  font-weight: var(--font-semibold);
-}
-
-.large-text {
-  font-size: 40px;
-}
-
-.small-text {
-  font-size: 20px;
-  text-align: left;
-}
-
-.stepper-text-inc {
-  font-family: var(--font);
-  font-size: 15px;
-  line-height: 15px;
-  color: var(--color-white);
-  height: 22px;
-}
-
-.stepper-text-dec {
-  font-family: var(--font);
-  font-size: 15px;
-  line-height: 10px;
-  color: var(--color-white);
-  height: 22px;
-}
-
-.match-date {
-  font-weight: var(--font-light);
-  width: 222px;
-  margin-right: 21px;
-  text-align: left;
-}
-
-.match-text {
-  font-weight: var(--font-light);
-}
-
-.match-icon {
-  height: 38px;
-  width: 38px;
-  background: var(--color-dimgray);
-  border: 3px solid var(--color-lightgray);
-  border-radius: var(--br);
-  font-family: var(--font);
-  font-size: 25px;
-  font-weight: var(--font-semibold);
-  color: var(--color-white);
-  line-height: 32px;
-  box-sizing: border-box;
-  margin-right: 21px;
-  text-align: center;
-}
-
-.left-player {
- width: 100%;
- text-align: right;
- text-overflow: ellipsis;
- overflow: hidden;
- white-space: nowrap;
-}
-
-.left-score {
-  width: 32px;
-  font-weight: var(--font-semibold);
-  margin-left: 5px;
-  text-align: right;
-}
-
-.score-colon {
-  width: 8.5px;
-  font-weight: var(--font-semibold);
-}
-
-.right-score {
-  width: 32px;
-  font-weight: var(--font-semibold);
-  margin-right: 5px;
-  text-align: left;
-}
-
-.right-player {
-  width: 100%;
-  text-align: left;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.tournament-place {
- font-weight: var(--font-semibold);
- margin-right: 8px;
-}
-
-.tournament-players {
-  font-weight: var(--font-semibold);
-  margin: 0px 8px;
-}
-
-/* GAME ELEMENTS */
+/* 
+GAME ELEMENTS
+########################################################################
+########################################################################
+########################################################################
+########################################################################
+########################################################################
+########################################################################
+########################################################################
+########################################################################
+*/
 
 .paddle_l,
 .paddle_r {
