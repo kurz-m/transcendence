@@ -17,11 +17,12 @@ class CustomTokenVerifySerializer(TokenVerifySerializer):
 
         try:
             access_token = AccessToken(token)
-            player_id = access_token.payload['player_id']
-            player = Players.objects.get(id=player_id)
-            user = player.user
-        except (TokenError, User.DoesNotExist):
-            raise serializers.ValidationError('Invalid token or user does not exist')
+            user_id = access_token.payload['user_id']
+            user = User.objects.get(id=user_id)
+        except TokenError:
+            raise serializers.ValidationError('Invalid token')
+        except User.DoesNotExist:
+            raise serializers.ValidationError('User does not exist')
 
         attrs['user'] = user
         return attrs
@@ -29,8 +30,8 @@ class CustomTokenVerifySerializer(TokenVerifySerializer):
 class CustomTokenVerifyView(APIView):
     serializer_class = CustomTokenVerifySerializer
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        return Response({'player_id': player.id, 'username': user.username}, status=status.HTTP_200_OK)
+        return Response({'user_id': user.id, 'username': user.username}, status=status.HTTP_200_OK)
