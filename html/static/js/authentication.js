@@ -32,9 +32,10 @@ export const handleAuthenticationCallback = async () => {
                 },
             });
             if (response.ok) {
+                const loginButton = document.getElementById('login-button');
                 isLoggedIn = true;
-                document.getElementById('login-button').classList.add('logged-in');
-                document.getElementById('login-button').classList.remove('logged-out');
+                loginButton.classList.remove('logged-out');
+                loginButton.classList.add('logged-in');
                 toggleLoginButtonStyle();
                 document.getElementById('login-button-field').textContent = getCookie('user');
             } else {
@@ -58,7 +59,6 @@ export const loginCallback = async () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                // maybe change to data.detail
                 window.location.href = data.location;
             } else {
                 console.error('Authentication failed:', response.statusText);

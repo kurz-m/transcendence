@@ -297,6 +297,7 @@ body {
 /* BUTTONS */
 
 .large-button {
+  display: block;;
   height: 73px;
   width: 100%;
   cursor: pointer;
@@ -307,6 +308,7 @@ body {
   font-size: 40px;
   font-weight: var(--font-semibold);
   color: var(--color-white);
+  text-decoration: none;
 }
 
 .large-button:not(:first-child) {
@@ -586,7 +588,7 @@ body {
   margin-left: 8px;
 }
 
-#login-icon-id.hidden {
+.hidden {
   display: none;
 }
 
@@ -769,4 +771,128 @@ body {
 .tournament-players {
   font-weight: var(--font-semibold);
   margin: 0px 8px;
+}
+
+/* GAME ELEMENTS */
+
+.paddle_l,
+.paddle_r {
+  position: fixed;
+  width: 42px;
+  height: 210px;
+  background: var(--color-white);
+  border-radius: var(--br);
+}
+
+.paddle_l {
+  left: 21px;
+  top: 50%;
+}
+
+.paddle_r {
+  right: 21px;
+  top: 50%;
+}
+
+.ball {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 42px;
+  height: 42px;
+  background: var(--color-white);
+  border-radius: var(--br);
+}
+
+.hud {
+  position: absolute;
+  top: 21px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font);
+  color: var(--color-white);
+  font-weight: var(--font-light);
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-main {
+  max-width: 100%;
+  height: 96px;
+  background-color: var(--color-window-bg);
+  border: 3px solid var(--color-dimgray);
+  border-radius: 84px;
+  display: grid;
+  grid-template-columns: 1fr 189px 1fr;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  padding: 0px 32px;
+}
+
+.hud-player-left,
+.hud-player-right {
+  width: 100%;
+  max-width: 320px;
+  font-size: 32px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.hud-player-left {
+  text-align: right;
+}
+
+.hud-player-right {
+  text-align: left;
+}
+
+.hud-score {
+  display: flex;
+  flex-direction: row;
+  font-size: 64px;
+  align-items: center;
+}
+
+.hud-score-left,
+.hud-score-right {
+  font-weight: var(--font-semibold);
+  margin: 7px;
+  width: 70px;
+}
+
+.hud-score-left {
+  text-align: right;
+}
+
+.hud-score-colon {
+  width: 7px;
+  font-size: 42px;
+  margin: 7px;
+}
+
+.hud-score-right {
+  text-align: left;
+}
+
+.hud-time {
+  display: flex;
+  flex-direction: row;
+  width: 124px;
+  height: 49px;
+  background-color: var(--color-window-bg);
+  border: 3px solid var(--color-dimgray);
+  border-radius: 0px 0px 21px 21px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: -3px;
+  align-items: center;
+  justify-content: center;
+}
+
+.hud-time-text {
+  font-size: 26px;
+  margin: 0px 7px;
 }

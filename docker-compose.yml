@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   authdb:
     image: postgres:12-alpine

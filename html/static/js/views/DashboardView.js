@@ -13,7 +13,7 @@ export default class extends AbstractView {
           <div class="title">Menu</div>
         </div>
         <div class="content">
-          <button class="large-button">Pong</button>
+          <a class="large-button" href="/pong" data-link>Pong</a>
           <button class="large-button">Tetris</button>
         </div>
       </div>

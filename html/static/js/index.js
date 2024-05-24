@@ -1,10 +1,10 @@
-import AbstractView from "./views/AbstractView.js";
-import Dashboard from "./views/Dashboard.js";
-import Account from "./views/Account.js";
-import Pong from "./views/Pong.js";
-import Friends from "./views/Friends.js";
+import Dashboard from "./views/DashboardView.js";
+import Account from "./views/AccountView.js";
+import PongGame from "./views/PongGameView.js";
+import Friends from "./views/FriendsView.js";
 import { checkLoginStatus, getLoggedIn, getUsername, handleAuthenticationCallback, loginCallback, logoutCallback } from "./authentication.js";
 import { toggleLoginButtonStyle } from "./shared.js";
+import { pongGame } from "./pong.js";
 
 export const navigateTo = url => {
     history.pushState(null, null, url);
@@ -15,7 +15,7 @@ const router = async () => {
     const routes = [
         { path: "/", view: Dashboard },
         { path: "/account", view: Account },
-        { path: "/pong", view: Pong },
+        { path: "/pong", view: PongGame, handler: pongGame },
         { path: "/friends", view: Friends },
         { path: "/callback", handler: handleAuthenticationCallback },
     ];
@@ -45,6 +45,10 @@ const router = async () => {
     const view = new match.route.view();
 
     document.querySelector("#app").innerHTML = await view.getHtml();
+
+    if (match.route.path === '/pong') {
+        pongGame();
+    }
 }
 
 window.addEventListener("popstate", router);
@@ -57,6 +61,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     await checkLoginStatus();
     if (getLoggedIn()) {
         loginButtonText.textContent = getUsername();
+        loginButton.classList.remove('logged-out');
+        loginButton.classList.add('logged-in');
         toggleLoginButtonStyle();
     } else {
         loginButtonText.textContent = 'login with';
