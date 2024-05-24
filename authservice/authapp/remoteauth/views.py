@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,6 +14,19 @@ from players.serializers import PlayerSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import redirect
 from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticated
+
+
+class ServeMedia(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, filename):
+        file_path = os.path.join(settings.MEDIA_ROOT, filename)
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as f:
+                return HttpResponse(f.read(), content_type='image/jpeg')
+        else:
+            raise Http404
 
 def get_user_info(access_token):
     url = 'https://api.intra.42.fr/v2/me'
@@ -88,8 +102,15 @@ class callbackCode(APIView):
                 if not access_token:
                     return HttpResponseBadRequest('Missing Access Token in response received from 42 oauth.')
                 player = get_user_info(access_token=access_token)
-                refresh = RefreshToken.for_user(player.user)
-                if player and player.two_factor is False:
+                jwt_service_url = 'http://jwtservice:8000/api-jwt/token/generate'
+                send_data = {'user_id': player.user.id, 'username': player.user.username, 'email': player.user.email, 'access_token': access_token}
+                send_json = json.dumps(send_data)
+                response = requests.post(jwt_service_url, json=send_data, headers={'Content-Type': 'application/json'})
+                response.raise_for_status()
+                data = response.json()
+                refresh_str = data.get('referesh_jwt_token')
+                refresh = RefreshToken(refresh_str)
+                if player and refresh and player.two_factor is False:
                     return_data = {'profile_image_url': player.profile_img_uri, 'detail': 'Successful operation. Cookies set with JWT token, username, and user ID'}
                     return_json = json.dumps(return_data)
                     oauth_response = HttpResponse(return_json, content_type='application/json')
