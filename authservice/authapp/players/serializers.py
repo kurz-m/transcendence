@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import serializers
-from players.models import Players
+from players.models import Players, FriendRequest
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -27,3 +27,17 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
         user = User.objects.create(**user_data)
         player = Players.objects.create(user=user, **validated_data)
         return player
+
+
+class FriendRequestSerializer(serializers.ModelSerializer):
+    sender = PlayerSerializer(read_only=True)
+    receiver = PlayerSerializer(read_only=True)
+
+    class Meta:
+        model = FriendRequest
+        fields = ['receiver']
+
+class FriendRequestCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequest
+        fields = ['receiver']
