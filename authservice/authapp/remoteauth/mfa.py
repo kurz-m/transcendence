@@ -126,7 +126,7 @@ class VerifyMFA(APIView):
             oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=True)
             oauth_response.set_cookie('user', player.user, httponly=False, secure=True)
             oauth_response.set_cookie('2fa', player.two_factor, httponly=False, secure=True)
-            oauth_response.set_cookie('user_id', player.user.id, httponly=False, secure=True)
+            oauth_response.set_cookie('player_id', player.id, httponly=False, secure=True)
             oauth_response.status_code = 200
             return oauth_response
         else:
