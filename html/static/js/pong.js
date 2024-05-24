@@ -1,3 +1,6 @@
+import { showGamePauseMenu, hideGamePauseMenu } from "./shared.js";
+import { navigateTo } from "./index.js";
+
 export const pongGame = () => {
     class Paddle {
         constructor(object) {
@@ -167,6 +170,13 @@ export const pongGame = () => {
         update_ball();
     }
     
+    function getPauseMenuVisible() {
+        const PauseMenu = document.getElementById("PauseMenu");
+        if (PauseMenu.classList.contains("hidden"))
+            return false;
+        return true;
+    }
+
     function reset_ball() {
         board.update();
         ball.x = board.width / 2 + board.left - ball.width / 2;
@@ -194,13 +204,33 @@ export const pongGame = () => {
         move_ball();
     }
     
+    var seconds = 5;
+    var countdownInterval;
+    const countdownWindow = document.getElementById("CountdownWindow");
+    const countdownText = document.getElementById("CountdownText");
+
+    function decrementCountdown() {
+        countdownText.innerHTML = seconds + "";
+        if (seconds === 0) {
+            window.clearInterval(countdownInterval);
+            countdownWindow.classList.add("hidden");
+            startGame();
+        } else {
+            seconds--;
+        }
+    }
+
+    function countdown() {
+        countdownWindow.classList.remove("hidden");
+        countdownInterval = window.setInterval(decrementCountdown, 1000);
+    }
+
     function startGame() {
         if (!startTime) {
             startTime = new Date().getTime();
             updateTime();
             timeInterval = window.setInterval(updateTime, 500);
         }
-    
         ball.dx = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         ball.dy = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         console.log("ball dx: " + ball.dx + "   ball dy: " + ball.dy);
@@ -210,20 +240,28 @@ export const pongGame = () => {
     function stopGame() {
         if (loopInterval) {
             window.clearInterval(loopInterval);
-            reset_ball();
             loopInterval = 0;
             paddle_speed = initial_paddle_speed;
         }
+        if (!getPauseMenuVisible()) {
+            showGamePauseMenu();
+        }
     }
     
+    function resumeGame() {
+        hideGamePauseMenu();
+        loopInterval = window.setInterval(loop, interval);
+    }
+
     function gameOver() {
         stopGame();
-        score_l = 0;
-        score_r = 0;
-        score_l_obj.innerHTML = "0";
-        score_r_obj.innerHTML = "0";
+        reset_ball();
+        // score_l = 0;
+        // score_r = 0;
+        // score_l_obj.innerHTML = "0";
+        // score_r_obj.innerHTML = "0";
         window.clearInterval(timeInterval);
-        startTime = 0;
+        // startTime = 0;
         minutes_obj.innerHTML = "00";
         seconds_obj.innerHTML = "00";
         // call backend with final score!
@@ -231,18 +269,14 @@ export const pongGame = () => {
     
     document.addEventListener("keydown", (event) => {
         if (event.key == "Enter") {
-            if (!loopInterval) {
-                startGame();
-            }
+            if (!loopInterval && !getPauseMenuVisible())
+                countdown();
+            else if (getPauseMenuVisible())
+                resumeGame();
         }
         if (event.key == "Escape") {
             stopGame();
-        }
-        if (event.key == "p") {
-            window.clearInterval(loopInterval);
-        }
-        if (event.key == "o") {
-            loopInterval = window.setInterval(loop, interval);
+            showGamePauseMenu();
         }
         if (event.key == "ArrowUp") {
             paddle_r.dy = -paddle_speed;
@@ -267,6 +301,14 @@ export const pongGame = () => {
         }
     });
     
+    document.getElementById("PauseContinueButton").addEventListener("click", () => {
+        resumeGame();
+    });
+
+    document.getElementById("PauseMenuQuitButton").addEventListener("click", () => {
+        navigateTo("/");
+    });
+
     window.addEventListener("resize", () => {
         board.update();
     });

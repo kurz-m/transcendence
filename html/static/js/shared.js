@@ -23,3 +23,13 @@ export const toggleLoginButtonStyle = () => {
     profilePicture.classList.toggle('show');
     loginIcon.classList.toggle('hidden');
 }
+
+export const hideGamePauseMenu = () => {
+    const PauseMenu = document.getElementById("PauseMenu");
+    PauseMenu.classList.add("hidden");
+}
+
+export const showGamePauseMenu = () => {
+    const PauseMenu = document.getElementById("PauseMenu");
+    PauseMenu.classList.remove("hidden");
+}
