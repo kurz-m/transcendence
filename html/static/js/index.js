@@ -30,7 +30,7 @@ const router = async () => {
     let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch);
 
     if (match.route.path === "/callback") {
-        await handleAuthenticationCallback();
+        await match.route.handler();
         navigateTo('/');
         return;
     }
@@ -46,8 +46,8 @@ const router = async () => {
 
     document.querySelector("#app").innerHTML = await view.getHtml();
 
-    if (match.route.path === '/pong') {
-        pongGame();
+    if (match.route.handler) {
+        match.route.handler();
     }
 }
 
@@ -57,9 +57,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     const loginButton = document.getElementById('login-button');
     const loginButtonText = document.getElementById('login-button-field');
     const logoutButton = document.getElementById('logout-button');
+    const profileImage = document.getElementById('small-profile-pic');
 
     await checkLoginStatus();
     if (getLoggedIn()) {
+        const profileImageCached = localStorage.getItem('profile_image');
+        if (!profileImageCached) {
+            profileImage.src = './static/media/fallback-profile.png';
+        } else {
+            profileImage.src = profileImageCached;
+        }
         loginButtonText.textContent = getUsername();
         loginButton.classList.remove('logged-out');
         loginButton.classList.add('logged-in');
