@@ -37,6 +37,25 @@ services:
     networks:
       - authnetwork
   
+  twofactordb:
+    image: postgres:12-alpine
+    container_name: twofactordb
+    restart: always
+    environment:
+      POSTGRES_DB: ${TDB_NAME}
+      POSTGRES_USER: ${TDB_USER}
+      POSTGRES_PASSWORD: ${TDB_PASSWORD}
+    volumes:
+      - twofactordb_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    # expose:
+    #   - "5432"
+    ports:
+      - "5652:5432"
+    networks:
+      - authnetwork
+  
   authservice:
     build: ./authservice/
     container_name: authservice
@@ -56,6 +75,19 @@ services:
   gameplayservice:
     build: ./gameplayservice/
     container_name: gameplayservice
+    restart: always
+    depends_on:
+      - authdb
+    expose:
+      - "8000"
+    env_file:
+      - .env
+    networks:
+      - authnetwork
+
+  twofactorservice:
+    build: ./twofactorservice/
+    container_name: twofactorservice
     restart: always
     depends_on:
       - authdb
@@ -118,6 +150,7 @@ services:
 volumes:
   postgres_data:
   gameplay_data:
+  twofactordb_data:
   static_files:
   certbot_conf:
   certbot_www:
