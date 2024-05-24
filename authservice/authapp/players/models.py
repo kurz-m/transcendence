@@ -22,3 +22,13 @@ class Players(models.Model):
     def remove_friend(self, player):
         self.friends.remove(player)
         player.friends.remove(self)
+
+
+class FriendRequest(models.Model):
+    sender = models.ForeignKey(Players, related_name='sent_requests', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(Players, related_name='received_requests', on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=(('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')), default='pending')
+    created_at = models.DateField(auto_now_add=True, blank=True)
+
+    def __str__(self):
+        return f"{self.sender} -> {self.receiver} ({self.status})"
