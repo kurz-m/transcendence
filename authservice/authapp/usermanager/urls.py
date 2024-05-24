@@ -44,10 +44,10 @@ urlpatterns = [
     path('api/auth/logout', logOut.as_view(), name='auth-logout'),
     path('api/auth/callback', callbackCode.as_view(), name='auth-callback'),
     path('api/auth/loggedin', loggedIn.as_view(), name='auth-loggedin'),
-    path('api/mfa/enable', EnableMFA.as_view(), name='enable_mfa'),
-    path('api/mfa/disable', DisableMFA.as_view(), name='disable_mfa'),
-    path('api/mfa/update', UpdateMFA.as_view(), name='update_mfa'),
-    path('api/mfa/verify', VerifyMFA.as_view(), name='verify_mfa'),
+    # path('api/mfa/enable', EnableMFA.as_view(), name='enable_mfa'),
+    # path('api/mfa/disable', DisableMFA.as_view(), name='disable_mfa'),
+    # path('api/mfa/update', UpdateMFA.as_view(), name='update_mfa'),
+    # path('api/mfa/verify', VerifyMFA.as_view(), name='verify_mfa'),
     path('api/media/<path:filename>', ServeMedia.as_view(), name='serve_media'),
     path('api/friends/sendrequest', FriendRequestSendView.as_view(), name='send_friend_request')
 ]

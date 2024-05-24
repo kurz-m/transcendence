@@ -98,6 +98,8 @@ class callbackCode(APIView):
                     oauth_response.set_cookie('2fa', player.two_factor, httponly=False, secure=True)
                     oauth_response.set_cookie('player_id', player.id, httponly=False, secure=True)
                     return oauth_response
+                # elif player and player.two_factor is True:
+
             else:
                 return HttpResponseBadRequest('Invalid Authorization Request to 42 oauth.')
         else:
