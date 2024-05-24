@@ -62,7 +62,7 @@ class logOut(APIView):
         oauth_response.delete_cookie('access_token', path='/', domain=None)
         oauth_response.delete_cookie('user', path='/', domain=None)
         oauth_response.delete_cookie('2fa', path='/', domain=None)
-        oauth_response.delete_cookie('user_id', path='/', domain=None)
+        oauth_response.delete_cookie('player_id', path='/', domain=None)
         oauth_response.status_code = 200
         return oauth_response
 
@@ -93,7 +93,7 @@ class callbackCode(APIView):
                     oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=True)
                     oauth_response.set_cookie('user', player.user, httponly=False, secure=True)
                     oauth_response.set_cookie('2fa', player.two_factor, httponly=False, secure=True)
-                    oauth_response.set_cookie('user_id', player.user.id, httponly=False, secure=True)
+                    oauth_response.set_cookie('player_id', player.id, httponly=False, secure=True)
                     return oauth_response
             else:
                 return HttpResponseBadRequest('Invalid Authorization Request to 42 oauth.')
