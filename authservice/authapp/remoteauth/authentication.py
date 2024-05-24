@@ -5,7 +5,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from rest_framework.response import Response
-from mfaauthenticator.models import Players
+from players.models import Players
 
 class RemoteJWTAUthentication(BaseAuthentication):
     def authenticate(self, request):        
@@ -19,16 +19,7 @@ class RemoteJWTAUthentication(BaseAuthentication):
             response.raise_for_status()
             data = response.json()
             user_id = data.get('user_id')
-            user_info_url = f'http://authservice:8000/api/users/{user_id}'
-            cookies = {'access_token': token}
-            user_response = requests.get(user_info_url, cookies=cookies)
-            user_response.raise_for_status()
-            user_data = user_response.json()
-            user, created = User.objects.get_or_create(
-                username=user_data['username'],
-                defaults={'email': user_data['email']}
-            )
-            player, created = Players.objects.get_or_create(user=user)
+            user = User.objects.get(id=user_id)
             return (user, token)
         except requests.RequestException as e:
             raise AuthenticationFailed('Token validation failed', code='token_not_valid') from e
