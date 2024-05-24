@@ -77,10 +77,12 @@ export const logoutCallback = async () => {
 
         if (response.ok) {
             toggleLoginButtonStyle();
+            toggleDropdown();
             document.getElementById('login-button-field').textContent = 'login with';
+            document.getElementById('login-button').classList.add('logged-out');
+            document.getElementById('login-button').classList.remove('logged-in');
             isLoggedIn = false;
             username = null;
-            window.location.href('/');
         } else {
             console.error('Could not logout the user');
         }
