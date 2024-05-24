@@ -1,0 +1,127 @@
+services:
+  authdb:
+    image: postgres:12-alpine
+    container_name: authdb
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    # expose:
+    #   - "5432"
+    ports:
+      - "5654:5432"
+    networks:
+      - authnetwork
+  
+  gameplaydb:
+    image: postgres:12-alpine
+    container_name: gameplaydb
+    restart: always
+    environment:
+      POSTGRES_DB: ${GDB_NAME}
+      POSTGRES_USER: ${GDB_USER}
+      POSTGRES_PASSWORD: ${GDB_PASSWORD}
+    volumes:
+      - gameplay_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    # expose:
+    #   - "5432"
+    ports:
+      - "5653:5432"
+    networks:
+      - authnetwork
+  
+  authservice:
+    build: ./authservice/
+    container_name: authservice
+    restart: always
+    depends_on:
+      - authdb
+    expose:
+      - "8000"
+    env_file:
+      - .env
+    volumes:
+      - static_files:${STATIC_DIRECTORY}
+    networks:
+      - authnetwork
+  
+  gameplayservice:
+    build: ./gameplayservice/
+    container_name: gameplayservice
+    restart: always
+    depends_on:
+      - authdb
+    expose:
+      - "8000"
+    env_file:
+      - .env
+    networks:
+      - authnetwork
+
+  nginx:
+    image: "nginx:1.25.5-alpine"
+    container_name: nginx
+    restart: always
+    depends_on:
+      certbot:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - authnetwork
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./html:/var/www/html
+      - certbot_www:/var/www/certbot/:ro
+      - certbot_conf:/etc/nginx/ssl/:ro
+      - static_files:${STATIC_DIRECTORY}
+
+  nginx-validation:
+    build: ./nginx-validation/
+    image: "nginx-validation:latest"
+    container_name: nginx-validation
+    restart: "no"
+    ports:
+      - "80:80"
+    networks:
+      - authnetwork
+    volumes:
+      - certbot_www:/var/www/certbot/:ro
+      - certbot_conf:/etc/nginx/ssl/:ro
+
+  certbot:
+    build: ./certbot/
+    container_name: certbot
+    restart: always
+    networks:
+      - authnetwork
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /healthy ]"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    volumes:
+      - certbot_www:/var/www/certbot/:rw
+      - certbot_conf:/etc/letsencrypt/:rw
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+
+volumes:
+  postgres_data:
+  gameplay_data:
+  static_files:
+  certbot_conf:
+  certbot_www:
+
+networks:
+  authnetwork:
+    name: authnetwork
+    driver: bridge
