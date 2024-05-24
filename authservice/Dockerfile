@@ -1,8 +1,6 @@
 FROM python:3.9-slim
 WORKDIR /app
-COPY authapp /app
-COPY tools/entryscript.sh /app
-RUN chmod +x entryscript.sh
-RUN pip install -r requirements.txt
+COPY tools/entryscript.sh /tmp
+RUN chmod +x /tmp/entryscript.sh
 EXPOSE 8000
-CMD ["./entryscript.sh"]
+ENTRYPOINT ["/tmp/entryscript.sh"]
