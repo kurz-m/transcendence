@@ -1,7 +1,17 @@
 import { showGamePauseMenu, hideGamePauseMenu } from "./shared.js";
 import { navigateTo } from "./index.js";
+import { getUsername } from "./authentication.js";
 
 export const pongGame = () => {
+
+    const player_l_name_obj = document.getElementById("player_l_name");
+    const player_r_name_obj = document.getElementById("player_r_name");
+
+    const setPlayerNames = () => {
+            player_l_name_obj.textContent = getUsername;
+            player_r_name_obj.textContent = 'opponent';
+    }
+    
     class Paddle {
         constructor(object) {
             this.object = object;
@@ -48,16 +58,16 @@ export const pongGame = () => {
         }
     }
     
-    const fps = 60;
-    const interval = 1000 / fps; // interval in ms
+    const FPS = 60;
+    const INTERVAL = 1000 / FPS; // interval in ms
     
     var loopInterval = 0;
     
     var score_l = 0;
     var score_r = 0;
     
-    const initial_paddle_speed = 12;
-    var paddle_speed = initial_paddle_speed;
+    const INITIAL_PADDLE_SPEED = 12;
+    var paddle_speed = INITIAL_PADDLE_SPEED;
     const board = new Board(document.getElementById("board"));
     
     const paddle_l = new Paddle(document.getElementById("paddle_l"));
@@ -65,15 +75,13 @@ export const pongGame = () => {
     const ball = new Ball(document.getElementById("ball"));
     const score_l_obj = document.getElementById("score_l");
     const score_r_obj = document.getElementById("score_r");
-    const player_l_name_obj = document.getElementById("player_l_name");
-    const player_r_name_obj = document.getElementById("player_r_name");
     const minutes_obj = document.getElementById("minutes");
     const seconds_obj = document.getElementById("seconds");
     var startTime = 0;
     var timeInterval = 0;
     
     
-    function update_paddle(paddle) {
+    function updatePaddle(paddle) {
         if (paddle.dy == 0) {
             return;
         }
@@ -96,12 +104,12 @@ export const pongGame = () => {
         return { x: x, y: y };
     }
     
-    function update_ball() {
+    function updateBall() {
         ball.object.style.left = ball.x + "px";
         ball.object.style.top = ball.y + "px";
     }
     
-    function log_scores() {
+    function logScores() {
         console.log("score: " + score_l + " : " + score_r);
         if (score_l >= 11 || score_r >= 11) {
             gameOver();
@@ -120,7 +128,7 @@ export const pongGame = () => {
         return false;
     }
     
-    function move_ball() {
+    function moveBall() {
         // new positions
         var new_left = ball.x + ball.dx;
         var new_top = ball.y + ball.dy;
@@ -128,13 +136,13 @@ export const pongGame = () => {
         if (new_left > board.right - ball.width) {
             score_l++;
             score_l_obj.innerHTML = score_l;
-            log_scores();
+            logScores();
             stopGame();
             return;
         } else if (new_left < board.left) {
             score_r++;
             score_r_obj.innerHTML = score_r;
-            log_scores();
+            logScores();
             stopGame();
             return;
         }
@@ -167,7 +175,7 @@ export const pongGame = () => {
         }
         ball.x = new_left;
         ball.y = new_top;
-        update_ball();
+        updateBall();
     }
     
     function getPauseMenuVisible() {
@@ -177,11 +185,11 @@ export const pongGame = () => {
         return true;
     }
 
-    function reset_ball() {
+    function resetBall() {
         board.update();
         ball.x = board.width / 2 + board.left - ball.width / 2;
         ball.y = board.height / 2 + board.top - ball.height / 2;
-        update_ball();
+        updateBall();
     }
     
     function pad(num) {
@@ -199,9 +207,9 @@ export const pongGame = () => {
     function loop() {
         paddle_l.y += paddle_l.dy;
         paddle_r.y += paddle_r.dy;
-        update_paddle(paddle_l);
-        update_paddle(paddle_r);
-        move_ball();
+        updatePaddle(paddle_l);
+        updatePaddle(paddle_r);
+        moveBall();
     }
     
     var seconds = 5;
@@ -234,14 +242,14 @@ export const pongGame = () => {
         ball.dx = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         ball.dy = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         console.log("ball dx: " + ball.dx + "   ball dy: " + ball.dy);
-        loopInterval = window.setInterval(loop, interval);
+        loopInterval = window.setInterval(loop, INTERVAL);
     }
     
     function stopGame() {
         if (loopInterval) {
             window.clearInterval(loopInterval);
             loopInterval = 0;
-            paddle_speed = initial_paddle_speed;
+            paddle_speed = INITIAL_PADDLE_SPEED;
         }
         if (!getPauseMenuVisible()) {
             showGamePauseMenu();
@@ -250,12 +258,12 @@ export const pongGame = () => {
     
     function resumeGame() {
         hideGamePauseMenu();
-        loopInterval = window.setInterval(loop, interval);
+        loopInterval = window.setInterval(loop, INTERVAL);
     }
 
     function gameOver() {
         stopGame();
-        reset_ball();
+        resetBall();
         // score_l = 0;
         // score_r = 0;
         // score_l_obj.innerHTML = "0";
