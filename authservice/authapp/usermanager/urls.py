@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 from django.urls import include, path
 from leaderboard.views import LeaderboardViewSet
 from remoteauth.views import callbackCode, authorizeCall, loggedIn, logOut
-from remoteauth.views import ServeMedia
+from remoteauth.utils import ServeMedia
 from players.friendrequest import FriendRequestSendView
 
 router = routers.DefaultRouter()
