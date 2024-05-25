@@ -563,25 +563,42 @@ body {
   opacity: 0.2;
 }
 
-.icon-button:active .icon,
-.large-button:active .large-text,
-.small-button:active .small-button-text,
-.small-icon:active,
+a:link {
+  text-decoration: none;
+}
+a:visited {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: none;
+}
+a:active {
+  text-decoration: none;
+}
+
+.large-button:active,
+.small-button:active,
 .friend-button:active .field,
 .stepper-inc:active .stepper-text-inc,
 .stepper-dec:active .stepper-text-dec,
-.match-button:active .small-button-text,
+.match-button:active,
 .logged-in:active .field,
 .logged-out:active .field,
-.logged-out:active .login-icon,
 .profile-button:active .field,
-.edit-pp-button:active .edit-pp-overlay {
-  filter: invert(42%);
+.medium-button:active {
+  color: var(--color-dimgray);
 }
 
-.large-button-red:active .large-text
-.medium-button-red {
-  filter: brightness(150%) saturate(200%);
+.icon-button:active .icon,
+.small-icon:active,
+.logged-out:active .login-icon,
+.edit-pp-button:active .edit-pp-overlay {
+  filter: brightness(0) saturate(100%) invert(44%) sepia(0%) saturate(636%) hue-rotate(180deg) brightness(85%);
+}
+
+.large-button-red:active,
+.medium-button-red:active {
+  color: red;
 }
 
 /* INPUT */
@@ -831,10 +848,6 @@ body {
   font-size: 20px;
   text-align: left;
   max-width: 528px;
-}
-
-.small-button-text {
-  font-size: 25px;
 }
 
 .small-text-bold {
