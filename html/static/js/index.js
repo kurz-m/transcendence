@@ -41,10 +41,9 @@ const router = async () => {
             isMatch: true
         };
     }
-
-    const view = new match.route.view();
-
+    
     if (match.route.view) {
+        const view = new match.route.view();
         document.querySelector("#app").innerHTML = await view.getHtml();
     }
     if (match.route.handler) {
