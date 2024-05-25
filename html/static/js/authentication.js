@@ -1,3 +1,4 @@
+import { navigateTo } from "./index.js";
 import { getCookie, toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
 
 let isLoggedIn = false;
@@ -56,6 +57,7 @@ export const handleAuthenticationCallback = async () => {
     } catch (error) {
         console.error('Error fetching data:', error);
     }
+    navigateTo('/');
 }
 
 export const loginCallback = async () => {

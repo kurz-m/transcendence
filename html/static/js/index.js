@@ -29,11 +29,11 @@ const router = async () => {
 
     let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch);
 
-    if (match.route.path === "/callback") {
+/*     if (match.route.path === "/callback") {
         await match.route.handler();
         navigateTo('/');
         return;
-    }
+    } */
 
     if (!match) {
         match = {
@@ -44,8 +44,9 @@ const router = async () => {
 
     const view = new match.route.view();
 
-    document.querySelector("#app").innerHTML = await view.getHtml();
-
+    if (match.route.view) {
+        document.querySelector("#app").innerHTML = await view.getHtml();
+    }
     if (match.route.handler) {
         match.route.handler();
     }
