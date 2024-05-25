@@ -13,18 +13,24 @@
   <body>
     <div class="background">
       <div class="window">
-        <div class="topbar">
-          <button class="icon-button">
-            <img class="icon" src="../media/back.svg" alt="Back" draggable="false" (dragstart)="false;">
-          </button>
-          <div class="title">Pong</div>
-          <button class="icon-button">
-            <img class="icon" src="../media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;">
-          </button>
+        <div class="menu-topbar">
+          <div class="topbar">
+            <button class="icon-button">
+              <img class="icon" src="../media/back.svg" alt="Back" draggable="false" (dragstart)="false;">
+            </button>
+            <div class="title">Pong</div>
+            <button class="icon-button">
+              <img class="icon" src="../media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;">
+            </button>
+          </div>
         </div>
         <div class="content">
-          <button class="large-button">Single Game</button>
-          <button class="large-button">Tournament</button>
+          <button class="large-button">
+            <div class="large-text">Single Game</div>
+          </button>
+          <button class="large-button">
+            <div class="large-text">Tournament</div>
+          </button>
         </div>
       </div>
     </div>

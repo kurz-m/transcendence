@@ -18,8 +18,11 @@
             <img class="icon" src="../media/back.svg" alt="Back" draggable="false" (dragstart)="false;">
           </button>
           <div class="user-header">
-            <img class="large-pp" src="../media/profile.jpg">
-            <div class="username">arabenst</div>
+            <button class="edit-pp-button">
+              <img class="large-pp" src="../media/profile.jpg" draggable="false" (dragstart)="false;">
+              <img class="edit-pp-overlay" src="../media/edit.svg" alt="Edit" draggable="false" (dragstart)="false;">
+            </button>
+            <div class="medium-text">arabenst</div>
           </div>
           <button class="icon-button">
             <img class="icon" src="../media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;">
@@ -48,8 +51,10 @@
             </div>
             <div class="list-item">
               <div class="field">2FA</div>
-              <button class="small-button">Enable</button>
-            
+              <button class="small-button">
+                <div class="small-button-text">Enable</div>
+              </button>
+
           </div>
         </div>
       </div>
