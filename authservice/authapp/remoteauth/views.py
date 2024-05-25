@@ -14,19 +14,10 @@ from players.serializers import PlayerSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import redirect
 from rest_framework import permissions
-from rest_framework.permissions import IsAuthenticated
+from django.http import JsonResponse
+from remoteauth.authentication import RemoteJWTAUthentication
+from rest_framework.permissions import AllowAny
 
-
-class ServeMedia(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, filename):
-        file_path = os.path.join(settings.MEDIA_ROOT, filename)
-        if os.path.exists(file_path):
-            with open(file_path, 'rb') as f:
-                return HttpResponse(f.read(), content_type='image/jpeg')
-        else:
-            raise Http404
 
 def get_user_info(access_token):
     url = 'https://api.intra.42.fr/v2/me'
@@ -62,8 +53,19 @@ def create_player_from_user_info(user_info):
 
 
 class authorizeCall(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
     def post(self, request, format=None):
-        return Response({'location': authorize()}, status=status.HTTP_200_OK)
+        token = request.COOKIES.get('access_token')
+        return_data = {'location': authorize()}
+        login_response = JsonResponse(return_data)
+        if token:
+            login_response.delete_cookie('access_token', path='/', domain=None)
+            login_response.delete_cookie('user', path='/', domain=None)
+            login_response.delete_cookie('2fa', path='/', domain=None)
+            login_response.delete_cookie('player_id', path='/', domain=None)
+            login_response.status_code = 200
+        return login_response
 
 class loggedIn(APIView):
     permission_classes = [permissions.IsAuthenticated]
