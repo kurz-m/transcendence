@@ -2,15 +2,26 @@ import { showGamePauseMenu, hideGamePauseMenu } from "./shared.js";
 import { navigateTo } from "./index.js";
 import { getUsername } from "./authentication.js";
 
+export const setOpponent = name => {
+    sessionStorage.setItem('opponent_name', name);
+}
+
+let gameType = "single";
+export const setGameType = type => {
+    gameType = type;
+}
+
+let gameRunning = true;
+
+let scoreAPI = 'https://transcendence.myprojekt.tech/api/score'
+
 export const pongGame = () => {
 
     const player_l_name_obj = document.getElementById("player_l_name");
     const player_r_name_obj = document.getElementById("player_r_name");
 
-    const setPlayerNames = () => {
-            player_l_name_obj.textContent = getUsername;
-            player_r_name_obj.textContent = 'opponent';
-    }
+    player_l_name_obj.textContent = getUsername();
+    player_r_name_obj.textContent = sessionStorage.getItem('opponent_name');
     
     class Paddle {
         constructor(object) {
@@ -80,7 +91,17 @@ export const pongGame = () => {
     var startTime = 0;
     var timeInterval = 0;
     
-    
+    function resetPaddles() {
+        const centerPos = (board.height - paddle_l.height) * 0.5;
+        paddle_l.y = centerPos;
+        paddle_r.y = centerPos;
+        paddle_l.object.style.top = centerPos + "px";
+        paddle_r.object.style.top = centerPos + "px";
+    }
+
+    resetPaddles();
+    resetBall();
+
     function updatePaddle(paddle) {
         if (paddle.dy == 0) {
             return;
@@ -110,10 +131,12 @@ export const pongGame = () => {
     }
     
     function logScores() {
-        console.log("score: " + score_l + " : " + score_r);
-        if (score_l >= 11 || score_r >= 11) {
+        // console.log("score: " + score_l + " : " + score_r);
+        if (score_l >= 3 || score_r >= 3) {
             gameOver();
         }
+        resetBall();
+        resetPaddles();
     }
     
     function intersectPaddle(obj, center, center_new) {
@@ -170,7 +193,7 @@ export const pongGame = () => {
             else
                 ball.dy += Math.round(Math.random() * 2);
             paddle_speed += Math.round(Math.random() * 1);
-            console.log("ball dx: " + ball.dx + "   ball dy: " + ball.dy);
+            // console.log("ball dx: " + ball.dx + "   ball dy: " + ball.dy);
             new_left = ball.x + ball.dx;
         }
         ball.x = new_left;
@@ -231,6 +254,7 @@ export const pongGame = () => {
     function countdown() {
         countdownWindow.classList.remove("hidden");
         countdownInterval = window.setInterval(decrementCountdown, 1000);
+        decrementCountdown();
     }
 
     function startGame() {
@@ -241,18 +265,22 @@ export const pongGame = () => {
         }
         ball.dx = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         ball.dy = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
-        console.log("ball dx: " + ball.dx + "   ball dy: " + ball.dy);
+        // console.log("ball dx: " + ball.dx + "   ball dy: " + ball.dy);
         loopInterval = window.setInterval(loop, INTERVAL);
     }
     
+    function pauseGame() {
+        stopGame();
+        if (!getPauseMenuVisible()) {
+            showGamePauseMenu();
+        }
+    }
+
     function stopGame() {
         if (loopInterval) {
             window.clearInterval(loopInterval);
             loopInterval = 0;
             paddle_speed = INITIAL_PADDLE_SPEED;
-        }
-        if (!getPauseMenuVisible()) {
-            showGamePauseMenu();
         }
     }
     
@@ -262,29 +290,50 @@ export const pongGame = () => {
     }
 
     function gameOver() {
+        gameRunning = false;
         stopGame();
         resetBall();
-        // score_l = 0;
-        // score_r = 0;
-        // score_l_obj.innerHTML = "0";
-        // score_r_obj.innerHTML = "0";
         window.clearInterval(timeInterval);
-        // startTime = 0;
         minutes_obj.innerHTML = "00";
         seconds_obj.innerHTML = "00";
-        // call backend with final score!
+
+        const scoreWindow = document.getElementById("FinalScore");
+        scoreWindow.classList.remove("hidden");
+        ball.object.classList.add("hidden");
+
+        let raw = JSON.stringify({
+            "opponent": sessionStorage.getItem('opponent_name'),
+            "own_score": score_l,
+            "opponent_score": score_r,
+            "win": score_l > score_r,
+            "game_type": gameType,
+            "tournament_id": sessionStorage.getItem('tournament_id'),
+        });
+
+        fetch(scoreAPI, {
+            method: 'POST',
+            body: raw
+        })
+        .then(response => {
+            console.log(response.text());
+        })
+        // TODO: show error on score window + try again button?!
+        .catch(error => console.log('error', error));
+
     }
     
     document.addEventListener("keydown", (event) => {
         if (event.key == "Enter") {
-            if (!loopInterval && !getPauseMenuVisible())
+            if (!gameRunning) {
+                navigateTo("/");
+            } else if (!loopInterval && !getPauseMenuVisible()) {
                 countdown();
-            else if (getPauseMenuVisible())
+            } else if (getPauseMenuVisible()) {
                 resumeGame();
+            }
         }
         if (event.key == "Escape") {
-            stopGame();
-            showGamePauseMenu();
+            pauseGame();
         }
         if (event.key == "ArrowUp") {
             paddle_r.dy = -paddle_speed;

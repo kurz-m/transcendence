@@ -37,6 +37,14 @@ export default class extends AbstractView {
             </div>
         </div>
 
+        <div id="FinalScore" class="window hidden">
+            <div class="title">Final Score</div>
+            <div class="content">
+            <a href="/" class="large-button" data-link>Close</a>
+            <div id="ScoreContent">Result</div>
+            </div>
+        </div>
+
         <div id="GameAnnounce" class="window hidden">
             <div class="title">Next Game</div>
             <div class="content">

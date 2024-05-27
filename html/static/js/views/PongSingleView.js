@@ -1,3 +1,4 @@
+import { setOpponent } from "../pong.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -22,11 +23,20 @@ export default class extends AbstractView {
             <button class="large-button">Play vs AI</button>
             <div class="label-field-button">
                 <div class="label">Play vs</div>
-                <input class="text-field" type="text" placeholder="Guest">
-                <a href="/pong-game" class="small-button">play</a>
+                <input id="opponent-name" class="text-field" type="text" placeholder="Guest">
+                <a id="single-game-play" href="/pong-game" class="small-button" data-link>play</a>
             </div>
             </div>
         </div>
         `
+    }
+
+    afterRender = async () => {
+        const opponentName = document.getElementById('opponent-name')
+
+        opponentName.addEventListener('input', (e) => {
+            const name = e.target.value;
+            setOpponent(name);
+        })
     }
 }
