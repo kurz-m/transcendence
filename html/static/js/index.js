@@ -5,6 +5,10 @@ import Friends from "./views/FriendsView.js";
 import { checkLoginStatus, getLoggedIn, getUsername, handleAuthenticationCallback, loginCallback, logoutCallback } from "./authentication.js";
 import { toggleLoginButtonStyle } from "./shared.js";
 import { pongGame } from "./pong.js";
+import PongMenuView from "./views/PongMenuView.js";
+import PongSingleView from "./views/PongSingleView.js";
+import PongTournamentView from "./views/PongTournamentView.js";
+import MatchHistoryView from "./views/MatchHistoryView.js";
 
 export const navigateTo = url => {
     history.pushState(null, null, url);
@@ -14,10 +18,15 @@ export const navigateTo = url => {
 const router = async () => {
     const routes = [
         { path: "/", view: Dashboard },
-        { path: "/account", view: Account },
-        { path: "/pong", view: PongGame, handler: pongGame },
         { path: "/friends", view: Friends },
+        { path: "/match-history", view: MatchHistoryView },
+        { path: "/account", view: Account },
+        { path: "/pong-menu", view: PongMenuView },
+        { path: "/pong-single", view: PongSingleView },
+        { path: "/pong-tournament", view: PongTournamentView },
+        { path: "/pong-game", view: PongGame, handler: pongGame },
         { path: "/callback", handler: handleAuthenticationCallback },
+        { path: "/two-factor", handler: handleAuthenticationCallback },
     ];
 
     const potentialMatches = routes.map(route => {
@@ -28,12 +37,6 @@ const router = async () => {
     });
 
     let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch);
-
-/*     if (match.route.path === "/callback") {
-        await match.route.handler();
-        navigateTo('/');
-        return;
-    } */
 
     if (!match) {
         match = {
