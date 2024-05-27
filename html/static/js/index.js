@@ -26,7 +26,7 @@ const router = async () => {
         { path: "/pong-tournament", view: PongTournamentView },
         { path: "/pong-game", view: PongGame, handler: pongGame },
         { path: "/callback", handler: handleAuthenticationCallback },
-        { path: "/two-factor", handler: handleAuthenticationCallback },
+        // { path: "/two-factor", handler: handleTwoFactorCallback },
     ];
 
     const potentialMatches = routes.map(route => {
@@ -48,6 +48,10 @@ const router = async () => {
     if (match.route.view) {
         const view = new match.route.view();
         document.querySelector("#app").innerHTML = await view.getHtml();
+
+        if (view.afterRender) {
+            await view.afterRender();
+        }
     }
     if (match.route.handler) {
         match.route.handler();
