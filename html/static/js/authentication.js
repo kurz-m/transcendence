@@ -101,6 +101,7 @@ export const logoutCallback = async () => {
     } catch (error) {
         console.error('Error:', error);
     }
+    navigateTo('/');
 }
 
 export const checkLoginStatus = async () => {
