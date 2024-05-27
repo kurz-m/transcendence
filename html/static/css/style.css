@@ -334,12 +334,34 @@ body {
   justify-content: end;
 }
 
+.game-result {
+  border: 3px solid var(--color-lightgray);
+  border-radius: var(--br);
+  font-family: var(--font);
+  color: var(--color-white);
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 21px;
+}
+
+.game-result-player {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+
 .v-spacer {
   height: 100%;
 }
 
 /* BUTTONS */
 
+.a-large-button,
 .large-button,
 .large-button-red {
   height: 73px;
@@ -354,6 +376,11 @@ body {
   color: var(--color-white);
 }
 
+.a-large-button {
+  height: 67px;
+  display: block;
+}
+
 .large-button-red {
   border: 3px solid var(--color-red);
   color: var(--color-red);
@@ -364,6 +391,7 @@ body {
   background-color: var(--color-red-bg)
 }
 
+.a-large-button:not(:first-child),
 .large-button:not(:first-child) {
   margin-top: 42px;
 }
@@ -506,6 +534,7 @@ body {
 
 .medium-button:hover,
 .icon-button:hover,
+.a-large-button:hover,
 .large-button:hover {
   border-color: var(--color-dimgray);
 }
@@ -576,6 +605,7 @@ a:active {
   text-decoration: none;
 }
 
+.a-large-button:active,
 .large-button:active,
 .small-button:active,
 .friend-button:active .field,
@@ -773,6 +803,12 @@ a:active {
   width: 25px;
 }
 
+.large-trophy {
+  margin-right: 21px;
+  height: 42px;
+  width: 42px;
+}
+
 .small-icon {
   width: 21px;
   height: 21px;
@@ -832,6 +868,7 @@ a:active {
 
 .subheading {
   width: 100%;
+  max-width: 420px;
   font-size: 40px;
   font-weight: var(--font-semibold);
   text-align: center;
@@ -1065,21 +1102,28 @@ GAME ELEMENTS
   text-align: left;
 }
 
-
-.hud-time {
+.hud-time,
+.game-result-time {
   display: flex;
   flex-direction: row;
   width: 124px;
   height: 49px;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.hud-time {
   background-color: var(--color-window-bg);
   border: 3px solid var(--color-dimgray);
   border-radius: 0px 0px 21px 21px;
-  margin-left: auto;
-  margin-right: auto;
   margin-top: -3px;
-  align-items: center;
-  justify-content: center;
+}
 
+.game-result-time {
+  border: 3px solid var(--color-lightgray);
+  border-radius: var(--br);
 }
 
 .hud-time-left,
