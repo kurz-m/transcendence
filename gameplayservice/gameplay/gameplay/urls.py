@@ -20,8 +20,8 @@ from rest_framework import routers
 from game.views import GameViewSet, ScoreViewSet
 
 router = routers.DefaultRouter()
-router.register(r'game', GameViewSet)
-router.register(r'score', ScoreViewSet)
+router.register(r'game', GameViewSet, basename='game')
+router.register(r'score', ScoreViewSet, basename='score')
 
 urlpatterns = [
     path('api-game/', include(router.urls)),
