@@ -96,7 +96,7 @@ body {
 
 .content {
   width: 100%;
-  padding: 21px 3px 3px 3px;
+  padding-top: 21px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -106,16 +106,16 @@ body {
 }
 
 .h-content {
-  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: right;
+  box-sizing: border-box;
 }
 
 .v-content {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .v-content:not(:last-child) {
@@ -140,6 +140,7 @@ body {
 .people-list {
   height: 420px;
   width: 100%;
+  max-width: 414px;
   border: 3px solid var(--color-lightgray);
   border-radius: var(--br);
   padding: 32px 8px 32px 32px;
@@ -149,10 +150,12 @@ body {
 
 .friend-item {
   height: 63px;
-  width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: left;
+  box-sizing: border-box;
 }
 
 .friend-item:not(:last-child) {
@@ -161,10 +164,11 @@ body {
 
 .match-list {
   height: 500px;
-  width: 840px;
+  width: 100%;
   border: 3px solid var(--color-lightgray);
   border-radius: var(--br);
   padding: 32px 8px 32px 32px;
+  box-sizing: border-box;
 }
 
 body {
@@ -179,8 +183,7 @@ body {
   max-height: 100%;
   padding-right: 16px;
   box-sizing: border-box;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--color-lightgray) var(--color-clear);
   font-family: var(--font);
@@ -210,6 +213,7 @@ body {
 
 .scroll-people {
   height: 420px;
+  overflow-x: hidden;
 }
 
 .scroll-matches {
@@ -221,22 +225,23 @@ body {
 }
 
 .tournament-result-games {
-  height: 190px;
-  width: 735px;
+  height: 240px;
+  width: 100%;
   border: 3px solid var(--color-lightgray);
   border-radius: var(--br);
   padding: 32px 8px 32px 32px;
   margin-top: 42px;
+  box-sizing: border-box;
 }
 
 .tournament-result-rank {
-  height: 190px;
-  width: 320px;
+  height: 240px;
+  width: 100%;
+  max-width: 320px;
   border: 3px solid var(--color-lightgray);
   border-radius: var(--br);
   padding: 32px 8px 32px 32px;
-  margin-left: auto;
-  margin-right: auto;
+  box-sizing: border-box;
 }
 
 .list-item {
@@ -246,6 +251,7 @@ body {
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .list-item-left {
@@ -255,6 +261,10 @@ body {
   align-items: center;
   flex-direction: row;
   justify-content: left;
+}
+
+.scroll-matches .list-item {
+  min-width: 795px;
 }
 
 .list-item-left:not(:last-child),
@@ -269,7 +279,8 @@ body {
 }
 
 .match-result {
-  width: 465px;
+  min-width: 465px;
+  max-width: 465px;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -456,6 +467,7 @@ body {
 
 .friend-button {
   width: 100%;
+  max-width: 303px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -466,7 +478,8 @@ body {
 
 .match-button {
   height: 38px;
-  width: 38px;
+  min-width: 38px;
+  max-width: 38px;
   cursor: pointer;
   background: var(--color-dimgray);
   border: 3px solid var(--color-lightgray);
@@ -929,7 +942,8 @@ a:active {
 
 .match-date {
   font-weight: var(--font-light);
-  width: 222px;
+  max-width: 222px;
+  min-width: 222px;
   margin-right: 21px;
   text-align: left;
 }
@@ -940,7 +954,8 @@ a:active {
 
 .match-icon {
   height: 38px;
-  width: 38px;
+  max-width: 38px;
+  min-width: 38px;
   background: var(--color-dimgray);
   border: 3px solid var(--color-lightgray);
   border-radius: var(--br);
@@ -960,6 +975,7 @@ a:active {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .left-score {
@@ -987,6 +1003,7 @@ a:active {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .tournament-place {
