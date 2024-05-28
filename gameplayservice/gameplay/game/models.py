@@ -10,9 +10,15 @@ class Game(models.Model):
     ]
     game_date = models.DateField(auto_now_add=True, blank=True)
     game_type = models.CharField(max_length=15, choices=GAME_TYPE_CHOICES)
-    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owner')
     class Meta:
         ordering = ['-game_date']
+    
+    # def save(self, *args, **kwargs):
+    #     if self.user_id is None:
+    #         if hasattr(self, 'request') and hasattr(self.request, 'user'):
+    #             self.user = self.request.user
+    #     super().save(*args, **kwargs)
 
 
 class Score(models.Model):
