@@ -96,7 +96,7 @@ services:
     container_name: gameplayservice
     restart: always
     depends_on:
-      - twofactordb
+      - gameplaydb
     expose:
       - "8000"
     env_file:
