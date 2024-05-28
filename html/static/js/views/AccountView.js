@@ -14,8 +14,11 @@ export default class extends AbstractView {
                  <img class="icon" src="./static/media/back.svg" alt="Back" draggable="false" (dragstart)="false;">
             </button>
             <div class="user-header">
-                <img class="large-pp" src="./static/media/fallback-profile.jpg">
-                <div class="username">User</div>
+                <button class="edit-pp-button">
+                    <img class="large-pp" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
+                    <img class="edit-pp-overlay" src="./static/media/edit.svg" alt="Edit" draggable="false" (dragstart)="false;">
+                </button>
+                <div class="medium-text">User</div>
             </div>
             <a href="/" class="icon-button" data-link>
                 <img class="icon" src="./static/media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;">

@@ -23,7 +23,7 @@ export default class extends AbstractView {
             <div class="scroll-people">
             <div class="friend-item">
                 <button class="friend-button">
-                <img class="small-pp" src="./static/media/fallback-profile.jpg" draggable="false" (dragstart)="false;">
+                <img class="small-pp" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
                 <div class="field">Aaron</div>
                 </button>
                 <button class="clean-button">
@@ -32,7 +32,7 @@ export default class extends AbstractView {
             </div>
             <div class="friend-item">
                 <button class="friend-button">
-                <img class="small-pp" src="./static/media/fallback-profile.jpg" draggable="false" (dragstart)="false;">
+                <img class="small-pp" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
                 <div class="field">Aaron</div>
                 </button>
                 <button class="clean-button">

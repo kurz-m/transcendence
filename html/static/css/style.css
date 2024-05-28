@@ -44,6 +44,7 @@
 /* BACKGROUND */
 
 body {
+  position: relative;
   margin: 0;
   height: 100vh;
   display: flex;
@@ -279,7 +280,7 @@ body {
 }
 
 .account-dropdown {
-  position: fixed;
+  position: absolute;
   top: 21px;
   left: 21px;
   background-color: var(--color-clear);
@@ -508,6 +509,7 @@ body {
   border: 3px solid var(--color-clear);
   border-radius: var(--br);
   margin: -3px;
+  padding: 0;
 }
 
 .medium-button-red,
@@ -764,6 +766,10 @@ a:active {
   -webkit-user-select: none;
   -ms-user-select: none;
   transition: opacity 0.3s ease;
+}
+
+#small-pp.show {
+  display: block;
 }
 
 #small-profile-pic.show {
@@ -1034,12 +1040,14 @@ GAME ELEMENTS
   max-width: 100%;
   position: absolute;
   top: 21px;
-  margin: 0px 21px;
+  left: 50%;
+  transform: translateX(-50%);
   font-family: var(--font);
   color: var(--color-white);
   font-weight: var(--font-light);
   display: flex;
   flex-direction: column;
+  text-align: center;
 }
 
 .hud-main {
