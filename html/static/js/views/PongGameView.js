@@ -4,6 +4,7 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Pong Game");
+        document.getElementById('login-button').classList.add('hidden');
     }
 
     getHtml = async () => {
@@ -23,9 +24,9 @@ export default class extends AbstractView {
             <div id="player_r_name" class="hud-player-right">Player 2</div>
             </div>
             <div class="hud-time">
-            <div id="minutes" class="hud-time-text">00</div>
-            <div class="hud-time-text">:</div>
-            <div id="seconds" class="hud-time-text">00</div>
+            <div id="minutes" class="hud-time-left">00</div>
+            <div class="hud-time-colon">:</div>
+            <div id="seconds" class="hud-time-right">00</div>
             </div>
         </div>
 
@@ -38,10 +39,35 @@ export default class extends AbstractView {
         </div>
 
         <div id="FinalScore" class="window hidden">
-            <div class="title">Final Score</div>
+            <div class="title">Game Over</div>
+            <div class="game-result-time">
+            <div id="minutes" class="hud-time-left">00</div>
+            <div class="hud-time-colon">:</div>
+            <div id="seconds" class="hud-time-right">00</div>
+            </div>
             <div class="content">
-            <a href="/" class="large-button" data-link>Close</a>
-            <div id="ScoreContent">Result</div>
+            <div class="game-result">
+                <div class="game-result-player">
+                <img class="large-trophy" src="./static/media/trophy-gold.svg" draggable="false" (dragstart)="false;">
+                <div id="winner-name" class="subheading">Player 1</div>
+                </div>
+                <div class="hud-score">
+                    <div id="score_l" class="hud-score-left">0</div>
+                    <div class="hud-score-colon">:</div>
+                    <div id="score_r" class="hud-score-right">0</div>
+                </div>
+                <div class="game-result-player">
+                <img class="large-trophy" src="./static/media/loose.svg" draggable="false" (dragstart)="false;">
+                <div id="looser-name" class="subheading">Player 2</div>
+                </div>
+            </div>
+
+            <a class="a-large-button" href="/" data-link>Back to Menu</a>
+            <button class="large-button">Rematch</button>
+
+            <!-- Buttons for tournament:
+            <button class="large-button-red">Quit</button>
+            <button class="large-button">Next Game</button> -->
             </div>
         </div>
 
