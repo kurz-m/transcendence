@@ -17,15 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from tournament.views import TournamentViewSet, ParticipantViewSet
+from game.views import GameViewSet, ScoreViewSet
 
 router = routers.DefaultRouter()
-router.register(r'tournament', TournamentViewSet)
-router.register(r'participant', ParticipantViewSet)
+router.register(r'game', GameViewSet)
+router.register(r'score', ScoreViewSet)
 
 urlpatterns = [
     path('api-game/', include(router.urls)),
     path('admin/', admin.site.urls),
     # path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
-    path('api-game/tournament/<int:pk>', TournamentViewSet.as_view({'get': 'retrieve_tournament'}), name='tournament-detail'),
+    # path('api-game/score/<user_id>/', ScoreViewSet.as_view({'get': 'user_scores'}), name='user_scores'),
+    path('api-game/user_games/<user_id>/', ScoreViewSet.as_view({'get': 'user_games'}), name='user_games'),
 ]
