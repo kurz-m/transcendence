@@ -13,9 +13,12 @@ class GameViewSet(viewsets.ModelViewSet):
     """
     API enpoint that allows users to view games.
     """
-    queryset = Game.objects.all()
     serializer_class = GameSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerAndNotDelete]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Game.objects.filter(user=user)
 
     # @action(detail=False, methods=['get'])
     # def user_games(self, request, user_id=None):
@@ -29,9 +32,12 @@ class ScoreViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to view Score.
     """
-    queryset = Score.objects.all()
     serializer_class = ScoreSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerAndNotDelete]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Score.objects.filter(user=user)
     
     @action(detail=False, methods=['get'])
     def user_games(self, request, user_id=None):
