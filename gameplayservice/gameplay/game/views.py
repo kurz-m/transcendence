@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework import permissions
 from django.db.models import Prefetch
 from rest_framework import status
+from game.permission import IsOwnerAndNotDelete
 
 # Create your views here.
 class GameViewSet(viewsets.ModelViewSet):
@@ -14,7 +15,7 @@ class GameViewSet(viewsets.ModelViewSet):
     """
     queryset = Game.objects.all()
     serializer_class = GameSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerAndNotDelete]
 
     # @action(detail=False, methods=['get'])
     # def user_games(self, request, user_id=None):
@@ -30,7 +31,7 @@ class ScoreViewSet(viewsets.ModelViewSet):
     """
     queryset = Score.objects.all()
     serializer_class = ScoreSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerAndNotDelete]
     
     @action(detail=False, methods=['get'])
     def user_games(self, request, user_id=None):
