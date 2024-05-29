@@ -4,6 +4,7 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Transcendence");
+        document.getElementById('login-button').classList.remove('hidden');
     }
 
     getHtml = async () => {
