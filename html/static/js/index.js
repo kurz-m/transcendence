@@ -3,7 +3,7 @@ import Account from "./views/AccountView.js";
 import PongGame from "./views/PongGameView.js";
 import Friends from "./views/FriendsView.js";
 import { checkLoginStatus, getLoggedIn, getUsername, handleAuthenticationCallback, loginCallback, logoutCallback } from "./authentication.js";
-import { toggleLoginButtonStyle } from "./shared.js";
+import { toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
 import { pongGame } from "./pong.js";
 import PongMenuView from "./views/PongMenuView.js";
 import PongSingleView from "./views/PongSingleView.js";
@@ -65,6 +65,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     const loginButtonText = document.getElementById('login-button-field');
     const logoutButton = document.getElementById('logout-button');
     const profileImage = document.getElementById('small-profile-pic');
+    
+    loginButton.addEventListener('click', e => {
+        e.stopPropagation();
+        loginCallback();
+    });
+    logoutButton.addEventListener('click', logoutCallback);
+
+    document.addEventListener('click', (e) => {
+        const target = e.target;
+        if (loginButton.classList.contains('profile-button') && target != loginButton) {
+            toggleDropdown();
+        }
+    });
 
     await checkLoginStatus();
     if (getLoggedIn()) {
@@ -82,8 +95,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         loginButtonText.textContent = 'login with';
     }
 
-    loginButton.addEventListener('click', loginCallback);
-    logoutButton.addEventListener('click', logoutCallback);
 
     document.body.addEventListener('click', e => {
         const link = e.target.closest('[data-link]');
