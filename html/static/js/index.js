@@ -70,7 +70,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         e.stopPropagation();
         loginCallback();
     });
-    logoutButton.addEventListener('click', logoutCallback);
+    logoutButton.addEventListener('click', e => {
+        e.stopPropagation();
+        logoutCallback();
+    });
 
     document.addEventListener('click', (e) => {
         const target = e.target;
@@ -105,4 +108,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     router();
+})
+
+window.addEventListener('load', () => {
+    const loader = document.querySelector('.loader');
+
+    setTimeout(() => {
+        loader.classList.add('loader-hidden');
+    }, 500);
 })
