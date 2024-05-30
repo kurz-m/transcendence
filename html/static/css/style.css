@@ -11,6 +11,7 @@
     --font-light: 300;
     --font-semibold: 600;
 
+
     /* Colors */
     --color-window-bg: rgba(72, 72, 72, 0.42);
     --color-darkgray: #333333;
@@ -19,14 +20,17 @@
     --color-highlightgray: #d9d9d9;
     --color-red: #c33232;
     --color-red-bg: #c3323242;
+    --color-red-bg: #c3323242;
     --color-white: #fff;
     --color-clear: #00000000;
+
 
     /* Gradients */
     --bg-gradient: linear-gradient(0deg, #0c003b, #004f68);
 
     /* Gaps */
     --gap-2xl: 21px;
+
 
     /* Paddings */
     --padding-2xl: 21px;
@@ -36,6 +40,7 @@
     --padding-3xs: 10px;
     --padding-mid: 17px;
 
+
     /* Border radiuses */
     --br: 42px;
     --br-account: 32px;
@@ -44,6 +49,7 @@
 /* BACKGROUND */
 
 body {
+  position: relative;
   margin: 0;
   height: 100vh;
   display: flex;
@@ -64,6 +70,48 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
+}
+
+/* LOADER */
+
+.loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-gradient);
+  opacity: 1;
+  transition: all 1s ease-in-out;
+  z-index: 9999;
+}
+
+.loader-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader::after {
+  content: "";
+  width: 75px;
+  height: 75px;
+  border: 30px solid var(--color-lightgray);
+  border-top-color: var(--color-dimgray);
+  border-radius: 50%;
+  animation: loading .75s ease infinite;
+  transition: opacity 1s ease-in-out;
+}
+
+@keyframes loading {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
 }
 
 /* SECTIONS */
@@ -295,7 +343,7 @@ body {
 }
 
 .account-dropdown {
-  position: fixed;
+  position: absolute;
   top: 21px;
   left: 21px;
   background-color: var(--color-clear);
@@ -310,16 +358,39 @@ body {
 #account-dropdown-id.show {
   background-color: var(--color-window-bg);
   border: 3px solid var(--color-dimgray);
+  transition: opacity .5s ease-in-out, padding .5s ease-in-out;
 }
 
 .dropdown-content {
-  display: none;
+  display: flex;
   flex-direction: column;
+  visibility: hidden;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
 }
 
 #dropdown-content-id.show {
-  display: flex;
+  opacity: 1;
+  visibility: visible;
+  max-height: fit-content;
+  transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
 }
+
+/*
+.dropdown-content {
+  display: flex;
+  flex-direction: column;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .5s ease-in-out;
+}
+
+#dropdown-content-id.show {
+  opacity: 1;
+  visibility: visible;
+}*/
 
 .announce-player {
   width: 210px;
@@ -530,6 +601,7 @@ body {
   border: 3px solid var(--color-clear);
   border-radius: var(--br);
   margin: -3px;
+  padding: 0;
 }
 
 .medium-button-red,
@@ -712,6 +784,41 @@ a:active {
   border-bottom: 1px dashed var(--color-white);
 }
 
+/* :where([autocomplete=one-time-code]) {
+  --otp-digits: 6;
+  --otp-ls: 60px;
+  --otp-gap: 1.25;
+
+  private consts
+  --_otp-bgsz: calc(var(--otp-ls) + 1ch);
+  --_otp-digit: 0;
+
+  all: unset;
+  background:
+  linear-gradient(90deg,
+    var(--otp-bg, #BBB) calc(var(--otp-gap) * var(--otp-ls)),
+    transparent 0),
+    linear-gradient(90deg,
+    var(--otp-bg, #EEE) calc(var(--otp-gap) * var(--otp-ls)),
+    transparent 0
+  );
+   border: 3px solid var(--color-dimgray);
+  border-radius: var(--br);
+  background-position: calc(var(--_otp-digit) * var(--_otp-bgsz)) 0, 0 0;
+  background-repeat: no-repeat, repeat-x;
+  background-size: var(--_otp-bgsz) 100%;
+  caret-color: var(--otp-cc, #222);
+  caret-shape: block;
+  clip-path: inset(0% calc(var(--otp-ls) / 2) 0% 0%);
+  font-family: ui-monospace, monospace;
+  font-size: var(--otp-fz, 2.5em);
+  inline-size: calc(var(--otp-digits) * var(--_otp-bgsz));
+  letter-spacing: var(--otp-ls);
+  padding-block: var(--otp-pb, 1ch);
+  padding-inline-start: calc(((var(--otp-ls) - 1ch) / 2) * var(--otp-gap));
+} */
+
+
 /* IMAGES */
 
 .icon {
@@ -736,7 +843,7 @@ a:active {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .small-pp {
@@ -752,6 +859,10 @@ a:active {
   -webkit-user-select: none;
   -ms-user-select: none;
   transition: opacity 0.3s ease;
+}
+
+#small-pp.show {
+  display: block;
 }
 
 #small-profile-pic.show {
@@ -1032,6 +1143,7 @@ GAME ELEMENTS
   font-weight: var(--font-light);
   display: flex;
   flex-direction: column;
+  text-align: center;
 }
 
 .hud-main {

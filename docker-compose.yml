@@ -37,6 +37,44 @@ services:
     networks:
       - authnetwork
   
+  twofactordb:
+    image: postgres:12-alpine
+    container_name: twofactordb
+    restart: always
+    environment:
+      POSTGRES_DB: ${TDB_NAME}
+      POSTGRES_USER: ${TDB_USER}
+      POSTGRES_PASSWORD: ${TDB_PASSWORD}
+    volumes:
+      - twofactordb_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    # expose:
+    #   - "5432"
+    ports:
+      - "5652:5432"
+    networks:
+      - authnetwork
+  
+  jwtdb:
+    image: postgres:12-alpine
+    container_name: jwtdb
+    restart: always
+    environment:
+      POSTGRES_DB: ${JDB_NAME}
+      POSTGRES_USER: ${JDB_USER}
+      POSTGRES_PASSWORD: ${JDB_PASSWORD}
+    volumes:
+      - jwtdb_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    # expose:
+    #   - "5432"
+    ports:
+      - "5651:5432"
+    networks:
+      - authnetwork
+  
   authservice:
     build: ./authservice/
     container_name: authservice
@@ -48,6 +86,7 @@ services:
     env_file:
       - .env
     volumes:
+      - ./authservice/authapp:/app
       - static_files:${STATIC_DIRECTORY}
     networks:
       - authnetwork
@@ -57,7 +96,34 @@ services:
     container_name: gameplayservice
     restart: always
     depends_on:
+      - gameplaydb
+    expose:
+      - "8000"
+    env_file:
+      - .env
+    networks:
+      - authnetwork
+
+  twofactorservice:
+    build: ./twofactorservice/
+    container_name: twofactorservice
+    restart: always
+    depends_on:
       - authdb
+    expose:
+      - "8000"
+    env_file:
+      - .env
+    networks:
+      - authnetwork
+  
+
+  jwtservice:
+    build: ./jwtservice/
+    container_name: jwtservice
+    restart: always
+    depends_on:
+      - jwtdb
     expose:
       - "8000"
     env_file:
@@ -117,6 +183,8 @@ services:
 volumes:
   postgres_data:
   gameplay_data:
+  twofactordb_data:
+  jwtdb_data:
   static_files:
   certbot_conf:
   certbot_www:

@@ -22,10 +22,8 @@ from django.conf.urls.static import static
 from django.urls import include, path
 from leaderboard.views import LeaderboardViewSet
 from remoteauth.views import callbackCode, authorizeCall, loggedIn, logOut
-from remoteauth.mfa import EnableMFA, UpdateMFA, VerifyMFA, DisableMFA
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
-from remoteauth.mfa import ServeMedia
-from remoteauth.jwt import CustomTokenVerifyView
+from remoteauth.utils import ServeMedia
+from players.friendrequest import FriendRequestSendView
 
 router = routers.DefaultRouter()
 # router.register(r'leaderboard', LeaderboardViewSet)
@@ -36,19 +34,12 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     # path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/auth/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/auth/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/auth/token/verify', CustomTokenVerifyView.as_view(), name='token_verify'),
     path('api/auth/login', authorizeCall.as_view(), name='auth-authorizeRequest'),
     path('api/auth/logout', logOut.as_view(), name='auth-logout'),
     path('api/auth/callback', callbackCode.as_view(), name='auth-callback'),
     path('api/auth/loggedin', loggedIn.as_view(), name='auth-loggedin'),
-    # path('api/player/<int:pk>', views.PlayerViewSet.as_view({'get': 'retrieve_player'}), name='player-detail'),
-    path('api/mfa/enable', EnableMFA.as_view(), name='enable_mfa'),
-    path('api/mfa/disable', DisableMFA.as_view(), name='disable_mfa'),
-    path('api/mfa/update', UpdateMFA.as_view(), name='update_mfa'),
-    path('api/mfa/verify', VerifyMFA.as_view(), name='verify_mfa'),
     path('api/media/<path:filename>', ServeMedia.as_view(), name='serve_media'),
+    path('api/friends/sendrequest', FriendRequestSendView.as_view(), name='send_friend_request')
 ]
 
 if not settings.DEBUG:

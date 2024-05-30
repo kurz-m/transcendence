@@ -1,0 +1,14 @@
+djangorestframework
+requests
+python-dotenv
+djangorestframework-simplejwt
+psycopg[binary,pool]
+pyotp
+gunicorn
+
+#for testing mfa qr
+Pillow
+qrcode
+
+#cors
+django-cors-headers

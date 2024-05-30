@@ -1,8 +1,9 @@
 import os
 import pyotp
 import qrcode
+import json
 from datetime import datetime
-from players.models import Players
+from mfaauthenticator.models import Players
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -80,7 +81,7 @@ class EnableMFA(APIView):
         filename = f"mfa_qr-{player.user.username}-{current_datetime}.png"
         mfa_qr_url = generate_qrcode_url(player.user.username, player.mfa_secret_key, filename)
         qr_image_path = f"../media/{filename}"
-        api_media_url = request.build_absolute_uri('/api/media/' + qr_image_path)
+        api_media_url = request.build_absolute_uri('/api-mfa/media/' + qr_image_path)
         return Response({'secret_key': mfa_secret_key, 'mfa_qr_url': mfa_qr_url, 'mfa_qrimage_url': api_media_url})
 
 
@@ -105,7 +106,6 @@ class DisableMFA(APIView):
         user = request.user
         player = Players.objects.filter(user=user).first()
         player.mfa_secret_key = ""
-        player.two_factor = False
         player.save()
         return Response({'detail': 'Successful operation. 2FA disabled'})
 
@@ -119,15 +119,6 @@ class VerifyMFA(APIView):
         player = Players.objects.filter(user=user).first()
         is_valid = verify_token(user, token=token)
         if is_valid:
-            player.two_factor = True
-            player.save()
-            refresh = RefreshToken.for_user(player.user)
-            oauth_response = HttpResponse("Successful operation. 2FA code is valid.")
-            oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=True)
-            oauth_response.set_cookie('user', player.user, httponly=False, secure=True)
-            oauth_response.set_cookie('2fa', player.two_factor, httponly=False, secure=True)
-            oauth_response.set_cookie('user_id', player.user.id, httponly=False, secure=True)
-            oauth_response.status_code = 200
-            return oauth_response
+            return Response({'detail': '2FA verified Successfully.'}, status=status.HTTP_200_OK)
         else:
-            return Response({'message': 'Bad request. Invalid or missing 2FA code.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': 'Bad request. Invalid or missing 2FA code.'}, status=status.HTTP_400_BAD_REQUEST)

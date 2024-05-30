@@ -1,5 +1,7 @@
 import os
+import json
 import requests
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,6 +14,10 @@ from players.serializers import PlayerSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import redirect
 from rest_framework import permissions
+from django.http import JsonResponse
+from remoteauth.authentication import RemoteJWTAUthentication
+from rest_framework.permissions import AllowAny
+
 
 def get_user_info(access_token):
     url = 'https://api.intra.42.fr/v2/me'
@@ -47,8 +53,19 @@ def create_player_from_user_info(user_info):
 
 
 class authorizeCall(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
     def post(self, request, format=None):
-        return Response({'location': authorize()}, status=status.HTTP_200_OK)
+        token = request.COOKIES.get('access_token')
+        return_data = {'location': authorize()}
+        login_response = JsonResponse(return_data)
+        if token:
+            login_response.delete_cookie('access_token', path='/', domain=None)
+            login_response.delete_cookie('user', path='/', domain=None)
+            login_response.delete_cookie('2fa', path='/', domain=None)
+            login_response.delete_cookie('player_id', path='/', domain=None)
+            login_response.status_code = 200
+        return login_response
 
 class loggedIn(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -62,7 +79,7 @@ class logOut(APIView):
         oauth_response.delete_cookie('access_token', path='/', domain=None)
         oauth_response.delete_cookie('user', path='/', domain=None)
         oauth_response.delete_cookie('2fa', path='/', domain=None)
-        oauth_response.delete_cookie('user_id', path='/', domain=None)
+        oauth_response.delete_cookie('player_id', path='/', domain=None)
         oauth_response.status_code = 200
         return oauth_response
 
@@ -87,14 +104,25 @@ class callbackCode(APIView):
                 if not access_token:
                     return HttpResponseBadRequest('Missing Access Token in response received from 42 oauth.')
                 player = get_user_info(access_token=access_token)
-                refresh = RefreshToken.for_user(player.user)
-                if player and player.two_factor is False:
-                    oauth_response = HttpResponse("Successful operation. Cookies set with JWT token, username, and user ID")
+                jwt_service_url = 'http://jwtservice:8000/api-jwt/token/generate'
+                send_data = {'user_id': player.user.id, 'username': player.user.username, 'email': player.user.email, 'access_token': access_token}
+                send_json = json.dumps(send_data)
+                response = requests.post(jwt_service_url, json=send_data, headers={'Content-Type': 'application/json'})
+                response.raise_for_status()
+                data = response.json()
+                refresh_str = data.get('referesh_jwt_token')
+                refresh = RefreshToken(refresh_str)
+                if player and refresh and player.two_factor is False:
+                    return_data = {'profile_image_url': player.profile_img_uri, 'detail': 'Successful operation. Cookies set with JWT token, username, and user ID'}
+                    return_json = json.dumps(return_data)
+                    oauth_response = HttpResponse(return_json, content_type='application/json')
                     oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=True)
                     oauth_response.set_cookie('user', player.user, httponly=False, secure=True)
                     oauth_response.set_cookie('2fa', player.two_factor, httponly=False, secure=True)
-                    oauth_response.set_cookie('user_id', player.user.id, httponly=False, secure=True)
+                    oauth_response.set_cookie('player_id', player.id, httponly=False, secure=True)
                     return oauth_response
+                # elif player and player.two_factor is True:
+
             else:
                 return HttpResponseBadRequest('Invalid Authorization Request to 42 oauth.')
         else:

@@ -1,3 +1,4 @@
+import { navigateTo } from "./index.js";
 import { getCookie, toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
 
 let isLoggedIn = false;
@@ -18,8 +19,11 @@ const jwtCallback = 'https://transcendence.myprojekt.tech/api/auth/callback';
 const checkLoginStatusAPI = 'https://transcendence.myprojekt.tech/api/auth/loggedin'
 const logoutAPI = 'https://transcendence.myprojekt.tech/api/auth/logout';
 
+const loginButton = document.getElementById('login-button');
+const loginButtonField = document.getElementById('login-button-field');
 
 export const handleAuthenticationCallback = async () => {
+    const profileImage = document.getElementById('small-profile-pic');
     try {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('code')) {
@@ -32,12 +36,18 @@ export const handleAuthenticationCallback = async () => {
                 },
             });
             if (response.ok) {
-                const loginButton = document.getElementById('login-button');
+                const data = await response.json();
                 isLoggedIn = true;
                 loginButton.classList.remove('logged-out');
                 loginButton.classList.add('logged-in');
                 toggleLoginButtonStyle();
-                document.getElementById('login-button-field').textContent = getCookie('user');
+                loginButtonField.textContent = getCookie('user');
+                localStorage.setItem('profile_image', data.profile_image_url);
+                if (!data.profile_image_url) {
+                    profileImage.src = './static/media/fallback-profile.png';
+                } else {
+                    profileImage.src = data.profile_image_url;
+                }
             } else {
                 console.error('Authentication failed:', response.statusText);
             }
@@ -47,6 +57,7 @@ export const handleAuthenticationCallback = async () => {
     } catch (error) {
         console.error('Error fetching data:', error);
     }
+    navigateTo('/');
 }
 
 export const loginCallback = async () => {
@@ -78,9 +89,9 @@ export const logoutCallback = async () => {
         if (response.ok) {
             toggleLoginButtonStyle();
             toggleDropdown();
-            document.getElementById('login-button-field').textContent = 'login with';
-            document.getElementById('login-button').classList.add('logged-out');
-            document.getElementById('login-button').classList.remove('logged-in');
+            loginButtonField.textContent = 'login with';
+            loginButton.classList.add('logged-out');
+            loginButton.classList.remove('logged-in');
             isLoggedIn = false;
             username = null;
         } else {
@@ -90,6 +101,7 @@ export const logoutCallback = async () => {
     } catch (error) {
         console.error('Error:', error);
     }
+    navigateTo('/');
 }
 
 export const checkLoginStatus = async () => {

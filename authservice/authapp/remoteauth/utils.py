@@ -1,5 +1,17 @@
 import os
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
+class ServeMedia(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, filename):
+        file_path = os.path.join(settings.MEDIA_ROOT, filename)
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as f:
+                return HttpResponse(f.read(), content_type='image/jpeg')
+        else:
+            raise Http404
 
 TOKEN_URL = "https://api.intra.42.fr/oauth/token"
 
@@ -13,11 +25,11 @@ def authorize():
     return authorize_url
 
 
-def serve_media(request, filename):
+# def serve_media(request, filename):
 
-    file_path = os.path.join(settings.MEDIA_ROOT, filename)
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as f:
-            return HttpResponse(f.read(), content_type='image/jpeg')
-    else:
-        raise Http404
+#     file_path = os.path.join(settings.MEDIA_ROOT, filename)
+#     if os.path.exists(file_path):
+#         with open(file_path, 'rb') as f:
+#             return HttpResponse(f.read(), content_type='image/jpeg')
+#     else:
+#         raise Http404

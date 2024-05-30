@@ -4,6 +4,7 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Transcendence");
+        document.getElementById('login-button').classList.remove('hidden');
     }
 
     getHtml = async () => {
@@ -13,7 +14,7 @@ export default class extends AbstractView {
           <div class="title">Menu</div>
         </div>
         <div class="content">
-          <a class="large-button" href="/pong" data-link>Pong</a>
+          <a class="a-large-button" href="/pong-menu" data-link>Pong</a>
           <button class="large-button">Tetris</button>
         </div>
       </div>

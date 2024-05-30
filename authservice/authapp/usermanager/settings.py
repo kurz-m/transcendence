@@ -151,7 +151,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'remoteauth.customjwt.CookieAccessCodeAuthentication',
+        # 
+        'remoteauth.authentication.RemoteJWTAUthentication',
     )
 }
 
@@ -160,7 +161,7 @@ SECRET_KEY = 'your_secret_key_here'
 
 SIMPLE_JWT = {
     'SIGNING_KEY': os.getenv("JWT_SECRET_KEY"),
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Adjust the time as needed
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=240),  # Adjust the time as needed
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Adjust the time as needed
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
