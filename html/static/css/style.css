@@ -337,16 +337,39 @@ body {
 #account-dropdown-id.show {
   background-color: var(--color-window-bg);
   border: 3px solid var(--color-dimgray);
+  transition: opacity .5s ease-in-out, padding .5s ease-in-out;
 }
 
 .dropdown-content {
-  display: none;
+  display: flex;
   flex-direction: column;
+  visibility: hidden;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
 }
 
 #dropdown-content-id.show {
-  display: flex;
+  opacity: 1;
+  visibility: visible;
+  max-height: fit-content;
+  transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
 }
+
+/*
+.dropdown-content {
+  display: flex;
+  flex-direction: column;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .5s ease-in-out;
+}
+
+#dropdown-content-id.show {
+  opacity: 1;
+  visibility: visible;
+}*/
 
 .announce-player {
   width: 210px;
