@@ -67,6 +67,14 @@ body {
   background-attachment: fixed;
 }
 
+/* app style */
+
+.app-style {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 /* LOADER */
 
 .loader {
@@ -1097,8 +1105,7 @@ GAME ELEMENTS
   max-width: 100%;
   position: absolute;
   top: 21px;
-  left: 50%;
-  transform: translateX(-50%);
+  margin: 0px 21px;
   font-family: var(--font);
   color: var(--color-white);
   font-weight: var(--font-light);
