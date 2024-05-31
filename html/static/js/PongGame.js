@@ -1,4 +1,3 @@
-import { getUsername } from "./authentication.js";
 import { navigateTo } from "./index.js";
 import { showGamePauseMenu, hideGamePauseMenu } from "./shared.js";
 
@@ -83,6 +82,14 @@ class PongGame {
         this.secondsObj = document.getElementById('seconds');
         this.playerLeftName = document.getElementById('player_l_name');
         this.playerRightName = document.getElementById('player_r_name');
+
+        /* elements for final score */
+        this.finalScoreMinutes = document.getElementById('minutes__final');
+        this.finalScoreSeconds = document.getElementById('seconds__final');
+        this.winnerName = document.getElementById('winner-name');
+        this.looserName = document.getElementById('looser-name'); 
+        this.winnerScore = document.getElementById('winner-score');
+        this.looserScore = document.getElementById('looser-score'); 
 
         /* Declare variables for the game logic */
         this.gameRunning = true;
@@ -398,13 +405,9 @@ class PongGame {
         this.stopGame();
         this.resetBall();
         window.clearInterval(this.timeInterval);
-        this.minutesObj.innerHTML = '00';
-        this.secondsObj.innerHTML = '00';
 
-        this.hudWindow.classList.add('hidden');
-        this.finalScoreWindow.classList.remove('hidden');
-        this.ball.object.classList.add('hidden');
-
+        this.finalScoreUpdate();
+        
         let raw = JSON.stringify({
             "opponent": sessionStorage.getItem('opponent_name'),
             "own_score": score_l,
@@ -412,7 +415,7 @@ class PongGame {
             "win": score_l > score_r,
             "game_id": sessionStorage.getItem('game_id'),
         });
-
+        
         fetch(scoreAPI, {
             method: 'POST',
             body: raw
@@ -421,6 +424,29 @@ class PongGame {
             console.log(response.text());
         })
         .catch(error => console.log('error', error));
+
+        sessionStorage.removeItem('opponent_name');
+    }
+    
+    finalScoreUpdate() {
+        this.finalScoreMinutes.innerHTML = this.minutesObj.innerHTML;
+        this.finalScoreSeconds.innerHTML = this.secondsObj.innerHTML;
+    
+        this.hudWindow.classList.add('hidden');
+        this.finalScoreWindow.classList.remove('hidden');
+        this.ball.object.classList.add('hidden');
+
+        if (this.scoreLeft > this.scoreRight) {
+            this.winnerName.textContent = this.playerLeftName.textContent;
+            this.looserName.textContent = this.playerRightName.textContent;
+            this.winnerScore.textContent = this.scoreLeft.toString();
+            this.looserScore.textContent = this.scoreRight.toString();
+        } else {
+            this.looserName.textContent = this.playerLeftName.textContent;
+            this.winnerName.textContent = this.playerRightName.textContent;
+            this.looserScore.textContent = this.scoreLeft.toString();
+            this.winnerScore.textContent = this.scoreRight.toString();
+        }
     }
 }
 
