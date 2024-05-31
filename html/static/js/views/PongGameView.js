@@ -41,9 +41,9 @@ export default class extends AbstractView {
         <div id="FinalScore" class="window hidden">
             <div class="title">Game Over</div>
             <div class="game-result-time">
-            <div id="minutes" class="hud-time-left">00</div>
+            <div id="minutes__final" class="hud-time-left">00</div>
             <div class="hud-time-colon">:</div>
-            <div id="seconds" class="hud-time-right">00</div>
+            <div id="seconds__final" class="hud-time-right">00</div>
             </div>
             <div class="content">
             <div class="game-result">
@@ -52,9 +52,9 @@ export default class extends AbstractView {
                 <div id="winner-name" class="subheading">Player 1</div>
                 </div>
                 <div class="hud-score">
-                    <div id="score_l" class="hud-score-left">0</div>
+                    <div id="winner-score" class="hud-score-left">0</div>
                     <div class="hud-score-colon">:</div>
-                    <div id="score_r" class="hud-score-right">0</div>
+                    <div id="looser-score" class="hud-score-right">0</div>
                 </div>
                 <div class="game-result-player">
                 <img class="large-trophy" src="./static/media/loose.svg" draggable="false" (dragstart)="false;">
