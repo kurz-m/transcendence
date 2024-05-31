@@ -43,6 +43,7 @@ export const handleAuthenticationCallback = async () => {
                 toggleLoginButtonStyle();
                 loginButtonField.textContent = getCookie('user');
                 localStorage.setItem('profile_image', data.profile_image_url);
+
                 if (!data.profile_image_url) {
                     profileImage.src = './static/media/fallback-profile.png';
                 } else {
@@ -57,6 +58,7 @@ export const handleAuthenticationCallback = async () => {
     } catch (error) {
         console.error('Error fetching data:', error);
     }
+    localStorage.setItem('username', getCookie('user'));
     navigateTo('/');
 }
 
@@ -85,19 +87,20 @@ export const logoutCallback = async () => {
         const response = await fetch(logoutAPI, {
             method: 'POST',
         });
-
+        
         if (response.ok) {
             toggleLoginButtonStyle();
             toggleDropdown();
             loginButtonField.textContent = 'login with';
             loginButton.classList.add('logged-out');
             loginButton.classList.remove('logged-in');
-            isLoggedIn = false;
-            username = null;
+            localStorage.removeItem('username');
+            localStorage.removeItem('profile_image');
+            setLoggedIn(false);
         } else {
             console.error('Could not logout the user');
         }
-
+        
     } catch (error) {
         console.error('Error:', error);
     }
@@ -108,9 +111,9 @@ export const checkLoginStatus = async () => {
     try {
         const response = await fetch(checkLoginStatusAPI)
         isLoggedIn = response.ok;
-
+        
         if (isLoggedIn) {
-            username = getCookie('user');
+            localStorage.setItem('username', getCookie('user'));
         }
     } catch (error) {
         console.error('error:', error);
