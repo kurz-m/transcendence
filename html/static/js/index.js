@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         } else {
             profileImage.src = profileImageCached;
         }
-        loginButtonText.textContent = getUsername();
+        loginButtonText.textContent = localStorage.getItem('username');
         loginButton.classList.remove('logged-out');
         loginButton.classList.add('logged-in');
         toggleLoginButtonStyle();

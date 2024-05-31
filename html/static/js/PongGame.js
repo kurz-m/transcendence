@@ -1,3 +1,4 @@
+import { getUsername } from "./authentication.js";
 import { navigateTo } from "./index.js";
 import { showGamePauseMenu, hideGamePauseMenu } from "./shared.js";
 
@@ -67,16 +68,21 @@ class PongGame {
 
 
         /* Declare all elements that are necessary for a pong game */
-        this.scoreLeftObj = document.getElementById('score_l');
-        this.scoreRightObj = document.getElementById('score_r');
-        this.minutesObj = document.getElementById('minutes');
-        this.secondsObj = document.getElementById('seconds');
         this.pauseMenu = document.getElementById('PauseMenu');
         this.countdownWindow = document.getElementById('CountdownWindow');
         this.countdownText = document.getElementById('CountdownText');
         this.continueButton = document.getElementById('PauseContinueButton');
         this.quitButton = document.getElementById('PauseMenuQuitButton');
         this.finalScoreWindow = document.getElementById('FinalScore');
+        
+        /* hud elements for the pong game */
+        this.hudWindow = document.querySelector('.hud');
+        this.scoreLeftObj = document.getElementById('score_l');
+        this.scoreRightObj = document.getElementById('score_r');
+        this.minutesObj = document.getElementById('minutes');
+        this.secondsObj = document.getElementById('seconds');
+        this.playerLeftName = document.getElementById('player_l_name');
+        this.playerRightName = document.getElementById('player_r_name');
 
         /* Declare variables for the game logic */
         this.gameRunning = true;
@@ -91,10 +97,30 @@ class PongGame {
         this.seconds = 5;
         this.countdownInterval = 0;
 
+        this.setPlayerNames();
         this.resetPaddles();
         this.resetBall();
 
         this.attachEventListeners();
+    }
+
+    setPlayerNames() {
+        /* set the name for the left player */
+        const playerOne = localStorage.getItem('username');
+        if (!playerOne) {
+            this.playerLeftName.textContent = "Anonymous";
+        } else {
+            this.playerLeftName.textContent = playerOne;
+        }
+
+        /* set the name for the right player */
+        const playerTwo = sessionStorage.getItem('opponent_name');
+        if (!playerTwo) {
+            this.playerRightName.textContent = "Anonymous";
+        } else {
+            this.playerRightName.textContent = playerTwo;
+        }
+
     }
 
     getPauseMenuVisibility() {
@@ -153,6 +179,7 @@ class PongGame {
         }
 
         this.handlePauseQuit = () => {
+            sessionStorage.removeItem('opponent_name');
             navigateTo('/');
         }
 
@@ -374,6 +401,7 @@ class PongGame {
         this.minutesObj.innerHTML = '00';
         this.secondsObj.innerHTML = '00';
 
+        this.hudWindow.classList.add('hidden');
         this.finalScoreWindow.classList.remove('hidden');
         this.ball.object.classList.add('hidden');
 
