@@ -108,6 +108,9 @@ class PongGame {
 
         this.handleKeyDown = (event) => {
             if (event.key == 'Enter') {
+                if (!this.countdownWindow.classList.contains('hidden')) {
+                    return;
+                }
                 if (!this.finalScoreWindow.classList.contains('hidden')) {
                     this.removeEventListeners();
                     navigateTo('/');
@@ -118,7 +121,9 @@ class PongGame {
                 }
             }
             if (event.key == 'Escape') {
-                this.pauseGame();
+                if (this.countdownWindow.classList.contains('hidden')) {
+                    this.pauseGame();
+                }
             }
             if (event.key == 'ArrowUp') {
                 this.paddleRight.dy = -this.paddleSpeed;
@@ -144,12 +149,10 @@ class PongGame {
         }
 
         this.handlePauseContinue = () => {
-            // TODO: implement this function
             this.resumeGame();
         }
 
         this.handlePauseQuit = () => {
-            // TODO: add a delete method if the game is quit early
             navigateTo('/');
         }
 
@@ -317,7 +320,6 @@ class PongGame {
         if (this.seconds === 0) {
             window.clearInterval(this.countdownInterval);
             this.countdownWindow.classList.add('hidden');
-            this.seconds = 2;
             this.startGame();
         } else {
             this.seconds--;
