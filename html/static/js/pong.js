@@ -237,8 +237,8 @@ export const pongGame = () => {
     
     var seconds = 5;
     var countdownInterval;
-    const countdownWindow = document.getElementById("CountdownWindow");
-    const countdownText = document.getElementById("CountdownText");
+    // const countdownWindow = document.getElementById("CountdownWindow");
+    // const countdownText = document.getElementById("CountdownText");
 
     function decrementCountdown() {
         countdownText.innerHTML = seconds + "";
