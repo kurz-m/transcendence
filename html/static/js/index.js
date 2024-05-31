@@ -9,6 +9,7 @@ import PongMenuView from "./views/PongMenuView.js";
 import PongSingleView from "./views/PongSingleView.js";
 import PongTournamentView from "./views/PongTournamentView.js";
 import MatchHistoryView from "./views/MatchHistoryView.js";
+import { startPongGame } from "./PongGame.js";
 
 export const navigateTo = url => {
     history.pushState(null, null, url);
@@ -24,7 +25,7 @@ const router = async () => {
         { path: "/pong-menu", view: PongMenuView },
         { path: "/pong-single", view: PongSingleView },
         { path: "/pong-tournament", view: PongTournamentView },
-        { path: "/pong-game", view: PongGame, handler: pongGame },
+        { path: "/pong-game", view: PongGame, handler: startPongGame },
         { path: "/callback", handler: handleAuthenticationCallback },
         // { path: "/two-factor", handler: handleTwoFactorCallback },
     ];
