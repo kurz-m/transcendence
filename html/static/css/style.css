@@ -361,7 +361,7 @@ body {
 #account-dropdown-id.show {
   background-color: var(--color-window-bg);
   border: 3px solid var(--color-dimgray);
-  transition: opacity .5s ease-in-out, padding .5s ease-in-out;
+  transition: opacity .25s ease-in-out, padding .25s ease-in-out;
 }
 
 .dropdown-content {
@@ -371,14 +371,14 @@ body {
   opacity: 0;
   max-height: 0;
   overflow: hidden;
-  transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+  transition: opacity .25s ease-in-out, max-height .25s ease-in-out;
 }
 
 #dropdown-content-id.show {
   opacity: 1;
   visibility: visible;
   max-height: fit-content;
-  transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+  transition: opacity .25s ease-in-out, max-height .25s ease-in-out;
 }
 
 /*
