@@ -29,15 +29,20 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
         return player
 
 
-class FriendRequestSerializer(serializers.ModelSerializer):
+class FriendRequestSerializer(serializers.HyperlinkedModelSerializer):
     sender = PlayerSerializer(read_only=True)
     receiver = PlayerSerializer(read_only=True)
 
     class Meta:
         model = FriendRequest
-        fields = ['receiver']
+        fields = ['id', 'sender', 'receiver', 'status', 'created_at']
+
 
 class FriendRequestCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = FriendRequest
         fields = ['receiver']
+
+
+class AcceptFriendRequestSerializer(serializers.Serializer):
+    request_id = serializers.IntegerField()
