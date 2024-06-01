@@ -67,6 +67,7 @@ class PongGame {
 
 
         /* Declare all elements that are necessary for a pong game */
+        this.app = document.getElementById('app');
         this.pauseMenu = document.getElementById('PauseMenu');
         this.countdownWindow = document.getElementById('CountdownWindow');
         this.countdownText = document.getElementById('CountdownText');
@@ -181,13 +182,20 @@ class PongGame {
             }
         }
 
-        this.handlePauseContinue = () => {
-            this.resumeGame();
-        }
+        this.handlePauseWindow = (e) => {
+            const target = e.target;
 
-        this.handlePauseQuit = () => {
-            sessionStorage.removeItem('opponent_name');
-            navigateTo('/');
+            switch (target.id) {
+                case 'PauseContinueButton':
+                    this.resumeGame();
+                    break;
+                case 'PauseMenuQuitButton':
+                    sessionStorage.removeItem('opponent_name');
+                    navigateTo('/');
+                    break;
+                default:
+                    break;
+            }
         }
 
         this.handleResize = () => {
@@ -195,19 +203,17 @@ class PongGame {
         }
 
         /* add the event listeners */
+        this.app.addEventListener('click', this.handlePauseWindow);
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
-        this.continueButton.addEventListener('click', this.handlePauseContinue);
-        this.quitButton.addEventListener('click', this.handlePauseQuit);
         window.addEventListener('resize', this.handleResize);
     }
 
     removeEventListeners() {
         /* remove the event listeners for a clean exit */
+        this.app.removeEventListener('click', this.handlePauseWindow);
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
-        this.continueButton.removeEventListener('click', this.handlePauseContinue);
-        this.quitButton.removeEventListener('click', this.handlePauseQuit);
         window.removeEventListener('resize', this.handleResize);
     }
 
