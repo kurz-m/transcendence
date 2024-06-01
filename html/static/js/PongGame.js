@@ -5,7 +5,7 @@ const FPS = 60;
 const INTERVAL = 1000 / FPS;
 const INITIAL_PADDLE_SPEED = 12;
 
-const scoreAPI = 'https://transcendence.myprojekt.tech/api/score'
+const scoreAPI = 'https://transcendence.myprojekt.tech/api-game/score'
 
 class PongGame {
     constructor() {
@@ -32,7 +32,7 @@ class PongGame {
                 this.right = bounds.right;
             }
         }
-        this.board = new this.Board(document.getElementById("board"));
+        this.board = new this.Board(document.getElementById('board'));
         
         /* Declare an IIFE class for the Ball to be able to pass the board element */
         this.Ball = (function(board) {
@@ -49,7 +49,7 @@ class PongGame {
                 }
             }
         })(this.board);
-        this.ball = new this.Ball(document.getElementById("ball"));
+        this.ball = new this.Ball(document.getElementById('ball'));
 
         /* Declare the Paddle class */
         this.Paddle = class Paddle {
@@ -62,8 +62,8 @@ class PongGame {
                 this.dy = 0;
             }
         }
-        this.paddleLeft = new this.Paddle(document.getElementById("paddle_l"));
-        this.paddleRight = new this.Paddle(document.getElementById("paddle_r"));
+        this.paddleLeft = new this.Paddle(document.getElementById('paddle_l'));
+        this.paddleRight = new this.Paddle(document.getElementById('paddle_r'));
 
 
         /* Declare all elements that are necessary for a pong game */
@@ -81,8 +81,8 @@ class PongGame {
         this.scoreRightObj = document.getElementById('score_r');
         this.minutesObj = document.getElementById('minutes');
         this.secondsObj = document.getElementById('seconds');
-        this.playerLeftName = document.getElementById('player_l_name');
-        this.playerRightName = document.getElementById('player_r_name');
+        this.playerLeftID = document.getElementById('player_l_name');
+        this.playerRightID = document.getElementById('player_r_name');
 
         /* elements for final score */
         this.finalScoreMinutes = document.getElementById('minutes__final');
@@ -116,17 +116,17 @@ class PongGame {
         /* set the name for the left player */
         const playerOne = localStorage.getItem('username');
         if (!playerOne) {
-            this.playerLeftName.textContent = "Anonymous";
+            this.playerLeftID.textContent = 'Player 1';
         } else {
-            this.playerLeftName.textContent = playerOne;
+            this.playerLeftID.textContent = playerOne;
         }
 
         /* set the name for the right player */
         const playerTwo = sessionStorage.getItem('opponent_name');
         if (!playerTwo) {
-            this.playerRightName.textContent = "Anonymous";
+            this.playerRightID.textContent = 'Player 2';
         } else {
-            this.playerRightName.textContent = playerTwo;
+            this.playerRightID.textContent = playerTwo;
         }
 
     }
@@ -415,10 +415,10 @@ class PongGame {
         this.finalScoreUpdate();
         
         let raw = JSON.stringify({
-            "opponent": sessionStorage.getItem('opponent_name'),
-            "own_score": score_l,
-            "opponent_score": score_r,
-            "win": score_l > score_r,
+            "opponent": this.playerRightID.textContent,
+            "own_score": this.scoreLeft,
+            "opponent_score": this.scoreRight,
+            "win": this.scoreLeft > this.scoreRight,
             "game_id": sessionStorage.getItem('game_id'),
         });
         
@@ -443,13 +443,13 @@ class PongGame {
         this.ball.object.classList.add('hidden');
 
         if (this.scoreLeft > this.scoreRight) {
-            this.winnerName.textContent = this.playerLeftName.textContent;
-            this.looserName.textContent = this.playerRightName.textContent;
+            this.winnerName.textContent = this.playerLeftID.textContent;
+            this.looserName.textContent = this.playerRightID.textContent;
             this.winnerScore.textContent = this.scoreLeft.toString();
             this.looserScore.textContent = this.scoreRight.toString();
         } else {
-            this.looserName.textContent = this.playerLeftName.textContent;
-            this.winnerName.textContent = this.playerRightName.textContent;
+            this.looserName.textContent = this.playerLeftID.textContent;
+            this.winnerName.textContent = this.playerRightID.textContent;
             this.looserScore.textContent = this.scoreLeft.toString();
             this.winnerScore.textContent = this.scoreRight.toString();
         }
