@@ -21,24 +21,24 @@ export default class extends AbstractView {
         <div class="content">
         <div class="people-list">
             <div class="scroll-people">
-            <div class="friend-item">
-                <button class="friend-button">
-                <img class="small-pp" style="display: block;" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
-                <div class="field">Aaron</div>
-                </button>
-                <button class="clean-button">
-                <img class="small-icon" src="./static/media/person-delete.svg" alt="Delete">
-                </button>
-            </div>
-            <div class="friend-item">
-                <button class="friend-button">
-                <img class="small-pp" style="display: block;" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
-                <div class="field">Aaron</div>
-                </button>
-                <button class="clean-button">
-                <img class="small-icon" src="./static/media/person-delete.svg" alt="Delete">
-                </button>
-            </div>
+                <div class="friend-item">
+                    <button class="friend-button">
+                    <img class="small-pp" style="display: block;" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
+                    <div class="field">Aaron</div>
+                    </button>
+                    <button class="clean-button">
+                    <img class="small-icon" src="./static/media/person-delete.svg" alt="Delete">
+                    </button>
+                </div>
+                <div class="friend-item">
+                    <button class="friend-button">
+                    <img class="small-pp" style="display: block;" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
+                    <div class="field">Aaron</div>
+                    </button>
+                    <button class="clean-button">
+                    <img class="small-icon" src="./static/media/person-delete.svg" alt="Delete">
+                    </button>
+                </div>
             </div>
         </div>
         <div class="label-field-button">
