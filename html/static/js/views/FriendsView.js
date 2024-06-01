@@ -49,4 +49,53 @@ export default class extends AbstractView {
     </div>
         `
     }
+
+    afterRender = async () => {
+        const peopleListContainer = document.querySelector('.people-list');
+        peopleListContainer.innerHTML = '';
+
+        const people = [
+            { name: "markus" },
+            { name: "florian" }, 
+            { name: "sanjok" },
+            { name: "aaron" }
+        ];
+
+        if (people.length === 0) {
+            const emptyMessage = document.createElement('div');
+            emptyMessage.textContent = 'No friends';
+            peopleListContainer.appendChild(emptyMessage);
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        people.forEach(friend => {
+            const friendItem = document.createElement('div');
+            friendItem.classList.add('friend-item');
+
+            friendItem.innerHTML = `
+            <button class="friend-button">
+                <img class="small-pp" style="display: block;" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
+                <div class="field">${friend.name}</div>
+            </button>
+                <button class="clean-button">
+                <img class="small-icon" src="./static/media/person-delete.svg" alt="Delete">
+            </button>
+            `;
+            
+            const deleteButton = friendItem.querySelector('.clean-button');
+            const deleteHandler = () => {
+                //TODO: make an api call to /api/friends/{friend_id}
+                deleteButton.removeEventListener('click', deleteHandler);
+                friendItem.remove();
+            };
+            deleteButton.addEventListener('click', deleteHandler); 
+            
+
+            fragment.appendChild(friendItem);
+        });
+
+        peopleListContainer.appendChild(fragment);
+    }
 }
