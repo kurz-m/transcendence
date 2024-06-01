@@ -422,11 +422,14 @@ class PongGame {
             "game_id": sessionStorage.getItem('game_id'),
         });
         
+        let header = new Headers();
+        header.append("Content-Type", "application/json");
+        header.append('Date', new Date().toUTCString());
+        header.append('User-Agent', 'Transcendence Pong Game Website');
+
         fetch(scoreAPI, {
             method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: header,
             body: raw
         })
         .then(response => {
