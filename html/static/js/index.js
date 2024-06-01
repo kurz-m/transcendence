@@ -10,6 +10,8 @@ import PongTournamentView from "./views/PongTournamentView.js";
 import MatchHistoryView from "./views/MatchHistoryView.js";
 import { startPongGame } from "./PongGame.js";
 
+let currentViewCleanup = null;
+
 const router = async () => {
     const routes = [
         { path: "/", view: Dashboard },
@@ -41,11 +43,16 @@ const router = async () => {
     }
     
     if (match.route.view) {
+        if (currentViewCleanup) {
+            currentViewCleanup();
+            currentViewCleanup = null;
+        }
+
         const view = new match.route.view();
         document.querySelector("#app").innerHTML = await view.getHtml();
         
         if (view.afterRender) {
-            await view.afterRender();
+            currentViewCleanup = await view.afterRender();
         }
     }
     if (match.route.handler) {
