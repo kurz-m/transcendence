@@ -79,6 +79,7 @@ export default class extends AbstractView {
 
                 /* attach the new created friend to the list */
                 this.peopleListContainer.appendChild(friendItem);
+                this.inputFriend.value = '';
             }
         }
         this.addFriendButton.addEventListener('click', this.handleAddFriend);
@@ -98,7 +99,7 @@ export default class extends AbstractView {
 
     afterRender = async () => {
         this.attachEventListeners();
-        this.peopleListContainer = document.querySelector('.people-list');
+        this.peopleListContainer = document.querySelector('.scroll-people');
         this.peopleListContainer.innerHTML = '';
 
         /* TODO: make api call to get the list of friends */
