@@ -4,6 +4,7 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Friends");
+        this.addFriendName = '';
     }
 
     getHtml = async () => {
@@ -42,18 +43,65 @@ export default class extends AbstractView {
             </div>
         </div>
         <div class="label-field-button">
-            <input class="text-field" type="text" placeholder="username">
-            <button class="small-button">add</button>
+            <input id="friends-input" class="text-field" type="text" placeholder="username">
+            <button id="add-friends" class="small-button">add</button>
         </div>
         </div>
     </div>
         `
     }
 
-    afterRender = async () => {
-        const peopleListContainer = document.querySelector('.people-list');
-        peopleListContainer.innerHTML = '';
+    attachEventListeners() {
+        this.inputFriend = document.getElementById('friends-input');
+        this.addFriendButton = document.getElementById('add-friends');
+        
+        
+        this.handleAddFriend = () => {
+            const friendValue = this.inputFriend.value;
 
+
+            var myHeader = new Headers();
+            if (friendValue) {
+                /* TODO: make api request to create a friend */
+                console.log(friendValue);
+                const friendItem = document.createElement('div');
+                friendItem.classList.add('friend-item');
+                friendItem.innerHTML = this.getFriendTemplate(friendValue);
+                
+                /* add event listener to the delete button */
+                const deleteButton = friendItem.querySelector('.clean-button');
+                const deleteHandler = () => {
+                //TODO: make an api call to /api/friends/{friend_id}
+                deleteButton.removeEventListener('click', deleteHandler);
+                friendItem.remove();
+                };
+                deleteButton.addEventListener('click', deleteHandler);
+
+                /* attach the new created friend to the list */
+                this.peopleListContainer.appendChild(friendItem);
+            }
+        }
+        this.addFriendButton.addEventListener('click', this.handleAddFriend);
+    }
+
+    getFriendTemplate(friend) {
+        return `
+        <button class="friend-button">
+            <img class="small-pp" style="display: block;" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
+            <div class="field">${friend}</div>
+        </button>
+            <button class="clean-button">
+            <img class="small-icon" src="./static/media/person-delete.svg" alt="Delete">
+        </button>
+        `;
+    }
+
+    afterRender = async () => {
+        this.attachEventListeners();
+        this.peopleListContainer = document.querySelector('.people-list');
+        this.peopleListContainer.innerHTML = '';
+
+        /* TODO: make api call to get the list of friends */
         const people = [
             { name: "markus" },
             { name: "florian" }, 
@@ -63,8 +111,9 @@ export default class extends AbstractView {
 
         if (people.length === 0) {
             const emptyMessage = document.createElement('div');
+            emptyMessage.classList.add('friend-item');
             emptyMessage.textContent = 'No friends';
-            peopleListContainer.appendChild(emptyMessage);
+            this.peopleListContainer.appendChild(emptyMessage);
             return;
         }
 
@@ -73,16 +122,7 @@ export default class extends AbstractView {
         people.forEach(friend => {
             const friendItem = document.createElement('div');
             friendItem.classList.add('friend-item');
-
-            friendItem.innerHTML = `
-            <button class="friend-button">
-                <img class="small-pp" style="display: block;" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
-                <div class="field">${friend.name}</div>
-            </button>
-                <button class="clean-button">
-                <img class="small-icon" src="./static/media/person-delete.svg" alt="Delete">
-            </button>
-            `;
+            friendItem.innerHTML = this.getFriendTemplate(friend.name);
             
             const deleteButton = friendItem.querySelector('.clean-button');
             const deleteHandler = () => {
@@ -96,6 +136,10 @@ export default class extends AbstractView {
             fragment.appendChild(friendItem);
         });
 
-        peopleListContainer.appendChild(fragment);
+        this.peopleListContainer.appendChild(fragment);
+
+        return () => {
+            this.addFriendButton.removeEventListener('click', this.handleAddFriend);
+        }
     }
 }
