@@ -197,6 +197,7 @@ body {
   padding: 32px 8px 32px 32px;
   display: flex;
   box-sizing: border-box;
+  flex-direction: column;
 }
 
 .friend-item {
