@@ -34,9 +34,13 @@ export default class extends AbstractView {
     afterRender = async () => {
         const opponentName = document.getElementById('opponent-name')
 
-        opponentName.addEventListener('input', (e) => {
+        const handleInput = (e) => {
             const name = e.target.value;
             setOpponent(name);
-        })
+        }
+        opponentName.addEventListener('input', handleInput);
+        return () => {
+            opponentName.removeEventListener('input', handleInput);
+        }
     }
 }
