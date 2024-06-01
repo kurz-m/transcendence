@@ -88,15 +88,18 @@ const updateLoginState = () => {
 
 const handleNavBar = () => {
     const loginButton = document.getElementById('login-button');
-    const logoutButton = document.getElementById('logout-button');
-    
-    loginButton.addEventListener('click', e => {
-        e.stopPropagation();
-        loginCallback();
-    });
-    logoutButton.addEventListener('click', e => {
-        e.stopPropagation();
-        logoutCallback();
+    const dropdownId = document.getElementById('account-dropdown-id');
+
+    dropdownId.addEventListener('click', e => {
+        const target = e.target;
+
+        if (target.closest('#login-button')) {
+            e.stopPropagation();
+            loginCallback();
+        } else if (target.id === 'logout-button') {
+            e.stopPropagation();
+            logoutCallback();
+        }
     });
     
     document.addEventListener('click', (e) => {
