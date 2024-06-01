@@ -5,6 +5,7 @@ export default class extends AbstractView {
         super();
         this.setTitle("Friends");
         this.addFriendName = '';
+        this.eventHandlers = [];
     }
 
     getHtml = async () => {
@@ -55,12 +56,9 @@ export default class extends AbstractView {
         this.inputFriend = document.getElementById('friends-input');
         this.addFriendButton = document.getElementById('add-friends');
         
-        
         this.handleAddFriend = () => {
-            const friendValue = this.inputFriend.value;
+            const friendValue = this.inputFriend.value.trim();
 
-
-            var myHeader = new Headers();
             if (friendValue) {
                 /* TODO: make api request to create a friend */
                 console.log(friendValue);
@@ -71,18 +69,30 @@ export default class extends AbstractView {
                 /* add event listener to the delete button */
                 const deleteButton = friendItem.querySelector('.clean-button');
                 const deleteHandler = () => {
-                //TODO: make an api call to /api/friends/{friend_id}
-                deleteButton.removeEventListener('click', deleteHandler);
-                friendItem.remove();
+                    //TODO: make an api call to /api/friends/{friend_id}
+                    friendItem.remove();
                 };
-                deleteButton.addEventListener('click', deleteHandler);
+                deleteButton.addEventListener('click', deleteHandler, { once: true });
 
                 /* attach the new created friend to the list */
                 this.peopleListContainer.appendChild(friendItem);
                 this.inputFriend.value = '';
             }
         }
+
+        this.handleAddFriendOnEnter = e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.handleAddFriend();
+            }
+        }
         this.addFriendButton.addEventListener('click', this.handleAddFriend);
+        this.inputFriend.addEventListener('keydown', this.handleAddFriendOnEnter);
+    }
+
+    removeEventListeners() {
+        this.addFriendButton.removeEventListener('click', this.handleAddFriend);
+        this.inputFriend.removeEventListener('keydown', this.handleAddFriendOnEnter);
     }
 
     getFriendTemplate(friend) {
@@ -140,7 +150,7 @@ export default class extends AbstractView {
         this.peopleListContainer.appendChild(fragment);
 
         return () => {
-            this.addFriendButton.removeEventListener('click', this.handleAddFriend);
+            this.removeEventListeners();
         }
     }
 }
