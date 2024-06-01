@@ -158,3 +158,5 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 STATIC_URL = 'static-django/'
 STATIC_ROOT = os.getenv("STATIC_DIRECTORY")
+
+APPEND_SLASH = False
