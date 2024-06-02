@@ -2,7 +2,7 @@ from rest_framework import serializers
 from game.models import Game, Score
 
 
-class GameSerializer(serializers.HyperlinkedModelSerializer):
+class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = ['id', 'game_date', 'game_type']
@@ -16,9 +16,9 @@ class GameSerializer(serializers.HyperlinkedModelSerializer):
         return super().create(validated_data)
 
 
-class ScoreSerializer(serializers.HyperlinkedModelSerializer):
+class ScoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Score
-        fields = ['opponent', 'own_score', 'opponent_score', 'win', 'game_type', 'game_id']
+        fields = ['opponent', 'own_score', 'opponent_score', 'win', 'game_type', 'game_id', 'rank', 'number_of_players']
 
         read_only_fields = ['user', 'created_date']
