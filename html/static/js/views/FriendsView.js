@@ -128,6 +128,7 @@ export default class extends AbstractView {
             return;
         }
 
+        /* create virtual DOM for building it up and adding it at once to the visible DOM */
         const fragment = document.createDocumentFragment();
 
         people.forEach(friend => {
