@@ -8,9 +8,9 @@ export const getLoggedIn = () => isLoggedIn;
 export const setLoggedIn = bool => {
     isLoggedIn = bool;
 }
-export const getUsername = () => username;
+export const getUsername = () => localStorage.getItem('username');
 export const setUsername = name => {
-    username = name;
+    localStorage.setItem('username', name);
 }
 
 
