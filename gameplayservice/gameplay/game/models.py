@@ -29,6 +29,10 @@ class Score(models.Model):
     win = models.BooleanField(default=False)
     opponent_score = models.IntegerField(default=0)
     created_date = models.DateTimeField(auto_now_add=True)
+    rank = models.IntegerField(default=0)
+    number_of_players = models.IntegerField(default=2)
+
+
 
     def game_type(self):
         return self.game_id.game_type
