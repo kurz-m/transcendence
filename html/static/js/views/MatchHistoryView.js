@@ -1,6 +1,50 @@
 import { getUsername } from "../authentication.js";
 import AbstractView from "./AbstractView.js";
 
+const TROPHY_IMAGES = {
+    1: "./static/media/trophy-gold.svg",
+    2: "./static/media/trophy-silver.svg",
+    3: "./static/media/trophy-bronze.svg",
+    4: "./static/media/loose.svg"
+};
+
+const mockMatches = {
+    "games": [
+        {
+            "opponent": "Florian",
+            "own_score": 12,
+            "opponent_score": 8,
+            "win": true,
+            "game_type": "single",
+            "game_id": 12345,
+            "place": null,
+            "amount": null
+        },
+        {
+            "opponent": "Team Bravo",
+            "own_score": 3,
+            "opponent_score": 5,
+            "win": false,
+            "game_type": "tournament",
+            "game_id": 54321,
+            "place": 2,
+            "amount": 5
+        },
+        {
+            "opponent": "noone",
+            "own_score": 5,
+            "opponent_score": 11,
+            "win": false,
+            "game_type": "single",
+            "game_id": 98765,
+            "place": null,
+            "amount": null
+        }
+    ]
+};
+
+const mockResponse = JSON.stringify(mockMatches);
+
 export default class extends AbstractView {
     constructor() {
         super();
@@ -55,11 +99,15 @@ export default class extends AbstractView {
     }
 
     getSingleScoreTemplate(user, userScore, opponent, opponentScore, date) {
+        const image = (userScore > opponentScore)
+            ? TROPHY_IMAGES[1]
+            : TROPHY_IMAGES[4];
+
         return `
         <div class="list-item">
             <div class="match-icon">S</div>
             <div class="match-date">${date}</div>
-            <img class="trophy" src="./static/media/trophy-gold.svg" draggable="false" (dragstart)="false;">
+            <img class="trophy" src="${image}" draggable="false" (dragstart)="false;">
             <div class="match-result">
                 <div class="left-player">${user}</div>
                 <div class="score">
@@ -75,11 +123,13 @@ export default class extends AbstractView {
     }
 
     getTournamentScoreTemplate(place, amount, date) {
+        const image = TROPHY_IMAGES[place] || TROPHY_IMAGES[4];
+
         return `
         <div class="list-item">
             <button class="match-button">T</button>
             <div class="match-date">${date}</div>
-            <img class="trophy" src="./static/media/trophy-gold.svg" draggable="false" (dragstart)="false;">
+            <img class="trophy" src="${image}" draggable="false" (dragstart)="false;">
             <div class="match-result">
                 <div class="tournament-place">${place + '.'}</div>
                 <div class="match-text">out of</div>
@@ -90,56 +140,52 @@ export default class extends AbstractView {
         `;
     }
 
+    async getMatches() {
+        try {
+            /* placeholder for the fetch call */
+            const response = JSON.parse(mockResponse);
+
+            if (response) {
+                return response.games;
+            }
+        } catch (error) {
+            console.error('error fetching games:', error);
+        }
+    }
+
     afterRender = async () => {
         this.matchListContainer = document.querySelector('.scroll-matches');
         this.matchListContainer.innerHTML = '';
 
-        const matches = [
-            {
-                "opponent": "Team Alpha",
-                "own_score": 12,
-                "opponent_score": 8,
-                "win": true,
-                "game_type": "Capture the Flag",
-                "game_id": 12345
-            },
-            {
-                "opponent": "Team Bravo",
-                "own_score": 3,
-                "opponent_score": 5,
-                "win": false,
-                "game_type": "Team Deathmatch",
-                "game_id": 54321
-            },
-            {
-                "opponent": "Team Charlie",
-                "own_score": 21,
-                "opponent_score": 19,
-                "win": true,
-                "game_type": "King of the Hill",
-                "game_id": 98765
+        try {
+            const matches = await this.getMatches();
+
+            if (matches.length === 0) {
+                const emptyMessage = document.createElement('div');
+                emptyMessage.classList.add('list-item');
+                emptyMessage.textContent = 'No matches';
+                this.matchListContainer.appendChild(emptyMessage);
+                return;
             }
-        ]
-
-        if (matches.length === 0) {
-            const emptyMessage = document.createElement('div');
-            emptyMessage.classList.add('list-item');
-            emptyMessage.textContent = 'No matches';
-            this.matchListContainer.appendChild(emptyMessage);
-            return;
+            
+            /* create virtual DOM for building it up and adding it at once to the visible DOM */
+            const fragment = document.createDocumentFragment();
+    
+            matches.forEach(match => {
+                const matchItem = document.createElement('div');
+                matchItem.classList.add('list-item');
+                matchItem.innerHTML = (match.game_type === 'single')
+                    ? this.getSingleScoreTemplate(getUsername(), match.own_score, match.opponent, match.opponent_score, match.game_id)
+                    : this.getTournamentScoreTemplate(match.place, match.amount, match.game_id);
+    
+                fragment.appendChild(matchItem);
+            });
+    
+            this.matchListContainer.appendChild(fragment);
+            
+        } catch (error) {
+            console.error('error fetching games:', error);
         }
-        
-        /* create virtual DOM for building it up and adding it at once to the visible DOM */
-        const fragment = document.createDocumentFragment();
 
-        matches.forEach(match => {
-            const matchItem = document.createElement('div');
-            matchItem.classList.add('list-item');
-            matchItem.innerHTML = (match.game_type === 'single')
-                ? this.getSingleScoreTemplate(getUsername(), match.own_score, match.opponent, match.opponent_score, match.game_id)
-                : this.getTournamentScoreTemplate();
-
-            fragment.appendChild(matchItem);
-        });
     }
 }
