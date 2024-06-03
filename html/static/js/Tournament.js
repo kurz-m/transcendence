@@ -13,6 +13,10 @@ class TournamentGame {
         this.attachEventListeners();
     }
 
+    run() {
+        
+    }
+
     getPlayerTemplate(player) {
         return `
         <div class="field">${player}</div>

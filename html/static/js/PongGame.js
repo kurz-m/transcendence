@@ -116,7 +116,20 @@ class PongGame {
         this.resetPaddles();
         this.resetBall();
 
+        this.onGameOver = null;
+        // this.attachEventListeners();
+    }
+
+    async run() {
+        /* attach event listeners to be able to start the game */
         this.attachEventListeners();
+
+        return new Promise((resolve) => {
+            this.onGameOver = () => {
+                this.resetGame();
+                resolve();
+            };
+        })
     }
 
     setPlayerNames() {
@@ -519,10 +532,8 @@ export const startPongGame = async (gameType, playerOne, playerTwo) => {
 
     currentPongGame = new PongGame(options);
 
-    if (gameType === 'tournament') {
-        return {
-            'left': currentPongGame.scoreLeft,
-            'right': currentPongGame.scoreRight
-        };
-    }
+    return currentPongGame.run().then(() => ({
+        'left': currentPongGame.scoreLeft,
+        'right': currentPongGame.scoreRight    
+        }));
 };
