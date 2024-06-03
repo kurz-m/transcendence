@@ -4,7 +4,9 @@ import { showGamePauseMenu, hideGamePauseMenu, getDefaultHeader } from "./shared
 
 const FPS = 60;
 const INTERVAL = 1000 / FPS;
+const AI_INTERVAL = 10;
 const INITIAL_PADDLE_SPEED = 12;
+const MAX_SCORE = 3;
 
 const POST_GAME_ID = 'https://transcendence.myprojekt.tech/api-game/game'
 const POST_SCORE_API = 'https://transcendence.myprojekt.tech/api-game/score'
@@ -60,6 +62,7 @@ class PongGame {
                 let bounds = object.getBoundingClientRect();
                 this.width = bounds.width;
                 this.height = bounds.height;
+                this.x = bounds.x;
                 this.y = bounds.y;
                 this.dy = 0;
             }
@@ -110,8 +113,17 @@ class PongGame {
         this.paddleSpeed = INITIAL_PADDLE_SPEED;
 
         /* countdown variables */
-        this.seconds = 5;
+this.seconds = 0;
         this.countdownInterval = 0;
+
+        /* variables for AI opponent */
+        this.isAI = (sessionStorage.getItem('opponent_name') == "AI");
+        console.log("is AI: " + this.isAI);
+        this.aiRefreshInterval = 0;
+        this.aiUpdateInterval = 0;
+        this.aiPrevBallX = this.ball.x;
+        this.aiPrevBallY = this.ball.y;
+        this.aiTargetY = this.ball.y;
 
         if (this.options.game_type === 'tournament') {
             this.playerLeftID.textContent = options.player_one;
@@ -140,7 +152,7 @@ class PongGame {
         /* set the name for the left player */
         const playerOne = localStorage.getItem('username');
         if (!playerOne) {
-            this.playerLeftID.textContent = 'Player 1';
+            this.playerLeftID.textContent = 'Me';
         } else {
             this.playerLeftID.textContent = playerOne;
         }
@@ -148,11 +160,10 @@ class PongGame {
         /* set the name for the right player */
         const playerTwo = sessionStorage.getItem('opponent_name');
         if (!playerTwo) {
-            this.playerRightID.textContent = 'Player 2';
+            this.playerRightID.textContent = 'Guest';
         } else {
             this.playerRightID.textContent = playerTwo;
         }
-
     }
 
     getPauseMenuVisibility() {
@@ -186,11 +197,13 @@ class PongGame {
                     this.pauseGame();
                 }
             }
-            if (event.key == 'ArrowUp') {
-                this.paddleRight.dy = -this.paddleSpeed;
-            }
-            if (event.key == 'ArrowDown') {
-                this.paddleRight.dy = this.paddleSpeed;
+            if (this.isAI == false) {
+                if (event.key == 'ArrowUp') {
+                    this.paddleRight.dy = -this.paddleSpeed;
+                }
+                if (event.key == 'ArrowDown') {
+                    this.paddleRight.dy = this.paddleSpeed;
+                }
             }
             if (event.key == 'w') {
                 this.paddleLeft.dy = -this.paddleSpeed;
@@ -201,7 +214,7 @@ class PongGame {
         }
 
         this.handleKeyUp = (event) => {
-            if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
+            if (!this.isAI && (event.key == 'ArrowUp' || event.key == 'ArrowDown')) {
                 this.paddleRight.dy = 0
             }
             if (event.key == 'w' || event.key == 's') {
@@ -264,11 +277,12 @@ class PongGame {
     }
 
     logScores() {
-        if (this.scoreLeft >= 3 || this.scoreRight >= 3) {
+        if (this.scoreLeft >= MAX_SCORE || this.scoreRight >= MAX_SCORE) {
             this.gameOver();
+        } else {
+            this.resetBall();
+            this.resetPaddles();
         }
-        this.resetBall();
-        this.resetPaddles();
     }
 
     resetBall() {
@@ -399,6 +413,32 @@ class PongGame {
         }
     }
 
+    refreshAI() {
+        console.log("AI refresh");
+        if (this.ball.x > this.aiPrevBallX) {
+            let m = (this.aiPrevBallY - this.ball.y) / (this.aiPrevBallX - this.ball.x);
+            let b = this.ball.y - m * this.ball.x;
+            var yc = m * this.paddleRight.x + b;
+            if (yc >= 0 && yc <= this.board.height) {
+                console.log("new target: " + yc);
+                this.aiTargetY = yc;
+            }
+        }
+
+        this.aiPrevBallX = this.ball.x;
+        this.aiPrevBallY = this.ball.y;
+    }
+
+    loopAI() {
+        if (this.aiTargetY > this.paddleRight.y + this.paddleRight.height - (this.paddleRight.height / 4)) {
+            this.paddleRight.dy = this.paddleSpeed;
+        } else if (this.aiTargetY < this.paddleRight.y + (this.paddleRight.height / 4)) {
+            this.paddleRight.dy = -this.paddleSpeed;
+        } else {
+            this.paddleRight.dy = 0;
+        }
+    }
+
     startGame() {
         if (!this.startTime) {
             this.startTime = new Date().getTime();
@@ -407,7 +447,7 @@ class PongGame {
         }
         this.ball.dx = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         this.ball.dy = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
-        this.loopInterval = window.setInterval(() => this.loop(), INTERVAL);
+        this.resumeGame()
     }
 
     stopGame() {
@@ -415,15 +455,22 @@ class PongGame {
             window.clearInterval(this.loopInterval);
             this.loopInterval = 0;
             this.paddleSpeed = INITIAL_PADDLE_SPEED;
+            if (this.isAI) {
+                window.clearInterval(this.aiRefreshInterval);
+                window.clearInterval(this.aiUpdateInterval);
+                this.aiRefreshInterval = 0;
+                this.aiUpdateInterval = 0;
+            }
         }
     }
 
     resetGame() {
-        if (this.loopInterval) {
-            window.clearInterval(this.loopInterval);
-            this.loopInterval = 0;
-            this.paddleSpeed = INITIAL_PADDLE_SPEED;
-        }
+        // if (this.loopInterval) {
+        //     window.clearInterval(this.loopInterval);
+        //     this.loopInterval = 0;
+        //     this.paddleSpeed = INITIAL_PADDLE_SPEED;
+        // }
+        this.stopGame();
         this.removeEventListeners();
     }
 
@@ -436,6 +483,10 @@ class PongGame {
 
     resumeGame() {
         hideGamePauseMenu();
+        if (this.isAI) {
+            this.aiRefreshInterval = window.setInterval(() => this.refreshAI(), AI_INTERVAL);
+            this.aiUpdateInterval = window.setInterval(() => this.loopAI(), INTERVAL);
+        }
         this.loopInterval = window.setInterval(() => this.loop(), INTERVAL);
     }
 

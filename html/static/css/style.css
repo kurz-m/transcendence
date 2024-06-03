@@ -472,7 +472,6 @@ body {
 }
 
 .a-large-button {
-  /* height: 64px; */
   display: block;
 }
 
@@ -506,6 +505,7 @@ body {
   margin-top: 19.5px;
 }
 
+.a-small-button,
 .small-button {
   height: 47px;
   cursor: pointer;
@@ -518,6 +518,11 @@ body {
   color: var(--color-white);
   text-align: top;
   padding: 0px 16px;
+}
+
+.a-small-button {
+  height: 41px;
+  display: block;
 }
 
 .stepper-inc {
@@ -638,6 +643,7 @@ body {
 }
 
 .match-button:hover,
+.a-small-button:hover,
 .small-button:hover {
   border-color: var(--color-dimgray);
   background: var(--color-darkgray);
@@ -705,6 +711,7 @@ a:active {
 
 .a-large-button:active,
 .large-button:active,
+.a-small-button:active,
 .small-button:active,
 .friend-button:active .field,
 .stepper-inc:active .stepper-text-inc,

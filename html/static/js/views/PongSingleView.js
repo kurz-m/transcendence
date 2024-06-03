@@ -5,6 +5,7 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Single Game");
+        this.controller = new AbortController();
     }
 
     getHtml = async () => {
@@ -20,11 +21,11 @@ export default class extends AbstractView {
             </a>
             </div>
             <div class="content">
-            <button class="large-button">Play vs AI</button>
+            <a id="ai-button" href="/pong-game" class="a-large-button" data-link>Play vs. AI</a>
             <div class="label-field-button">
-                <div class="label">Play vs</div>
+                <div class="label">Play vs.</div>
                 <input id="opponent-name" class="text-field" type="text" placeholder="Guest">
-                <a id="single-game-play" href="/pong-game" class="small-button" data-link>play</a>
+                <a id="play-button" href="/pong-game" class="a-small-button" data-link>play</a>
             </div>
             </div>
         </div>
@@ -32,15 +33,26 @@ export default class extends AbstractView {
     }
 
     afterRender = async () => {
-        const opponentName = document.getElementById('opponent-name')
+        const playButton = document.getElementById('play-button');
+        const aiButton = document.getElementById('ai-button');
 
-        const handleInput = (e) => {
-            const name = e.target.value;
-            setOpponent(name);
+        const handlePlayButton = () => {
+            setOpponent(document.getElementById('opponent-name').value);
         }
-        opponentName.addEventListener('input', handleInput);
+
+        const handleAIButton = () => {
+            setOpponent("AI");
+        }
+
+        playButton.addEventListener('click', handlePlayButton, {
+            signal: this.controller.signal
+        });
+        aiButton.addEventListener('click', handleAIButton, {
+            signal: this.controller.signal
+        });
+
         return () => {
-            opponentName.removeEventListener('input', handleInput);
+            this.controller.abort();
         }
     }
 }
