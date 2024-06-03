@@ -22,26 +22,7 @@ export default class extends AbstractView {
         </div>
         <div class="content">
         <div class="people-list">
-            <div class="scroll-people">
-                <div class="friend-item">
-                    <button class="friend-button">
-                    <img class="small-pp" style="display: block;" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
-                    <div class="field">Aaron</div>
-                    </button>
-                    <button class="clean-button">
-                    <img class="small-icon" src="./static/media/person-delete.svg" alt="Delete">
-                    </button>
-                </div>
-                <div class="friend-item">
-                    <button class="friend-button">
-                    <img class="small-pp" style="display: block;" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;">
-                    <div class="field">Aaron</div>
-                    </button>
-                    <button class="clean-button">
-                    <img class="small-icon" src="./static/media/person-delete.svg" alt="Delete">
-                    </button>
-                </div>
-            </div>
+            <div class="scroll-people"></div>
         </div>
         <div class="label-field-button">
             <input id="friends-input" class="text-field" type="text" placeholder="username">
@@ -55,17 +36,16 @@ export default class extends AbstractView {
     attachEventListeners() {
         this.inputFriend = document.getElementById('friends-input');
         this.addFriendButton = document.getElementById('add-friends');
-        
+
         this.handleAddFriend = () => {
             const friendValue = this.inputFriend.value.trim();
 
             if (friendValue) {
                 /* TODO: make api request to create a friend */
-                console.log(friendValue);
                 const friendItem = document.createElement('div');
                 friendItem.classList.add('friend-item');
                 friendItem.innerHTML = this.getFriendTemplate(friendValue);
-                
+
                 /* add event listener to the delete button */
                 const deleteButton = friendItem.querySelector('.clean-button');
                 const deleteHandler = () => {
@@ -135,7 +115,7 @@ export default class extends AbstractView {
             const friendItem = document.createElement('div');
             friendItem.classList.add('friend-item');
             friendItem.innerHTML = this.getFriendTemplate(friend.name);
-            
+
             const deleteButton = friendItem.querySelector('.clean-button');
             const deleteHandler = () => {
                 //TODO: make an api call to /api/friends/{friend_id}
@@ -143,7 +123,7 @@ export default class extends AbstractView {
                 friendItem.remove();
             };
             deleteButton.addEventListener('click', deleteHandler); 
-            
+
 
             fragment.appendChild(friendItem);
         });
