@@ -9,6 +9,14 @@ const mockObject = {
     game_id: 4
 };
 
+const states = {
+    ANNOUNCE_GAME: 'announce_game',
+    WAIT_GAME: 'wait_game',
+    PLAY_GAME: 'play_game',
+    SHOW_SCORE: 'show_score',
+    SHOW_FINAL_SCORE: 'show_final_score'
+}
+
 class TournamentGame {
     constructor() {
         /* declare elements for creating the event */
@@ -19,6 +27,7 @@ class TournamentGame {
         this.totalPlayersElement = document.getElementById('total-players');
         this.playersArray = [];
         this.matchupArray = [];
+        this.mIndex = 0;
 
         /* elements for event listeners */
         this.inputPlayer = document.getElementById('player-input');
@@ -30,8 +39,20 @@ class TournamentGame {
 
         /* controller for removing the event listeners */
         this.controller = new AbortController();
+
+        /* elements for the game */
+        this.currentState = states.ANNOUNCE_GAME;
+        this.announceWindow = document.getElementById('announce-window');
+        this.hudWindow = document.getElementById('hud-window');
+        this.announceWindow = document.getElementById('announce-window');
+        this.scoreWindow = document.getElementById('final-score-window');
+        this.announceLeft = document.getElementById('announce-left');
+        this.announceRight = document.getElementById('announce-right');
+        this.nextGameButton = document.getElementById('next-game-button');
+        this.announcePlayButton = document.getElementById('announce-play-button');
+        this.ball = document.querySelector('#ball');
     }
-    
+
     async run() {
         /* start the event listeners */
         this.attachEventListeners();
@@ -68,11 +89,11 @@ class TournamentGame {
         </button>
         `;
     }
-    
+
     attachEventListeners() {
         this.handleAddPlayer = () => {
             const playerName = this.inputPlayer.value.trim();
-            
+
             if (playerName) {
                 const playerItem = document.createElement('div');
                 playerItem.classList.add('list-item');
@@ -80,29 +101,29 @@ class TournamentGame {
                 this.totalPlayersCount++;
                 this.totalPlayersElement.textContent = `Total Players: ${this.totalPlayersCount}`;
                 this.playersArray.push(playerName);
-                
+
                 /* add event listener to the remove button */
                 const deleteButton = playerItem.querySelector('.clean-button');
                 const deleteHandler = (playerName) => {
                     this.totalPlayersCount--;
                     this.totalPlayersElement.textContent = `Total Players: ${this.totalPlayersCount}`;
-                    
+
                     const index = this.playersArray.indexOf(playerName);
                     if (index > -1) {
                         this.playersArray.splice(index, 1);
                     }
-                    
+
                     playerItem.remove();
                 };
                 deleteButton.addEventListener('click', deleteHandler.bind(null, playerName), { once: true });
-                
+
                 /* attach the new created player to the tournament */
                 this.playerListContainer.appendChild(playerItem);
                 this.inputPlayer.value = '';
             }
         }
         this.addPlayerButton.addEventListener('click', this.handleAddPlayer, {
-             signal: this.controller.signal
+            signal: this.controller.signal
         });
 
         this.handleAddPlayerOnEnter = e => {
@@ -142,25 +163,12 @@ class TournamentGame {
 
     tournamentLoop() {
         this.removeEventListeners();
-        const playSingleMatch = async () => {
-            for (const match of this.matchupArray) {
-                this.options.player_one = match.left;
-                this.options.player_two = match.right;
-
-                try {
-                    match.score = await startPongGame(this.options);
-                } catch (error) {
-                    
-                }
-            }
-
-        }
+        this.executeGameState();
     }
 
     removeEventListeners() {
         this.controller.abort();
     }
-
 
     createTournamentSchedule() {
         for (let i = 0; i < this.playersArray.length; i++) {
@@ -179,6 +187,96 @@ class TournamentGame {
                 });
             }
         }
+        this.currentMatch = this.matchupArray[this.mIndex];
+    }
+
+    /* functions for the state machine of the tournament */
+    hasMoreMatches() {
+        return this.mIndex < this.matchupArray.length - 1;
+    }
+
+    nextMatch() {
+        this.mIndex++;
+        this.currentMatch = this.matchupArray[this.mIndex];
+    }
+
+    transition(newState) {
+        this.currentState = newState;
+        this.executeGameState();
+    }
+
+    executeGameState() {
+        switch (this.currentState) {
+            case states.ANNOUNCE_GAME:
+                this.announceGame();
+                break;
+            case states.WAIT_GAME:
+                this.waitForGame();
+                break;
+            case states.PLAY_GAME:
+                this.playGame();
+                break;
+            case states.SHOW_SCORE:
+                this.showScore();
+                break;
+            case states.SHOW_FINAL_SCORE:
+                this.showFinalScore();
+                break;
+            default:
+                console.log('invalid state');
+        }
+    }
+
+    announceGame() {
+        this.tournamentWindow.classList.add('hidden');
+        this.announceLeft.textContent = this.currentMatch.left;
+        this.announceRight.textContent = this.currentMatch.right;
+        this.announceWindow.classList.remove('hidden');
+        this.transition(states.WAIT_GAME);
+    }
+
+    waitForGame() {
+        this.handleAnnouncePlay = () => {
+            this.ball.classList.remove('hidden');
+            this.announceWindow.classList.add('hidden');
+            this.hudWindow.classList.remove('hidden');
+            this.transition(states.PLAY_GAME);
+        };
+        this.announcePlayButton.addEventListener('click', this.handleAnnouncePlay, {
+            once: true
+        });
+    }
+
+    async playGame() {
+        this.options.player_one = this.currentMatch.left;
+        this.options.player_two = this.currentMatch.right;
+
+        try {
+            this.currentMatch.score = await startPongGame(this.options);
+            this.transition(states.SHOW_SCORE);
+        } catch (error) {
+            console.error('error:', error);
+        }
+    }
+
+    showScore() {
+
+        this.nextGameHandler = () => {
+            if (this.hasMoreMatches()) {
+                this.scoreWindow.classList.add('hidden');
+                this.nextMatch();
+                this.transition(states.ANNOUNCE_GAME);
+            } else {
+                this.transition(states.SHOW_FINAL_SCORE);
+            }
+        };
+        this.nextGameButton.addEventListener('click', this.nextGameHandler, {
+            once: true
+        });
+    }
+
+    showFinalScore() {
+        console.log('game is finished now');
     }
 }
 

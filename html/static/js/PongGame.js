@@ -69,19 +69,23 @@ class PongGame {
 
         /* Declare all elements that are necessary for a pong game */
         this.app = document.getElementById('app');
-        this.pauseMenu = document.getElementById('PauseMenu');
-        this.countdownWindow = document.getElementById('CountdownWindow');
-        this.countdownText = document.getElementById('CountdownText');
-        this.continueButton = document.getElementById('PauseContinueButton');
-        this.quitButton = document.getElementById('PauseMenuQuitButton');
-        this.finalScoreWindow = document.getElementById('FinalScore');
+        this.pauseMenu = document.getElementById('pause-window');
+        this.countdownWindow = document.getElementById('countdown-window');
+        this.countdownText = document.getElementById('countdown-text');
+        this.continueButton = document.getElementById('continue-button');
+        this.quitButton = document.getElementById('quit-button');
+        this.finalScoreWindow = document.getElementById('final-score-window');
 
         /* hud elements for the pong game */
         this.hudWindow = document.querySelector('.hud');
         this.scoreLeftObj = document.getElementById('score_l');
+        this.scoreLeftObj.innerHTML = '0';
         this.scoreRightObj = document.getElementById('score_r');
+        this.scoreLeftObj.innerHTML = '0';
         this.minutesObj = document.getElementById('minutes');
         this.secondsObj = document.getElementById('seconds');
+        this.minutesObj.innerHTML = this.padTime(Math.floor(0));
+        this.secondsObj.innerHTML = this.padTime(Math.floor(0));
         this.playerLeftID = document.getElementById('player_l_name');
         this.playerRightID = document.getElementById('player_r_name');
 
@@ -90,9 +94,9 @@ class PongGame {
         this.finalScoreMinutes = document.getElementById('minutes__final');
         this.finalScoreSeconds = document.getElementById('seconds__final');
         this.winnerName = document.getElementById('winner-name');
-        this.looserName = document.getElementById('looser-name'); 
+        this.looserName = document.getElementById('looser-name');
         this.winnerScore = document.getElementById('winner-score');
-        this.looserScore = document.getElementById('looser-score'); 
+        this.looserScore = document.getElementById('looser-score');
         this.backHomeButton = document.getElementById('back-home-button');
 
         /* Declare variables for the game logic */
@@ -161,20 +165,23 @@ class PongGame {
 
         this.handleKeyDown = (event) => {
             if (event.key == 'Enter') {
-                if (!this.countdownWindow.classList.contains('hidden')) {
+                if (!this.countdownWindow.classList.contains('hidden')) return;
+                if (!this.finalScoreWindow.classList.contains('hidden')) {
+                    if (this.options.game_type !== 'tournament') {
+                        this.removeEventListeners();
+                        navigateTo('/');
+                    }
                     return;
                 }
-                if (!this.finalScoreWindow.classList.contains('hidden')) {
-                    this.removeEventListeners();
-                    navigateTo('/');
-                } else if (!this.loopInterval && !this.getPauseMenuVisibility()) {
+                if (!this.loopInterval && !this.getPauseMenuVisibility()) {
                     this.countdown();
                 } else if (this.getPauseMenuVisibility()) {
                     this.resumeGame();
                 }
             }
             if (event.key == 'Escape') {
-                if (this.countdownWindow.classList.contains('hidden')) {
+                if (this.countdownWindow.classList.contains('hidden') &&
+                    this.finalScoreWindow.classList.contains('hidden')) {
                     this.pauseGame();
                 }
             }
@@ -298,7 +305,7 @@ class PongGame {
         if (Math.sign(paddleCenterHeight - center.x) != Math.sign(paddleCenterHeight - centerNew.x)) {
             if ((center.y > bounds.top && center.y < bounds.bottom) ||
                 (centerNew.y > bounds.top && centerNew.y < bounds.bottomw)) {
-                    return true;
+                return true;
             }
         }
         return false;
@@ -335,23 +342,23 @@ class PongGame {
 
         if (this.intersectPaddle(this.paddleLeft.object, centerPoint, centerPointNew) ||
             this.intersectPaddle(this.paddleRight.object, centerPoint, centerPointNew)) {
-                this.ball.dx = -this.ball.dx;
-                if (this.ball.dx < 0) {
-                    this.ball.dx -= Math.round(Math.random() * 2);
-                } else {
-                    this.ball.dx += Math.round(Math.random() * 2);
-                }
-                if (this.ball.dy < 0) {
-                    this.ball.dy -= Math.round(Math.random() * 2);
-                } else {
-                    this.ball.dy += Math.round(Math.random() * 2);
-                }
-                this.paddleSpeed += Math.round(Math.random());
-                newLeft = this.ball.x + this.ball.dx;
+            this.ball.dx = -this.ball.dx;
+            if (this.ball.dx < 0) {
+                this.ball.dx -= Math.round(Math.random() * 2);
+            } else {
+                this.ball.dx += Math.round(Math.random() * 2);
             }
-            this.ball.x = newLeft;
-            this.ball.y = newTop;
-            this.updateBall();
+            if (this.ball.dy < 0) {
+                this.ball.dy -= Math.round(Math.random() * 2);
+            } else {
+                this.ball.dy += Math.round(Math.random() * 2);
+            }
+            this.paddleSpeed += Math.round(Math.random());
+            newLeft = this.ball.x + this.ball.dx;
+        }
+        this.ball.x = newLeft;
+        this.ball.y = newTop;
+        this.updateBall();
     }
 
     padTime(num) {
@@ -379,7 +386,7 @@ class PongGame {
         this.countdownInterval = window.setInterval(() => this.decrementCountdown(), 1000);
         this.decrementCountdown();
     }
-    
+
     decrementCountdown() {
         this.countdownText.innerHTML = this.seconds + '';
         if (this.seconds === 0) {
@@ -395,7 +402,7 @@ class PongGame {
         if (!this.startTime) {
             this.startTime = new Date().getTime();
             this.updateTime();
-            this.timeInterval = window.setInterval(() =>this.updateTime(), 500);
+            this.timeInterval = window.setInterval(() => this.updateTime(), 500);
         }
         this.ball.dx = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         this.ball.dy = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
@@ -447,22 +454,22 @@ class PongGame {
                 "win": this.scoreLeft > this.scoreRight,
                 "game_id": this.options.game_id
             });
-    
+
             const header = getDefaultHeader();
-    
+
             fetch(POST_SCORE_API, {
                 method: 'POST',
                 headers: header,
                 body: raw
             })
-            .then(response => {
-                console.log(response.text());
-            })
-            .catch(error => console.log('error', error));
-    
+                .then(response => {
+                    console.log(response.text());
+                })
+                .catch(error => console.log('error', error));
+
             sessionStorage.removeItem('opponent_name');
-            this.onGameOver();
         }
+        this.onGameOver();
     }
 
     finalScoreUpdate() {
@@ -495,7 +502,7 @@ const createNewSingleGame = async () => {
     const raw = JSON.stringify({
         "game_type": "single"
     });
-    
+
     try {
         const response = await fetch(POST_GAME_ID, {
             method: 'POST',
@@ -540,12 +547,12 @@ export const startPongGame = async (options) => {
             game_id: options.game_id
         };
     }
-    
+
 
     currentPongGame = new PongGame(gameOptions);
 
     return currentPongGame.run().then(() => ({
         'left': currentPongGame.scoreLeft,
-        'right': currentPongGame.scoreRight    
-        }));
+        'right': currentPongGame.scoreRight
+    }));
 };
