@@ -22,14 +22,14 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework import routers
 from jwtapp.jwt import CustomTokenVerifyView, GenerateTokenView
 
-router = routers.DefaultRouter()
-# router.register(r'leaderboard', LeaderboardViewSet)
-router.register(r'player', views.PlayerViewSet)
-router.register(r'users', views.UserViewSet)
+# router = routers.DefaultRouter()
+# # router.register(r'leaderboard', LeaderboardViewSet)
+# router.register(r'player', views.PlayerViewSet)
+# router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api-jwt/', include(router.urls)),
+    # path('admin/', admin.site.urls),
+    # path('api-jwt/', include(router.urls)),
     path('api-jwt/token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api-jwt/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('api-jwt/token/verify', CustomTokenVerifyView.as_view(), name='token_verify'),
