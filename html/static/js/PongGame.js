@@ -1,14 +1,15 @@
 import { navigateTo } from "./index.js";
-import { showGamePauseMenu, hideGamePauseMenu } from "./shared.js";
+import { showGamePauseMenu, hideGamePauseMenu, getDefaultHeader } from "./shared.js";
 
 const FPS = 60;
 const INTERVAL = 1000 / FPS;
 const INITIAL_PADDLE_SPEED = 12;
 
-const scoreAPI = 'https://transcendence.myprojekt.tech/api-game/score'
+const POST_GAME_ID = 'https://transcendence.myprojekt.tech/api-game/game'
+const POST_SCORE_API = 'https://transcendence.myprojekt.tech/api-game/score'
 
 class PongGame {
-    constructor(gameType, playerOne, playerTwo) {
+    constructor(options) {
 
         /* Declare the Board class */
         this.Board = class Board {
@@ -85,7 +86,7 @@ class PongGame {
         this.playerRightID = document.getElementById('player_r_name');
 
         /* elements for final score */
-        this.gameType = gameType;
+        this.options = options;;
         this.finalScoreMinutes = document.getElementById('minutes__final');
         this.finalScoreSeconds = document.getElementById('seconds__final');
         this.winnerName = document.getElementById('winner-name');
@@ -106,9 +107,9 @@ class PongGame {
         this.seconds = 5;
         this.countdownInterval = 0;
 
-        if (playerOne && playerTwo) {
-            this.playerLeftID.textContent = playerOne;
-            this.playerRightID.textContent = playerTwo;
+        if (options.player_one && options.player_two) {
+            this.playerLeftID.textContent = options.player_one;
+            this.playerRightID.textContent = options.player_two;
         } else {
             this.setPlayerNames();
         }
@@ -420,30 +421,29 @@ class PongGame {
 
         this.finalScoreUpdate();
 
-        let raw = JSON.stringify({
-            "opponent": this.playerRightID.textContent,
-            "own_score": this.scoreLeft,
-            "opponent_score": this.scoreRight,
-            "win": this.scoreLeft > this.scoreRight,
-            "game_id": sessionStorage.getItem('game_id'),
-        });
-
-        let header = new Headers();
-        header.append("Content-Type", "application/json");
-        header.append('Date', new Date().toUTCString());
-        header.append('User-Agent', 'Transcendence Pong Game Website');
-
-        fetch(scoreAPI, {
-            method: 'POST',
-            headers: header,
-            body: raw
-        })
-        .then(response => {
-            console.log(response.text());
-        })
-        .catch(error => console.log('error', error));
-
-        sessionStorage.removeItem('opponent_name');
+        if (this.options.game_type === 'single') {
+            let raw = JSON.stringify({
+                "opponent": this.playerRightID.textContent,
+                "own_score": this.scoreLeft,
+                "opponent_score": this.scoreRight,
+                "win": this.scoreLeft > this.scoreRight,
+                "game_id": this.options.game_id
+            });
+    
+            const header = getDefaultHeader();
+    
+            fetch(POST_SCORE_API, {
+                method: 'POST',
+                headers: header,
+                body: raw
+            })
+            .then(response => {
+                console.log(response.text());
+            })
+            .catch(error => console.log('error', error));
+    
+            sessionStorage.removeItem('opponent_name');
+        }
     }
 
     finalScoreUpdate() {
@@ -469,11 +469,60 @@ class PongGame {
 }
 
 let currentPongGame = null;
+let gameObject = null;
 
-export const startPongGame = (gameType, playerOne, playerTwo) => {
+const createNewSingleGame = async () => {
+    const header = getDefaultHeader();
+    const raw = JSON.stringify({
+        "game_type": "single"
+    });
+    
+    try {
+        const response = await fetch(POST_GAME_ID, {
+            method: 'POST',
+            headers: header,
+            body: raw
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error creating single game:', error);
+        throw error;
+    }
+}
+
+export const startPongGame = async (gameType, playerOne, playerTwo) => {
     if (currentPongGame) {
         currentPongGame.resetGame();
         currentPongGame = null;
+        gameObject = null;
     }
-    currentPongGame = new PongGame(gameType, playerOne, playerTwo);
+    if (gameType !== 'tournament') {
+        try {
+            gameObject = await createNewSingleGame();
+            gameType = 'single';
+        } catch (error) {
+            console.error('Error starting single game:', error);
+            return;
+        }
+    }
+
+    const options = {
+        "game_type": gameType,
+        "player_one": playerOne,
+        "player_two": playerTwo,
+        "game_id": gameObject.id
+    };
+
+    currentPongGame = new PongGame(options);
+
+    if (gameType === 'tournament') {
+        return {
+            'left': currentPongGame.scoreLeft,
+            'right': currentPongGame.scoreRight
+        };
+    }
 };
