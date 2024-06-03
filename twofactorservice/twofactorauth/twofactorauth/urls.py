@@ -23,12 +23,11 @@ from django.conf.urls.static import static
 from mfaauthenticator.mfa import ServeMedia
 from mfaauthenticator.mfa import EnableMFA, UpdateMFA, VerifyMFA, DisableMFA
 
-router = routers.DefaultRouter()
-router.register(r'player', views.PlayerViewSet)
+# router = routers.DefaultRouter()
+# router.register(r'player', views.PlayerViewSet, basename='player')
 
 urlpatterns = [
-    path('api-mfa/', include(router.urls)),
-    path('admin/', admin.site.urls),
+    # path('api-mfa/', include(router.urls)),
     path('api-mfa/enable', EnableMFA.as_view(), name='enable_mfa'),
     path('api-mfa/disable', DisableMFA.as_view(), name='disable_mfa'),
     path('api-mfa/update', UpdateMFA.as_view(), name='update_mfa'),
