@@ -26,14 +26,11 @@ from remoteauth.utils import ServeMedia
 from players.friendrequest import FriendRequestSendView, AcceptFriendRequestView, FriendRequestsAPIView
 
 router = routers.DefaultRouter()
-# router.register(r'leaderboard', LeaderboardViewSet)
-router.register(r'player', views.PlayerViewSet)
-router.register(r'users', views.UserViewSet)
+router.register(r'player', views.PlayerViewSet, basename='players')
+router.register(r'users', views.UserViewSet, basename='users')
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    # path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
     path('api/auth/login', authorizeCall.as_view(), name='auth-authorizeRequest'),
     path('api/auth/logout', logOut.as_view(), name='auth-logout'),
     path('api/auth/callback', callbackCode.as_view(), name='auth-callback'),
