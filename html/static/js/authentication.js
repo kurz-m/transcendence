@@ -2,7 +2,6 @@ import { navigateTo } from "./index.js";
 import { getCookie, toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
 
 let isLoggedIn = false;
-let username = null;
 
 export const getLoggedIn = () => isLoggedIn;
 export const setLoggedIn = bool => {
@@ -58,7 +57,7 @@ export const handleAuthenticationCallback = async () => {
     } catch (error) {
         console.error('Error fetching data:', error);
     }
-    localStorage.setItem('username', getCookie('user'));
+    setUsername(getCookie('user'));
     navigateTo('/');
 }
 
@@ -113,7 +112,7 @@ export const checkLoginStatus = async () => {
         isLoggedIn = response.ok;
         
         if (isLoggedIn) {
-            localStorage.setItem('username', getCookie('user'));
+            setUsername(getCookie('user'));
         }
     } catch (error) {
         console.error('error:', error);
