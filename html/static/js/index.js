@@ -2,7 +2,7 @@ import Dashboard from "./views/DashboardView.js";
 import Account from "./views/AccountView.js";
 import PongGame from "./views/PongGameView.js";
 import Friends from "./views/FriendsView.js";
-import { checkLoginStatus, getLoggedIn, getUsername, handleAuthenticationCallback, loginCallback, logoutCallback } from "./authentication.js";
+import { checkLoginStatus, getLoggedIn, handleAuthenticationCallback, loginCallback, logoutCallback } from "./authentication.js";
 import { toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
 import PongMenuView from "./views/PongMenuView.js";
 import PongSingleView from "./views/PongSingleView.js";
