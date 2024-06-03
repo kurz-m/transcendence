@@ -1,37 +1,40 @@
 from django.contrib.auth.models import Group, User
 from rest_framework import permissions, viewsets
-from players.serializers import GroupSerializer, UserSerializer, PlayerSerializer, FriendRequestSerializer
+from players.serializers import UserSerializer, PlayerSerializer, FriendRequestSerializer
 from players.models import Players
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from players.permission import IsOwnerAndNotDelete, IsOwnerAndNotDeleteUsers
 
 
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerAndNotDeleteUsers]
 
-
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited
-    """
-    queryset = Group.objects.all().order_by('name')
-    serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    def get_queryset(self):
+        user = self.request.user
+        return User.objects.filter(id=user.id).order_by('-date_joined')
 
 
 class PlayerViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows players to be view and edited
     """
-    queryset = Players.objects.all().order_by('-user__date_joined')
     serializer_class = PlayerSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerAndNotDelete]
+
+    def get_queryset(self):
+        user = self.request.user
+        player = Players.objects.get(user=user)
+
+        friends_ids = player.friends.values_list('id', flat=True)
+        ids_to_view = list(friends_ids) + [player.id]
+        return Players.objects.filter(id__in=ids_to_view).order_by('-user__date_joined')
+
 
 
 class FriendsApiView(APIView):
