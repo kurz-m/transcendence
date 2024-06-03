@@ -36,8 +36,6 @@ export const showGamePauseMenu = () => {
 
 export const getDefaultHeader = () => {
     let header = new Headers();
-
-    /* TODO: adding a Host for the header */
     header.append('Content-Type', 'application/json');
     header.append('Date', new Date().toUTCString());
     header.append('User-Agent', 'Transcendence Pong Game Website');

@@ -1,3 +1,8 @@
+import { getDefaultHeader } from "./shared.js";
+
+const POST_GAME_ID = 'https://transcendence.myprojekt.tech/api-game/game'
+const POST_SCORE_API = 'https://transcendence.myprojekt.tech/api-game/score'
+
 class TournamentGame {
     constructor() {
         /* declare elements for creating the event */
@@ -9,12 +14,44 @@ class TournamentGame {
         this.playersArray = [];
         this.matchupArray = [];
 
+        /* elements for event listeners */
+        this.inputPlayer = document.getElementById('player-input');
+        this.addPlayerButton = document.getElementById('add-player');
+        this.startTournamentButton = document.getElementById('start-tournament');
+
+        this.gameObject = null;
+        this.options = null;
+
+        /* controller for removing the event listeners */
+        this.controller = new AbortController();
+    }
+    
+    async run() {
         /* start the event listeners */
         this.attachEventListeners();
     }
 
-    run() {
-        
+    createNewTournamentId = async () => {
+        const header = getDefaultHeader();
+        const raw = JSON.stringify({
+            "game_type": "tournament"
+        });
+
+        try {
+            const response = await fetch(POST_GAME_ID, {
+                method: 'POST',
+                headers: header,
+                body: raw
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error creating a tournament:', error);
+            throw error;
+        }
     }
 
     getPlayerTemplate(player) {
@@ -25,16 +62,11 @@ class TournamentGame {
         </button>
         `;
     }
-
+    
     attachEventListeners() {
-        /* elements for adding players to the tournament */
-        /* TODO: add player input to an array of players */
-        this.inputPlayer = document.getElementById('player-input');
-        this.addPlayerButton = document.getElementById('add-player');
-
         this.handleAddPlayer = () => {
             const playerName = this.inputPlayer.value.trim();
-
+            
             if (playerName) {
                 const playerItem = document.createElement('div');
                 playerItem.classList.add('list-item');
@@ -42,32 +74,34 @@ class TournamentGame {
                 this.totalPlayersCount++;
                 this.totalPlayersElement.textContent = `Total Players: ${this.totalPlayersCount}`;
                 this.playersArray.push(playerName);
-
+                
                 /* add event listener to the remove button */
                 const deleteButton = playerItem.querySelector('.clean-button');
                 const deleteHandler = (playerName) => {
                     this.totalPlayersCount--;
                     this.totalPlayersElement.textContent = `Total Players: ${this.totalPlayersCount}`;
-
+                    
                     const index = this.playersArray.indexOf(playerName);
                     if (index > -1) {
                         this.playersArray.splice(index, 1);
                     }
-
+                    
                     playerItem.remove();
                 };
                 deleteButton.addEventListener('click', deleteHandler.bind(null, playerName), { once: true });
-
+                
                 /* attach the new created player to the tournament */
                 this.playerListContainer.appendChild(playerItem);
                 this.inputPlayer.value = '';
-
+                
                 this.matchupArray.length = 0;
                 this.createTournamentSchedule();
                 this.testMatches();
             }
         }
-        this.addPlayerButton.addEventListener('click', this.handleAddPlayer);
+        this.addPlayerButton.addEventListener('click', this.handleAddPlayer, {
+             signal: this.controller.signal
+        });
 
         this.handleAddPlayerOnEnter = e => {
             if (e.key === 'Enter') {
@@ -75,20 +109,41 @@ class TournamentGame {
                 this.handleAddPlayer();
             }
         }
-        this.inputPlayer.addEventListener('keydown', this.handleAddPlayerOnEnter);
+        this.inputPlayer.addEventListener('keydown', this.handleAddPlayerOnEnter, {
+            signal: this.controller.signal
+        });
 
-        /* element for starting the tournament */
-        this.startTournamentButton = document.getElementById('start-tournament');
 
         this.handleStartTournament = () => {
+            const startTournament = async () => {
+                try {
+                    this.gameObject = await this.createNewTournamentId();
+                } catch (error) {
+                    console.error('Error starting tournament:', error);
+                    return;
+                }
+                this.options = {
+                    game_type: this.gameObject.game_type,
+                    game_id: this.gameObject.id
+                 }
+            }
 
+            this.tournamentLoop();
+
+            this.startTournamentButton.addEventListener('click', startTournament, {
+                once: true
+            });
         }
     }
 
-    removeEventListeners() {
-        this.addPlayerButton.removeEventListener('click', this.handleAddPlayer);
-        this.inputPlayer.removeEventListener('keydown', this.handleAddPlayerOnEnter);
+    tournamentLoop() {
+
     }
+
+    removeEventListeners() {
+        this.controller.abort();
+    }
+
 
     createTournamentSchedule() {
         for (let i = 0; i < this.playersArray.length; i++) {
@@ -120,4 +175,5 @@ export const startTournament = () => {
         currentTournament = null;
     }
     currentTournament = new TournamentGame();
+    currentTournament.run();
 };

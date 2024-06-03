@@ -115,6 +115,6 @@ export const checkLoginStatus = async () => {
             setUsername(getCookie('user'));
         }
     } catch (error) {
-        console.error('error:', error);
+        isLoggedIn = false;
     }
 };
