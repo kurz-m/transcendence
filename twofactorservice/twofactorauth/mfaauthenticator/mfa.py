@@ -12,10 +12,11 @@ from django.utils.http import urlencode
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
 from django.http import HttpResponse, Http404
+from mfaauthenticator.permission import IsOwnerAndNotDelete
 
 
 class ServeMedia(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerAndNotDelete]
 
     def get(self, request, filename):
         file_path = os.path.join(settings.MEDIA_ROOT, filename)
@@ -69,7 +70,7 @@ def verify_token(user, token):
 
 
 class EnableMFA(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerAndNotDelete]
 
     def post(self, request):
         user = request.user
@@ -86,7 +87,7 @@ class EnableMFA(APIView):
 
 
 class UpdateMFA(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerAndNotDelete]
 
     def put(self, request):
         user = request.user
@@ -100,7 +101,7 @@ class UpdateMFA(APIView):
 
 
 class DisableMFA(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerAndNotDelete]
 
     def put(self, request):
         user = request.user
@@ -111,7 +112,7 @@ class DisableMFA(APIView):
 
 
 class VerifyMFA(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerAndNotDelete]
     
     def post(self, request):
         token = request.data.get('token')
