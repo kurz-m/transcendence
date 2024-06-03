@@ -514,29 +514,33 @@ const createNewSingleGame = async () => {
 }
 
 export const startPongGame = async (options) => {
+    let gameOptions = null;
     if (currentPongGame) {
         currentPongGame.resetGame();
         currentPongGame = null;
         gameObject = null;
     }
-    if (gameType !== 'tournament') {
+    if (!options) {
         try {
             // gameObject = await createNewSingleGame();
-            gameType = 'single';
+            /* local development */
+            gameOptions = {
+                game_type: 'single',
+                game_id: 2
+            };
         } catch (error) {
             console.error('Error starting single game:', error);
             return;
         }
+    } else {
+        gameOptions = {
+            game_type: options.game_type,
+            player_one: options.player_one,
+            player_two: options.player_two,
+            game_id: options.game_id
+        };
     }
-
-    const gameOptions = {
-        game_type: options.game_type,
-        player_one: options.player_one,
-        player_two: options.player_two,
-        /* local development */
-        // "game_id": (options.game_type) ? gameObject.id : options.game_type;
-        game_id: 2
-    };
+    
 
     currentPongGame = new PongGame(gameOptions);
 
