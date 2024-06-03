@@ -7,11 +7,12 @@ from rest_framework.views import APIView
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from rest_framework import permissions
+from players.permission import IsOwnerAndNotDeleteFriends
 
 
 class FriendRequestSendView(APIView):
     serializer_class = FriendRequestCreateSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerAndNotDeleteFriends]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -29,6 +30,9 @@ class FriendRequestSendView(APIView):
             receiver = Players.objects.get(user=receiver_user)
         except Players.DoesNotExist:
             return HttpResponse('Receiver is not a player', status=status.HTTP_400_BAD_REQUEST)
+        
+        if sender_user.id == receiver_user.id:
+            return HttpResponse('Cannot send request to yourself.', status=status.HTTP_400_BAD_REQUEST)
 
         if FriendRequest.objects.filter(sender=sender, receiver=receiver).exists():
             return HttpResponse('Friend request is already sent.', status=status.HTTP_400_BAD_REQUEST)
@@ -37,7 +41,7 @@ class FriendRequestSendView(APIView):
 
 
 class AcceptFriendRequestView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerAndNotDeleteFriends]
 
     def post(self, request):
         serializer = AcceptFriendRequestSerializer(data=request.data)
@@ -61,7 +65,7 @@ class FriendRequestsAPIView(APIView):
     """
     API endpoint that allows to list friend requests received by a player.
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwnerAndNotDeleteFriends]
 
     def get(self, request):
         user = request.user
