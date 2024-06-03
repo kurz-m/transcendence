@@ -1,7 +1,13 @@
+import { startPongGame } from "./PongGame.js";
 import { getDefaultHeader } from "./shared.js";
 
 const POST_GAME_ID = 'https://transcendence.myprojekt.tech/api-game/game'
 const POST_SCORE_API = 'https://transcendence.myprojekt.tech/api-game/score'
+
+const mockObject = {
+    game_type: 'tournament',
+    game_id: 4
+};
 
 class TournamentGame {
     constructor() {
@@ -93,10 +99,6 @@ class TournamentGame {
                 /* attach the new created player to the tournament */
                 this.playerListContainer.appendChild(playerItem);
                 this.inputPlayer.value = '';
-                
-                this.matchupArray.length = 0;
-                this.createTournamentSchedule();
-                this.testMatches();
             }
         }
         this.addPlayerButton.addEventListener('click', this.handleAddPlayer, {
@@ -113,31 +115,46 @@ class TournamentGame {
             signal: this.controller.signal
         });
 
+        this.handleStartTournament();
+    }
 
-        this.handleStartTournament = () => {
-            const startTournament = async () => {
-                try {
-                    this.gameObject = await this.createNewTournamentId();
-                } catch (error) {
-                    console.error('Error starting tournament:', error);
-                    return;
-                }
-                this.options = {
-                    game_type: this.gameObject.game_type,
-                    game_id: this.gameObject.id
-                 }
+    handleStartTournament = () => {
+        const startTournament = async () => {
+            try {
+                // this.gameObject = await this.createNewTournamentId();
+                this.gameObject = mockObject;
+            } catch (error) {
+                console.error('Error starting tournament:', error);
+                return;
             }
-
+            this.options = {
+                game_type: this.gameObject.game_type,
+                game_id: this.gameObject.id,
+            }
+            this.createTournamentSchedule();
             this.tournamentLoop();
-
-            this.startTournamentButton.addEventListener('click', startTournament, {
-                once: true
-            });
         }
+
+        this.startTournamentButton.addEventListener('click', startTournament, {
+            once: true
+        });
     }
 
     tournamentLoop() {
+        this.removeEventListeners();
+        const playSingleMatch = async () => {
+            for (const match of this.matchupArray) {
+                this.options.player_one = match.left;
+                this.options.player_two = match.right;
 
+                try {
+                    match.score = await startPongGame(this.options);
+                } catch (error) {
+                    
+                }
+            }
+
+        }
     }
 
     removeEventListeners() {
@@ -154,15 +171,13 @@ class TournamentGame {
 
                 this.matchupArray.push({
                     left: randomMatchup ? playerOne : playerTwo,
-                    right: randomMatchup ? playerTwo : playerOne
+                    right: randomMatchup ? playerTwo : playerOne,
+                    score: {
+                        left: 0,
+                        right: 0
+                    }
                 });
             }
-        }
-    }
-
-    testMatches() {
-        for (const match of this.matchupArray) {
-            console.log(match.left, "vs.", match.right);
         }
     }
 }
