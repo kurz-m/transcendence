@@ -33,3 +33,14 @@ export const showGamePauseMenu = () => {
     const PauseMenu = document.getElementById("PauseMenu");
     PauseMenu.classList.remove("hidden");
 }
+
+export const getDefaultHeader = () => {
+    let header = new Headers();
+
+    /* TODO: adding a Host for the header */
+    header.append('Content-Type', 'application/json');
+    header.append('Date', new Date().toUTCString());
+    header.append('User-Agent', 'Transcendence Pong Game Website');
+
+    return header;
+}
