@@ -17,8 +17,8 @@ const mockMatches = {
             "win": true,
             "game_type": "single",
             "game_id": 12345,
-            "place": null,
-            "amount": null
+            "rank": null,
+            "number_of_players": null
         },
         {
             "opponent": "Team Bravo",
@@ -27,8 +27,8 @@ const mockMatches = {
             "win": false,
             "game_type": "tournament",
             "game_id": 54321,
-            "place": 2,
-            "amount": 5
+            "rank": 2,
+            "number_of_players": 5
         },
         {
             "opponent": "noone",
@@ -37,8 +37,8 @@ const mockMatches = {
             "win": false,
             "game_type": "single",
             "game_id": 98765,
-            "place": null,
-            "amount": null
+            "rank": null,
+            "number_of_players": null
         }
     ]
 };
@@ -85,7 +85,7 @@ export default class extends AbstractView {
                         <div class="match-date">21.04.24 16:04</div>
                         <img class="trophy" src="./static/media/trophy-gold.svg" draggable="false" (dragstart)="false;">
                         <div class="match-result">
-                        <div class="tournament-place">1st</div>
+                        <div class="tournament-rank">1st</div>
                         <div class="match-text">out of</div>
                         <div class="tournament-players">5</div>
                         <div class="match-text"> players</div>
@@ -122,8 +122,8 @@ export default class extends AbstractView {
 
     }
 
-    getTournamentScoreTemplate(place, amount, date) {
-        const image = TROPHY_IMAGES[place] || TROPHY_IMAGES[4];
+    getTournamentScoreTemplate(rank, number_of_players, date) {
+        const image = TROPHY_IMAGES[rank] || TROPHY_IMAGES[4];
 
         return `
         <div class="list-item">
@@ -131,9 +131,9 @@ export default class extends AbstractView {
             <div class="match-date">${date}</div>
             <img class="trophy" src="${image}" draggable="false" (dragstart)="false;">
             <div class="match-result">
-                <div class="tournament-place">${place + '.'}</div>
+                <div class="tournament-rank">${rank + '.'}</div>
                 <div class="match-text">out of</div>
-                <div class="tournament-players">${amount}</div>
+                <div class="tournament-players">${number_of_players}</div>
                 <div class="match-text"> players</div>
             </div>
         </div>
@@ -167,22 +167,22 @@ export default class extends AbstractView {
                 this.matchListContainer.appendChild(emptyMessage);
                 return;
             }
-            
+
             /* create virtual DOM for building it up and adding it at once to the visible DOM */
             const fragment = document.createDocumentFragment();
-    
+
             matches.forEach(match => {
                 const matchItem = document.createElement('div');
                 matchItem.classList.add('list-item');
                 matchItem.innerHTML = (match.game_type === 'single')
                     ? this.getSingleScoreTemplate(getUsername(), match.own_score, match.opponent, match.opponent_score, match.game_id)
-                    : this.getTournamentScoreTemplate(match.place, match.amount, match.game_id);
-    
+                    : this.getTournamentScoreTemplate(match.rank, match.number_of_players, match.game_id);
+
                 fragment.appendChild(matchItem);
             });
-    
+
             this.matchListContainer.appendChild(fragment);
-            
+
         } catch (error) {
             console.error('error fetching games:', error);
         }
