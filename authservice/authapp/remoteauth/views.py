@@ -45,6 +45,8 @@ def create_player_from_user_info(user_info):
 
     if existing_user:
         player = Players.objects.filter(user=existing_user).first()
+        if not player:
+            player = Players.objects.create(user=existing_user, profile_img_uri=profile_img_uri)
         return player
     else:
         user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email)
@@ -121,8 +123,8 @@ class callbackCode(APIView):
                     oauth_response.set_cookie('2fa', player.two_factor, httponly=False, secure=True)
                     oauth_response.set_cookie('player_id', player.id, httponly=False, secure=True)
                     return oauth_response
-                # elif player and player.two_factor is True:
-
+                else:
+                    return Response({'detail': 'Two-factor authentication is enabled for this user.'}, status=status.HTTP_200_OK)
             else:
                 return HttpResponseBadRequest('Invalid Authorization Request to 42 oauth.')
         else:
