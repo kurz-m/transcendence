@@ -93,6 +93,7 @@ class PongGame {
         this.looserName = document.getElementById('looser-name'); 
         this.winnerScore = document.getElementById('winner-score');
         this.looserScore = document.getElementById('looser-score'); 
+        this.backHomeButton = document.getElementById('back-home-button');
 
         /* Declare variables for the game logic */
         this.gameRunning = true;
@@ -117,7 +118,6 @@ class PongGame {
         this.resetBall();
 
         this.onGameOver = null;
-        // this.attachEventListeners();
     }
 
     async run() {
@@ -126,7 +126,6 @@ class PongGame {
 
         return new Promise((resolve) => {
             this.onGameOver = () => {
-                this.resetGame();
                 resolve();
             };
         })
@@ -222,8 +221,13 @@ class PongGame {
             this.board.update();
         }
 
+        this.handleBackHome = () => {
+            this.resetGame();
+        }
+
         /* add the event listeners */
         this.app.addEventListener('click', this.handlePauseWindow);
+        this.backHomeButton.addEventListener('click', this.handleBackHome);
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
         window.addEventListener('resize', this.handleResize);
@@ -232,6 +236,7 @@ class PongGame {
     removeEventListeners() {
         /* remove the event listeners for a clean exit */
         this.app.removeEventListener('click', this.handlePauseWindow);
+        this.backHomeButton.removeEventListener('click', this.handleBackHome);
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
         window.removeEventListener('resize', this.handleResize);
@@ -456,6 +461,7 @@ class PongGame {
             .catch(error => console.log('error', error));
     
             sessionStorage.removeItem('opponent_name');
+            this.onGameOver();
         }
     }
 
@@ -507,7 +513,7 @@ const createNewSingleGame = async () => {
     }
 }
 
-export const startPongGame = async (gameType, playerOne, playerTwo) => {
+export const startPongGame = async (options) => {
     if (currentPongGame) {
         currentPongGame.resetGame();
         currentPongGame = null;
@@ -515,7 +521,7 @@ export const startPongGame = async (gameType, playerOne, playerTwo) => {
     }
     if (gameType !== 'tournament') {
         try {
-            gameObject = await createNewSingleGame();
+            // gameObject = await createNewSingleGame();
             gameType = 'single';
         } catch (error) {
             console.error('Error starting single game:', error);
@@ -523,14 +529,16 @@ export const startPongGame = async (gameType, playerOne, playerTwo) => {
         }
     }
 
-    const options = {
-        "game_type": gameType,
-        "player_one": playerOne,
-        "player_two": playerTwo,
-        "game_id": gameObject.id
+    const gameOptions = {
+        game_type: options.game_type,
+        player_one: options.player_one,
+        player_two: options.player_two,
+        /* local development */
+        // "game_id": (options.game_type) ? gameObject.id : options.game_type;
+        game_id: 2
     };
 
-    currentPongGame = new PongGame(options);
+    currentPongGame = new PongGame(gameOptions);
 
     return currentPongGame.run().then(() => ({
         'left': currentPongGame.scoreLeft,
