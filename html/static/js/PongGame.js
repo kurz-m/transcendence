@@ -8,7 +8,7 @@ const INITIAL_PADDLE_SPEED = 12;
 const scoreAPI = 'https://transcendence.myprojekt.tech/api-game/score'
 
 class PongGame {
-    constructor() {
+    constructor(gameType, playerOne, playerTwo) {
 
         /* Declare the Board class */
         this.Board = class Board {
@@ -33,7 +33,7 @@ class PongGame {
             }
         }
         this.board = new this.Board(document.getElementById('board'));
-        
+
         /* Declare an IIFE class for the Ball to be able to pass the board element */
         this.Ball = (function(board) {
             return class Ball {
@@ -74,7 +74,7 @@ class PongGame {
         this.continueButton = document.getElementById('PauseContinueButton');
         this.quitButton = document.getElementById('PauseMenuQuitButton');
         this.finalScoreWindow = document.getElementById('FinalScore');
-        
+
         /* hud elements for the pong game */
         this.hudWindow = document.querySelector('.hud');
         this.scoreLeftObj = document.getElementById('score_l');
@@ -85,6 +85,7 @@ class PongGame {
         this.playerRightID = document.getElementById('player_r_name');
 
         /* elements for final score */
+        this.gameType = gameType;
         this.finalScoreMinutes = document.getElementById('minutes__final');
         this.finalScoreSeconds = document.getElementById('seconds__final');
         this.winnerName = document.getElementById('winner-name');
@@ -105,7 +106,12 @@ class PongGame {
         this.seconds = 5;
         this.countdownInterval = 0;
 
-        this.setPlayerNames();
+        if (playerOne && playerTwo) {
+            this.playerLeftID.textContent = playerOne;
+            this.playerRightID.textContent = playerTwo;
+        } else {
+            this.setPlayerNames();
+        }
         this.resetPaddles();
         this.resetBall();
 
@@ -376,7 +382,7 @@ class PongGame {
         this.ball.dy = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         this.loopInterval = window.setInterval(() => this.loop(), INTERVAL);
     }
-    
+
     stopGame() {
         if (this.loopInterval) {
             window.clearInterval(this.loopInterval);
@@ -413,7 +419,7 @@ class PongGame {
         window.clearInterval(this.timeInterval);
 
         this.finalScoreUpdate();
-        
+
         let raw = JSON.stringify({
             "opponent": this.playerRightID.textContent,
             "own_score": this.scoreLeft,
@@ -421,7 +427,7 @@ class PongGame {
             "win": this.scoreLeft > this.scoreRight,
             "game_id": sessionStorage.getItem('game_id'),
         });
-        
+
         let header = new Headers();
         header.append("Content-Type", "application/json");
         header.append('Date', new Date().toUTCString());
@@ -439,11 +445,11 @@ class PongGame {
 
         sessionStorage.removeItem('opponent_name');
     }
-    
+
     finalScoreUpdate() {
         this.finalScoreMinutes.innerHTML = this.minutesObj.innerHTML;
         this.finalScoreSeconds.innerHTML = this.secondsObj.innerHTML;
-    
+
         this.hudWindow.classList.add('hidden');
         this.finalScoreWindow.classList.remove('hidden');
         this.ball.object.classList.add('hidden');
@@ -464,10 +470,10 @@ class PongGame {
 
 let currentPongGame = null;
 
-export const startPongGame = () => {
+export const startPongGame = (gameType, playerOne, playerTwo) => {
     if (currentPongGame) {
         currentPongGame.resetGame();
         currentPongGame = null;
     }
-    currentPongGame = new PongGame();
+    currentPongGame = new PongGame(gameType, playerOne, playerTwo);
 };

@@ -9,6 +9,7 @@ import PongSingleView from "./views/PongSingleView.js";
 import PongTournamentView from "./views/PongTournamentView.js";
 import MatchHistoryView from "./views/MatchHistoryView.js";
 import { startPongGame } from "./PongGame.js";
+import { startTournament } from "./Tournament.js";
 
 let currentViewCleanup = null;
 
@@ -20,28 +21,28 @@ const router = async () => {
         { path: "/account", view: Account },
         { path: "/pong-menu", view: PongMenuView },
         { path: "/pong-single", view: PongSingleView },
-        { path: "/pong-tournament", view: PongTournamentView },
+        { path: "/pong-tournament", view: PongTournamentView, handler: startTournament },
         { path: "/pong-game", view: PongGame, handler: startPongGame },
         { path: "/callback", handler: handleAuthenticationCallback },
         // { path: "/two-factor", handler: handleTwoFactorCallback },
     ];
-    
+
     const potentialMatches = routes.map(route => {
         return {
             route: route,
             isMatch: location.pathname === route.path
         };
     });
-    
+
     let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch);
-    
+
     if (!match) {
         match = {
             route: routes[0],
             isMatch: true
         };
     }
-    
+
     if (match.route.view) {
         if (currentViewCleanup) {
             currentViewCleanup();
@@ -50,7 +51,7 @@ const router = async () => {
 
         const view = new match.route.view();
         document.querySelector("#app").innerHTML = await view.getHtml();
-        
+
         if (view.afterRender) {
             currentViewCleanup = await view.afterRender();
         }
@@ -69,7 +70,7 @@ const updateLoginState = () => {
     const loginButton = document.getElementById('login-button');
     const loginButtonText = document.getElementById('login-button-field');
     const profileImage = document.getElementById('small-profile-pic');
-    
+
     if (getLoggedIn()) {
         const profileImageCached = localStorage.getItem('profile_image');
         if (!profileImageCached) {
@@ -101,7 +102,7 @@ const handleNavBar = () => {
             logoutCallback();
         }
     });
-    
+
     document.addEventListener('click', (e) => {
         const target = e.target;
         if (loginButton.classList.contains('profile-button') && target != loginButton) {
