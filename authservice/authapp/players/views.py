@@ -46,7 +46,10 @@ class FriendsApiView(APIView):
                 friend = Players.objects.get(user__username=username)
             except Players.DoesNotExist:
                 return Response({'error': 'Friend not found'}, status=status.HTTP_404_NOT_FOUND)
-
+            
+            if friend in Players.objects.get(user=request.user).friends.all():
+                return Response({'error': 'You are not friend with the user.'}, status=status.HTTP_404_NOT_FOUND)
+            
             serializer = PlayerSerializer(friend, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
