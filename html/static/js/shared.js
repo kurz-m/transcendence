@@ -25,13 +25,13 @@ export const toggleLoginButtonStyle = () => {
 }
 
 export const hideGamePauseMenu = () => {
-    const PauseMenu = document.getElementById("PauseMenu");
-    PauseMenu.classList.add("hidden");
+    const pauseMenu = document.getElementById('pause-window');
+    pauseMenu.classList.add("hidden");
 }
 
 export const showGamePauseMenu = () => {
-    const PauseMenu = document.getElementById("PauseMenu");
-    PauseMenu.classList.remove("hidden");
+    const pauseMenu = document.getElementById('pause-window');
+    pauseMenu.classList.remove("hidden");
 }
 
 export const getDefaultHeader = () => {
