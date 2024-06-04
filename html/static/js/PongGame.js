@@ -532,6 +532,10 @@ export const startPongGame = async (options) => {
         if (getLoggedIn()) {
             try {
                 gameObject = await createNewSingleGame();
+                gameOptions = {
+                    game_type: gameObject.game_type,
+                    game_id: gameObject.id
+                };
             } catch (error) {
                 console.error('Error starting single game:', error);
                 return;
