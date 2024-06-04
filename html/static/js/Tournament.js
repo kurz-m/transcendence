@@ -6,8 +6,7 @@ const POST_GAME_ID = 'https://transcendence.myprojekt.tech/api-game/game'
 const POST_SCORE_API = 'https://transcendence.myprojekt.tech/api-game/score'
 
 const mockObject = {
-    game_type: 'tournament',
-    game_id: 4
+    game_type: 'tournament'
 };
 
 const states = {
@@ -157,7 +156,9 @@ class TournamentGame {
                 return;
             }
             try {
-                // this.gameObject = await this.createNewTournamentId();
+                if (getLoggedIn()) {
+                    this.gameObject = await this.createNewTournamentId();
+                }
                 this.gameObject = mockObject;
             } catch (error) {
                 console.error('Error starting tournament:', error);
@@ -326,9 +327,31 @@ class TournamentGame {
         })
     }
 
+    postFinaleScore() {
+        const header = getDefaultHeader();
+        let raw = JSON.stringify({
+            "rank": this.playersArray.indexOf(getUsername()),
+            "number_of_players": this.playersArray.length,
+            "game_id": this.options.game_id
+        });
+
+        fetch(POST_SCORE_API, {
+            method: 'POST',
+            headers: header,
+            body: raw
+        })
+        .then(response => {
+            console.log(response.text());
+        })
+        .catch(error => console.log('error', error));
+    }
+
     showFinalScore() {
         this.updateFinaleScore();
         this.rankScoring();
+        if (getLoggedIn()) {
+            this.postFinaleScore();
+        }
         this.finalScoreWindow.classList.remove('hidden');        
         console.log('game is finished now');
     }
