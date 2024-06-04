@@ -81,7 +81,7 @@ class PongGame {
         this.scoreLeftObj = document.getElementById('score_l');
         this.scoreLeftObj.innerHTML = '0';
         this.scoreRightObj = document.getElementById('score_r');
-        this.scoreLeftObj.innerHTML = '0';
+        this.scoreRightObj.innerHTML = '0';
         this.minutesObj = document.getElementById('minutes');
         this.secondsObj = document.getElementById('seconds');
         this.minutesObj.innerHTML = this.padTime(Math.floor(0));
