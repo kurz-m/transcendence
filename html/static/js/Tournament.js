@@ -158,8 +158,9 @@ class TournamentGame {
             try {
                 if (getLoggedIn()) {
                     this.gameObject = await this.createNewTournamentId();
+                } else {
+                    this.gameObject = mockObject;
                 }
-                this.gameObject = mockObject;
             } catch (error) {
                 console.error('Error starting tournament:', error);
                 return;
@@ -330,7 +331,7 @@ class TournamentGame {
     postFinaleScore() {
         const header = getDefaultHeader();
         let raw = JSON.stringify({
-            "rank": this.playersArray.indexOf(getUsername()),
+            "rank": this.playersArray.indexOf(getUsername()) + 1,
             "number_of_players": this.playersArray.length,
             "game_id": this.options.game_id
         });
