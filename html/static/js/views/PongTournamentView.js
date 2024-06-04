@@ -38,7 +38,7 @@ export default class extends AbstractView {
         </div>
     </div>
 
-    <div id="final-score-window" class="window hidden">
+    <div id="score-window" class="window hidden">
         <div class="title">Game Over</div>
         <div class="game-result-time">
             <div id="minutes__final" class="hud-time-left">00</div>
@@ -139,6 +139,96 @@ export default class extends AbstractView {
                     <div class="v-spacer"></div>
                     <div id="total-players" class="small-text">Total Players: 0</div>
                     <button id="start-tournament" class="large-button">Play</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="final-score-window" class="window hidden">
+        <div class="topbar">
+            <button style="opacity: 0;">
+                <img class="icon" src="./static/media/back.svg" alt="Back" draggable="false" (dragstart)="false;" />
+            </button>
+            <div class="title">Tournament Result</div>
+            <button class="icon-button">
+                <img class="icon" src="./static/media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;" />
+            </button>
+        </div>
+        <div class="content">
+            <div class="tournament-result-rank">
+                <div class="scroll-tournament-result">
+                    <div class="list-item-left">
+                        <img class="trophy" src="./static/media/trophy-gold.svg" draggable="false" (dragstart)="false;" />
+                        <div class="tournament-place">1st</div>
+                        <div class="field">Florian</div>
+                    </div>
+                    <div class="list-item-left">
+                        <img class="trophy" src="./static/media/trophy-silver.svg" draggable="false" (dragstart)="false;" />
+                        <div class="tournament-place">2nd</div>
+                        <div class="field">Sanjok</div>
+                    </div>
+                    <div class="list-item-left">
+                        <img class="trophy" src="./static/media/trophy-bronze.svg" draggable="false" (dragstart)="false;" />
+                        <div class="tournament-place">3rd</div>
+                        <div class="field">Aaron Rabenstein</div>
+                    </div>
+                    <div class="list-item-left">
+                        <div class="trophy"></div>
+                        <div class="tournament-place">4th</div>
+                        <div class="field">Markus</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tournament-result-games">
+                <div class="scroll-tournament-result">
+                    <div class="list-item">
+                        <div class="match-date">28.08.28 08:58</div>
+                        <div class="match-result">
+                            <div class="left-player">Aaron Rabenstein</div>
+                            <div class="score">
+                                <div class="left-score">11</div>
+                                <div class="score-colon">:</div>
+                                <div class="right-score">8</div>
+                            </div>
+                            <div class="right-player">Markuz Kurz</div>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="match-date">22.05.24 14:29</div>
+                        <div class="match-result">
+                            <div class="left-player">Me</div>
+                            <div class="score">
+                                <div class="left-score">3</div>
+                                <div class="score-colon">:</div>
+                                <div class="right-score">11</div>
+                            </div>
+                            <div class="right-player">Sanjok Bhatta</div>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="match-date">28.08.28 08:58</div>
+                        <div class="match-result">
+                            <div class="left-player">Aaron Rabenstein</div>
+                            <div class="score">
+                                <div class="left-score">11</div>
+                                <div class="score-colon">:</div>
+                                <div class="right-score">8</div>
+                            </div>
+                            <div class="right-player">Markuz Kurz</div>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="match-date">22.05.24 14:29</div>
+                        <div class="match-result">
+                            <div class="left-player">Me</div>
+                            <div class="score">
+                                <div class="left-score">3</div>
+                                <div class="score-colon">:</div>
+                                <div class="right-score">11</div>
+                            </div>
+                            <div class="right-player">Sanjok Bhatta</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

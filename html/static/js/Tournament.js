@@ -46,7 +46,8 @@ class TournamentGame {
         this.announceWindow = document.getElementById('announce-window');
         this.hudWindow = document.getElementById('hud-window');
         this.announceWindow = document.getElementById('announce-window');
-        this.scoreWindow = document.getElementById('final-score-window');
+        this.scoreWindow = document.getElementById('score-window');
+        this.finalScoreWindow = document.getElementById('final-score-window');
         this.announceLeft = document.getElementById('announce-left');
         this.announceRight = document.getElementById('announce-right');
         this.nextGameButton = document.getElementById('next-game-button');
@@ -148,6 +149,9 @@ class TournamentGame {
 
     handleStartTournament = () => {
         const startTournament = async () => {
+            if (this.playersArray.length < 3) {
+                return;
+            }
             try {
                 // this.gameObject = await this.createNewTournamentId();
                 this.gameObject = mockObject;
@@ -163,9 +167,7 @@ class TournamentGame {
             this.tournamentLoop();
         }
 
-        this.startTournamentButton.addEventListener('click', startTournament, {
-            once: true
-        });
+        this.startTournamentButton.addEventListener('click', startTournament);
     }
 
     tournamentLoop() {
@@ -174,6 +176,7 @@ class TournamentGame {
     }
 
     removeEventListeners() {
+        this.startTournamentButton.removeEventListener('click', startTournament);
         this.controller.abort();
     }
 
@@ -267,10 +270,12 @@ class TournamentGame {
     }
 
     showScore() {
-
+        if (!this.hasMoreMatches()) {
+            this.nextGameButton.textContent = "Show Final Score";
+        }
         this.nextGameHandler = () => {
+            this.scoreWindow.classList.add('hidden');
             if (this.hasMoreMatches()) {
-                this.scoreWindow.classList.add('hidden');
                 this.nextMatch();
                 this.transition(states.ANNOUNCE_GAME);
             } else {
@@ -283,6 +288,7 @@ class TournamentGame {
     }
 
     showFinalScore() {
+        this.finalScoreWindow.classList.remove('hidden');        
         console.log('game is finished now');
     }
 }
