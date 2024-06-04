@@ -37,7 +37,12 @@ export default class extends AbstractView {
         const aiButton = document.getElementById('ai-button');
 
         const handlePlayButton = () => {
-            setOpponent(document.getElementById('opponent-name').value);
+            let input = document.getElementById('opponent-name').value;
+            if (!input && !localStorage.getItem('username')) {
+                setOpponent("");
+            } else {
+                setOpponent(input || "Guest");
+            }
         }
 
         const handleAIButton = () => {
