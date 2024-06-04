@@ -4,7 +4,7 @@ import { showGamePauseMenu, hideGamePauseMenu, getDefaultHeader } from "./shared
 
 const FPS = 60;
 const INTERVAL = 1000 / FPS;
-const AI_INTERVAL = 10;
+const AI_INTERVAL = 1000;
 const INITIAL_PADDLE_SPEED = 12;
 const MAX_SCORE = 3;
 
@@ -106,6 +106,7 @@ class PongGame {
         /* Declare variables for the game logic */
         this.gameRunning = true;
         this.startTime = 0;
+        this.timerSeconds = 0;
         this.timeInterval = 0;
         this.loopInterval = 0;
         this.scoreLeft = 0;
@@ -152,7 +153,7 @@ this.seconds = 0;
         /* set the name for the left player */
         const playerOne = localStorage.getItem('username');
         if (!playerOne) {
-            this.playerLeftID.textContent = 'Me';
+            this.playerLeftID.textContent = 'Player 1';
         } else {
             this.playerLeftID.textContent = playerOne;
         }
@@ -160,9 +161,12 @@ this.seconds = 0;
         /* set the name for the right player */
         const playerTwo = sessionStorage.getItem('opponent_name');
         if (!playerTwo) {
-            this.playerRightID.textContent = 'Guest';
+            this.playerRightID.textContent = 'Player 2';
         } else {
             this.playerRightID.textContent = playerTwo;
+            if (!playerOne) {
+                this.playerLeftID.textContent = 'Me';
+            }
         }
     }
 
@@ -384,8 +388,9 @@ this.seconds = 0;
     updateTime() {
         let now = new Date().getTime();
         let millisPassed = now - this.startTime;
-        this.minutesObj.innerHTML = this.padTime(Math.floor(millisPassed * 0.001 / 60));
-        this.secondsObj.innerHTML = this.padTime(Math.floor((millisPassed * 0.001) % 60));
+        let gameSeconds = this.timerSeconds + millisPassed / 1000;
+        this.minutesObj.innerHTML = this.padTime(Math.floor(gameSeconds / 60));
+        this.secondsObj.innerHTML = this.padTime(Math.floor(gameSeconds % 60));
     }
 
     loop() {
@@ -414,37 +419,51 @@ this.seconds = 0;
     }
 
     refreshAI() {
-        console.log("AI refresh");
+        // console.log("AI refresh");
         if (this.ball.x > this.aiPrevBallX) {
             let m = (this.aiPrevBallY - this.ball.y) / (this.aiPrevBallX - this.ball.x);
             let b = this.ball.y - m * this.ball.x;
             var yc = m * this.paddleRight.x + b;
             if (yc >= 0 && yc <= this.board.height) {
-                console.log("new target: " + yc);
                 this.aiTargetY = yc;
             }
         }
+        // console.log("new target: " + this.aiTargetY);
 
         this.aiPrevBallX = this.ball.x;
         this.aiPrevBallY = this.ball.y;
     }
 
     loopAI() {
-        if (this.aiTargetY > this.paddleRight.y + this.paddleRight.height - (this.paddleRight.height / 4)) {
-            this.paddleRight.dy = this.paddleSpeed;
-        } else if (this.aiTargetY < this.paddleRight.y + (this.paddleRight.height / 4)) {
-            this.paddleRight.dy = -this.paddleSpeed;
+        let buffer = this.paddleRight.height / 4;
+        if (this.aiTargetY > this.paddleRight.y + this.paddleRight.height - buffer) {
+            this.paddleRight.dy = this.paddleSpeed; // Moves paddle down
+        } else if (this.aiTargetY < this.paddleRight.y + buffer) {
+            this.paddleRight.dy = -this.paddleSpeed; // Moves paddle up
         } else {
             this.paddleRight.dy = 0;
         }
     }
 
-    startGame() {
+    startTimer() {
         if (!this.startTime) {
             this.startTime = new Date().getTime();
             this.updateTime();
             this.timeInterval = window.setInterval(() => this.updateTime(), 500);
         }
+    }
+
+    stopTimer() {
+        window.clearInterval(this.timeInterval);
+        this.timeInterval = 0;
+        let now = new Date().getTime();
+        let millisPassed = now - this.startTime;
+        this.timerSeconds += millisPassed / 1000;
+        this.startTime = 0;
+    }
+
+    startGame() {
+        this.startTimer();
         this.ball.dx = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         this.ball.dy = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         this.resumeGame()
@@ -452,6 +471,7 @@ this.seconds = 0;
 
     stopGame() {
         if (this.loopInterval) {
+            this.stopTimer();
             window.clearInterval(this.loopInterval);
             this.loopInterval = 0;
             this.paddleSpeed = INITIAL_PADDLE_SPEED;
@@ -465,17 +485,21 @@ this.seconds = 0;
     }
 
     resetGame() {
-        // if (this.loopInterval) {
-        //     window.clearInterval(this.loopInterval);
-        //     this.loopInterval = 0;
-        //     this.paddleSpeed = INITIAL_PADDLE_SPEED;
-        // }
         this.stopGame();
         this.removeEventListeners();
     }
 
     pauseGame() {
-        this.stopGame();
+        if (this.loopInterval) {
+            this.stopTimer();
+            window.clearInterval(this.loopInterval);
+            this.loopInterval = 0;
+            this.paddleSpeed = INITIAL_PADDLE_SPEED;
+            if (this.isAI) {
+                window.clearInterval(this.aiUpdateInterval);
+                this.aiUpdateInterval = 0;
+            }
+        }
         if (!this.getPauseMenuVisibility()) {
             showGamePauseMenu();
         }
@@ -488,13 +512,13 @@ this.seconds = 0;
             this.aiUpdateInterval = window.setInterval(() => this.loopAI(), INTERVAL);
         }
         this.loopInterval = window.setInterval(() => this.loop(), INTERVAL);
+        this.startTimer();
     }
 
     gameOver() {
         this.gameRunning = false;
         this.stopGame();
         this.resetBall();
-        window.clearInterval(this.timeInterval);
 
         this.finalScoreUpdate();
 
