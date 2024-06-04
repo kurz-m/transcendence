@@ -1,3 +1,4 @@
+import { getLoggedIn } from "./authentication.js";
 import { navigateTo } from "./index.js";
 import { showGamePauseMenu, hideGamePauseMenu, getDefaultHeader } from "./shared.js";
 
@@ -446,7 +447,7 @@ class PongGame {
 
         this.finalScoreUpdate();
 
-        if (this.options.game_type === 'single') {
+        if (getLoggedIn() && this.options.game_type === 'single') {
             let raw = JSON.stringify({
                 "opponent": this.playerRightID.textContent,
                 "own_score": this.scoreLeft,
@@ -528,16 +529,17 @@ export const startPongGame = async (options) => {
         gameObject = null;
     }
     if (!options) {
-        try {
-            // gameObject = await createNewSingleGame();
-            /* local development */
+        if (getLoggedIn()) {
+            try {
+                gameObject = await createNewSingleGame();
+            } catch (error) {
+                console.error('Error starting single game:', error);
+                return;
+            }
+        } else {
             gameOptions = {
-                game_type: 'single',
-                game_id: 2
+                game_type: 'single'
             };
-        } catch (error) {
-            console.error('Error starting single game:', error);
-            return;
         }
     } else {
         gameOptions = {
