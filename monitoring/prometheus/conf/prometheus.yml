@@ -1,0 +1,46 @@
+# my global config
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: "transcendence-monitor"
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first.rules"
+  # - "second.rules"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+  - job_name: cadvisor
+    static_configs:
+      - targets: ["cadvisor:8080"]
+
+
+# NOTE: Replace the URL with one from the above mentioned "downloads" page.
+# <VERSION>, <OS>, and <ARCH> are placeholders.
+# wget https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.darwin-amd64.tar.gz
+# tar xvfz node_exporter-*.*-amd64.tar.gz
+# cd node_exporter-*.*-amd64
+# ./node_exporter
+
+# Configuring your Prometheus instances
+# Your locally running Prometheus instance needs to be properly configured in order to access Node Exporter metrics. The following prometheus.yml example configuration file will tell the Prometheus instance to scrape, and how frequently, from the Node Exporter via localhost:9100:
+
+
+# global:
+#   scrape_interval: 15s
+
+# scrape_configs:
+# - job_name: node
+#   static_configs:
+#   - targets: ['localhost:9100']

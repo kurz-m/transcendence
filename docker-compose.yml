@@ -179,6 +179,51 @@ services:
       - certbot_www:/var/www/certbot/:rw
       - certbot_conf:/etc/letsencrypt/:rw
       - /var/run/docker.sock:/var/run/docker.sock:rw
+    env_file:
+      - .env
+
+  prometheus:
+    container_name: prometheus
+    image: prometheus
+    build: ./monitoring/prometheus/
+    networks:
+      - authnetwork
+    ports:
+      - "9090:9090"
+    restart: always
+    privileged: true
+
+  grafana:
+    image: grafana/grafana:10.4.2-ubuntu
+    container_name: grafana
+    volumes: 
+      - ./monitoring/grafana/config/datasource.yml:/etc/grafana/provisioning/datasources/datasources.yml
+    ports:
+      - 3000:3000
+    restart: always
+    networks:
+      - authnetwork
+    privileged: true
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    platform: linux/amd64
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/machine-id:/etc/machine-id:ro
+      - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - authnetwork
+    restart: always
+    privileged: true
 
 volumes:
   postgres_data:
