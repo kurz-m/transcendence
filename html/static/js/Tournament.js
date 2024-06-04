@@ -103,7 +103,11 @@ class TournamentGame {
             playerItem.innerHTML = this.getPlayerTemplate(playerName);
             this.totalPlayersCount++;
             this.totalPlayersElement.textContent = `Total Players: ${this.totalPlayersCount}`;
-            this.playersArray.push(playerName);
+            const playerObject = {
+                name: playerName,
+                score: 0
+            };
+            this.playersArray.push(playerObject);
     
             /* add event listener to the remove button */
             const deleteButton = playerItem.querySelector('.clean-button');
@@ -183,8 +187,8 @@ class TournamentGame {
     createTournamentSchedule() {
         for (let i = 0; i < this.playersArray.length; i++) {
             for (let j = i + 1; j < this.playersArray.length; j++) {
-                const playerOne = this.playersArray[i];
-                const playerTwo = this.playersArray[j];
+                const playerOne = this.playersArray[i].name;
+                const playerTwo = this.playersArray[j].name;
                 const randomMatchup = Math.random() < 0.5;
 
                 this.matchupArray.push({
@@ -287,7 +291,44 @@ class TournamentGame {
         });
     }
 
+    updateFinaleScore() {
+        for (const match of this.matchupArray) {
+            const leftPlayer = this.playersArray.find(p => p.name === match.left);
+            const rightPlayer = this.playersArray.find(p => p.name === match.right);
+
+            if (match.score.left > match.score.right) {
+                leftPlayer.score++;
+            } else {
+                rightPlayer.score++;
+            }
+        }
+    }
+
+    rankScoring() {
+        this.playersArray.sort((a, b) => {
+            if (b.score !== a.score) {
+                return b.score - a.score;
+            }
+
+            /* find direct match */
+            const directMatch = this.matchupArray.find(match => {
+                return (match.left === a.name && match.right === b.name) ||
+                       (match.left === b.name && match.right === a.name);
+            })
+
+            if (directMatch.left === a.name) {
+                return directMatch.score.right - directMatch.score.left;
+            } else if (directMatch.left === b.name) {
+                return directMatch.score.left - directMatch.score.right;
+            }
+
+            return 0;
+        })
+    }
+
     showFinalScore() {
+        this.updateFinaleScore();
+        this.rankScoring();
         this.finalScoreWindow.classList.remove('hidden');        
         console.log('game is finished now');
     }
