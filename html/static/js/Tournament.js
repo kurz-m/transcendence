@@ -1,3 +1,4 @@
+import { getLoggedIn, getUsername } from "./authentication.js";
 import { startPongGame } from "./PongGame.js";
 import { getDefaultHeader } from "./shared.js";
 
@@ -54,6 +55,10 @@ class TournamentGame {
     }
 
     async run() {
+        /* add own player to the list if someone is logged in */
+        if (getLoggedIn()) {
+            this.addPlayer(getUsername());
+        }
         /* start the event listeners */
         this.attachEventListeners();
     }
@@ -90,37 +95,39 @@ class TournamentGame {
         `;
     }
 
+    addPlayer(playerName) {
+        if (playerName) {
+            const playerItem = document.createElement('div');
+            playerItem.classList.add('list-item');
+            playerItem.innerHTML = this.getPlayerTemplate(playerName);
+            this.totalPlayersCount++;
+            this.totalPlayersElement.textContent = `Total Players: ${this.totalPlayersCount}`;
+            this.playersArray.push(playerName);
+    
+            /* add event listener to the remove button */
+            const deleteButton = playerItem.querySelector('.clean-button');
+            const deleteHandler = (playerName) => {
+                this.totalPlayersCount--;
+                this.totalPlayersElement.textContent = `Total Players: ${this.totalPlayersCount}`;
+    
+                const index = this.playersArray.indexOf(playerName);
+                if (index > -1) {
+                    this.playersArray.splice(index, 1);
+                }
+    
+                playerItem.remove();
+            };
+            deleteButton.addEventListener('click', deleteHandler.bind(null, playerName), { once: true });
+    
+            /* attach the new created player to the tournament */
+            this.playerListContainer.appendChild(playerItem);
+            this.inputPlayer.value = '';
+        }
+    }
+
     attachEventListeners() {
         this.handleAddPlayer = () => {
-            const playerName = this.inputPlayer.value.trim();
-
-            if (playerName) {
-                const playerItem = document.createElement('div');
-                playerItem.classList.add('list-item');
-                playerItem.innerHTML = this.getPlayerTemplate(playerName);
-                this.totalPlayersCount++;
-                this.totalPlayersElement.textContent = `Total Players: ${this.totalPlayersCount}`;
-                this.playersArray.push(playerName);
-
-                /* add event listener to the remove button */
-                const deleteButton = playerItem.querySelector('.clean-button');
-                const deleteHandler = (playerName) => {
-                    this.totalPlayersCount--;
-                    this.totalPlayersElement.textContent = `Total Players: ${this.totalPlayersCount}`;
-
-                    const index = this.playersArray.indexOf(playerName);
-                    if (index > -1) {
-                        this.playersArray.splice(index, 1);
-                    }
-
-                    playerItem.remove();
-                };
-                deleteButton.addEventListener('click', deleteHandler.bind(null, playerName), { once: true });
-
-                /* attach the new created player to the tournament */
-                this.playerListContainer.appendChild(playerItem);
-                this.inputPlayer.value = '';
-            }
+            this.addPlayer(this.inputPlayer.value.trim());
         }
         this.addPlayerButton.addEventListener('click', this.handleAddPlayer, {
             signal: this.controller.signal
@@ -129,7 +136,7 @@ class TournamentGame {
         this.handleAddPlayerOnEnter = e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                this.handleAddPlayer();
+                this.addPlayer(this.inputPlayer.value.trim());
             }
         }
         this.inputPlayer.addEventListener('keydown', this.handleAddPlayerOnEnter, {
