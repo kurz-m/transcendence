@@ -38,7 +38,7 @@ export default class extends AbstractView {
             </div>
         </div>
 
-        <div id="final-score-window" class="window hidden">
+        <div id="score-window" class="window hidden">
             <div class="title">Game Over</div>
             <div class="game-result-time">
                 <div id="minutes__final" class="hud-time-left">00</div>

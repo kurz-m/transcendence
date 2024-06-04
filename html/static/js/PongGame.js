@@ -74,7 +74,7 @@ class PongGame {
         this.countdownText = document.getElementById('countdown-text');
         this.continueButton = document.getElementById('continue-button');
         this.quitButton = document.getElementById('quit-button');
-        this.finalScoreWindow = document.getElementById('final-score-window');
+        this.finalScoreWindow = document.getElementById('score-window');
 
         /* hud elements for the pong game */
         this.hudWindow = document.querySelector('.hud');
