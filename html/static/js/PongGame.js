@@ -213,10 +213,10 @@ class PongGame {
             const target = e.target;
 
             switch (target.id) {
-                case 'PauseContinueButton':
+                case 'continue-button':
                     this.resumeGame();
                     break;
-                case 'PauseMenuQuitButton':
+                case 'quit-button':
                     sessionStorage.removeItem('opponent_name');
                     navigateTo('/');
                     break;
