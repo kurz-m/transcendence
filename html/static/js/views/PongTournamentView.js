@@ -150,9 +150,9 @@ export default class extends AbstractView {
                 <img class="icon" src="./static/media/back.svg" alt="Back" draggable="false" (dragstart)="false;" />
             </button>
             <div class="title">Tournament Result</div>
-            <button class="icon-button">
-                <img class="icon" src="./static/media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;" />
-            </button>
+            <a href="/" class="icon-button" data-link>
+                <img class="icon" src="./static/media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;">
+            </a>
         </div>
         <div class="content">
             <div class="tournament-result-rank">
