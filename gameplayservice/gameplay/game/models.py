@@ -24,7 +24,7 @@ class Game(models.Model):
 class Score(models.Model):
     game_id = models.ForeignKey(Game, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    opponent = models.CharField(max_length=200)
+    opponent = models.CharField(max_length=200, blank=True, null=True)
     own_score = models.IntegerField(default=0)
     win = models.BooleanField(default=False)
     opponent_score = models.IntegerField(default=0)
