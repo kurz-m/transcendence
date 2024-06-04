@@ -113,7 +113,7 @@ class PongGame {
         this.seconds = 5;
         this.countdownInterval = 0;
 
-        if (options.player_one && options.player_two) {
+        if (this.options.game_type === 'tournament') {
             this.playerLeftID.textContent = options.player_one;
             this.playerRightID.textContent = options.player_two;
         } else {
