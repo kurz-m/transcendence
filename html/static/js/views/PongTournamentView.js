@@ -156,80 +156,10 @@ export default class extends AbstractView {
         </div>
         <div class="content">
             <div class="tournament-result-rank">
-                <div class="scroll-tournament-result">
-                    <div class="list-item-left">
-                        <img class="trophy" src="./static/media/trophy-gold.svg" draggable="false" (dragstart)="false;" />
-                        <div class="tournament-place">1st</div>
-                        <div class="field">Florian</div>
-                    </div>
-                    <div class="list-item-left">
-                        <img class="trophy" src="./static/media/trophy-silver.svg" draggable="false" (dragstart)="false;" />
-                        <div class="tournament-place">2nd</div>
-                        <div class="field">Sanjok</div>
-                    </div>
-                    <div class="list-item-left">
-                        <img class="trophy" src="./static/media/trophy-bronze.svg" draggable="false" (dragstart)="false;" />
-                        <div class="tournament-place">3rd</div>
-                        <div class="field">Aaron Rabenstein</div>
-                    </div>
-                    <div class="list-item-left">
-                        <div class="trophy"></div>
-                        <div class="tournament-place">4th</div>
-                        <div class="field">Markus</div>
-                    </div>
-                </div>
+                <div class="scroll-tournament-result"></div>
             </div>
             <div class="tournament-result-games">
-                <div class="scroll-tournament-result">
-                    <div class="list-item">
-                        <div class="match-date">28.08.28 08:58</div>
-                        <div class="match-result">
-                            <div class="left-player">Aaron Rabenstein</div>
-                            <div class="score">
-                                <div class="left-score">11</div>
-                                <div class="score-colon">:</div>
-                                <div class="right-score">8</div>
-                            </div>
-                            <div class="right-player">Markuz Kurz</div>
-                        </div>
-                    </div>
-                    <div class="list-item">
-                        <div class="match-date">22.05.24 14:29</div>
-                        <div class="match-result">
-                            <div class="left-player">Me</div>
-                            <div class="score">
-                                <div class="left-score">3</div>
-                                <div class="score-colon">:</div>
-                                <div class="right-score">11</div>
-                            </div>
-                            <div class="right-player">Sanjok Bhatta</div>
-                        </div>
-                    </div>
-                    <div class="list-item">
-                        <div class="match-date">28.08.28 08:58</div>
-                        <div class="match-result">
-                            <div class="left-player">Aaron Rabenstein</div>
-                            <div class="score">
-                                <div class="left-score">11</div>
-                                <div class="score-colon">:</div>
-                                <div class="right-score">8</div>
-                            </div>
-                            <div class="right-player">Markuz Kurz</div>
-                        </div>
-                    </div>
-                    <div class="list-item">
-                        <div class="match-date">22.05.24 14:29</div>
-                        <div class="match-result">
-                            <div class="left-player">Me</div>
-                            <div class="score">
-                                <div class="left-score">3</div>
-                                <div class="score-colon">:</div>
-                                <div class="right-score">11</div>
-                            </div>
-                            <div class="right-player">Sanjok Bhatta</div>
-                        </div>
-                    </div>
-                </div>
+                <div id="match-scroll" class="scroll-tournament-result"></div>
             </div>
         </div>
     </div>

@@ -17,6 +17,13 @@ const states = {
     SHOW_FINAL_SCORE: 'show_final_score'
 }
 
+const TROPHY_IMAGES = {
+    1: "./static/media/trophy-gold.svg",
+    2: "./static/media/trophy-silver.svg",
+    3: "./static/media/trophy-bronze.svg",
+    4: "./static/media/loose.svg"
+};
+
 class TournamentGame {
     constructor() {
         /* declare elements for creating the event */
@@ -52,6 +59,10 @@ class TournamentGame {
         this.nextGameButton = document.getElementById('next-game-button');
         this.announcePlayButton = document.getElementById('announce-play-button');
         this.ball = document.querySelector('#ball');
+
+        /* elements for the final score window */
+        this.rankScroll = document.getElementById('rank-scroll');
+        this.matchScroll = document.getElementById('match-scroll');
     }
 
     async run() {
@@ -107,22 +118,22 @@ class TournamentGame {
                 score: 0
             };
             this.playersArray.push(playerObject);
-    
+
             /* add event listener to the remove button */
             const deleteButton = playerItem.querySelector('.clean-button');
             const deleteHandler = (playerName) => {
                 this.totalPlayersCount--;
                 this.totalPlayersElement.textContent = `Total Players: ${this.totalPlayersCount}`;
-    
+
                 const index = this.playersArray.indexOf(playerName);
                 if (index > -1) {
                     this.playersArray.splice(index, 1);
                 }
-    
+
                 playerItem.remove();
             };
             deleteButton.addEventListener('click', deleteHandler.bind(null, playerName), { once: true });
-    
+
             /* attach the new created player to the tournament */
             this.playerListContainer.appendChild(playerItem);
             this.inputPlayer.value = '';
@@ -347,13 +358,72 @@ class TournamentGame {
         .catch(error => console.log('error', error));
     }
 
+    getRankScrollTemplate(player, rank) {
+        const image = TROPHY_IMAGES[rank + 1] ||
+                        TROPHY_IMAGES[4];
+
+        return `
+        <div class="list-item-left">
+            <img class="trophy" src="${image}" draggable="false" (dragstart)="false;" />
+            <div class="tournament-place">${rank + 1}</div>
+            <div class="field">${player}</div>
+        </div>
+        `;
+    }
+
+    getMatchScrollTemplate(match) {
+        const now = new Date();
+        const time = now.toISOString().slice(0, 10);
+
+        return `
+        <div class="list-item">
+            <div class="match-date">${time}</div>
+            <div class="match-result">
+                <div class="left-player">${match.left}</div>
+                <div class="score">
+                    <div class="left-score">${match.score.left.toString()}</div>
+                    <div class="score-colon">:</div>
+                    <div class="right-score">${match.score.right.toString()}</div>
+                </div>
+                <div class="right-player">${match.right}</div>
+            </div>
+        </div>
+        `;
+    }
+
+    createFinalScoreContent() {
+        this.rankContainer = document.querySelector('.scroll-tournament-result');
+        this.rankContainer.innerHTML = '';
+        this.matchContainer = document.querySelector('#match-scroll');
+        this.matchContainer.innerHTML = '';
+
+        const rankFragment = document.createDocumentFragment();
+        for (const [index, player] of this.playersArray.entries()) {
+            const rankItem = document.createElement('div');
+            rankItem.classList.add('list-item-left');
+            rankItem.innerHTML = this.getRankScrollTemplate(player.name, index);
+            rankFragment.appendChild(rankItem);
+        }
+        this.rankContainer.appendChild(rankFragment);
+
+        const matchFragment = document.createDocumentFragment();
+        for (const match of this.matchupArray) {
+            const matchItem = document.createElement('div');
+            matchItem.classList.add('list-item');
+            matchItem.innerHTML = this.getMatchScrollTemplate(match);
+            matchFragment.appendChild(matchItem);
+        }
+        this.matchContainer.appendChild(matchFragment);
+    }
+
     showFinalScore() {
         this.updateFinaleScore();
         this.rankScoring();
         if (getLoggedIn()) {
             this.postFinaleScore();
         }
-        this.finalScoreWindow.classList.remove('hidden');        
+        this.finalScoreWindow.classList.remove('hidden');
+        this.createFinalScoreContent();
         console.log('game is finished now');
     }
 }
