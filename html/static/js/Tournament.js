@@ -368,27 +368,23 @@ class TournamentGame {
                         TROPHY_IMAGES[4];
 
         return `
-        <div class="list-item-left">
-            <img class="trophy" src="${image}" draggable="false" (dragstart)="false;" />
-            <div class="tournament-place">${rank + 1}</div>
-            <div class="field">${player}</div>
-        </div>
+        <img class="trophy" src="${image}" draggable="false" (dragstart)="false;" />
+        <div class="tournament-place">${rank + 1}</div>
+        <div class="field">${player}</div>
         `;
     }
 
     getMatchScrollTemplate(match) {
         return `
-        <div class="list-item">
-            <div class="match-date">${match.date}</div>
-            <div class="match-result">
-                <div class="left-player">${match.left}</div>
-                <div class="score">
-                    <div class="left-score">${match.score.left.toString()}</div>
-                    <div class="score-colon">:</div>
-                    <div class="right-score">${match.score.right.toString()}</div>
-                </div>
-                <div class="right-player">${match.right}</div>
+        <div class="match-date">${match.date}</div>
+        <div class="match-result">
+            <div class="left-player">${match.left}</div>
+            <div class="score">
+                <div class="left-score">${match.score.left.toString()}</div>
+                <div class="score-colon">:</div>
+                <div class="right-score">${match.score.right.toString()}</div>
             </div>
+            <div class="right-player">${match.right}</div>
         </div>
         `;
     }
