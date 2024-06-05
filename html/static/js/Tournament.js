@@ -210,7 +210,8 @@ class TournamentGame {
                     score: {
                         left: 0,
                         right: 0
-                    }
+                    },
+                    date: null
                 });
             }
         }
@@ -275,6 +276,10 @@ class TournamentGame {
     }
 
     async playGame() {
+        const now = new Date();
+        const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
+        this.currentMatch.date = formattedDate;
+
         this.options.player_one = this.currentMatch.left;
         this.options.player_two = this.currentMatch.right;
 
@@ -372,12 +377,9 @@ class TournamentGame {
     }
 
     getMatchScrollTemplate(match) {
-        const now = new Date();
-        const time = now.toISOString().slice(0, 10);
-
         return `
         <div class="list-item">
-            <div class="match-date">${time}</div>
+            <div class="match-date">${match.date}</div>
             <div class="match-result">
                 <div class="left-player">${match.left}</div>
                 <div class="score">
