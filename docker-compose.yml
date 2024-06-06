@@ -194,12 +194,21 @@ services:
     privileged: true
 
   grafana:
-    image: grafana/grafana:10.4.2-ubuntu
+    image: grafana/grafana:11.0.0-ubuntu
     container_name: grafana
-    volumes: 
+    volumes:
+      - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/config/datasource.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./monitoring/grafana/config/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
     ports:
       - 3000:3000
+    environment:
+      - DS_PROMETHEUS="prometheus-uid"
+      - GF_SECURITY_ADMIN_USER= ${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    env_file:
+      - .env
     restart: always
     networks:
       - authnetwork
@@ -233,6 +242,7 @@ volumes:
   static_files:
   certbot_conf:
   certbot_www:
+  grafana_data:
 
 networks:
   authnetwork:

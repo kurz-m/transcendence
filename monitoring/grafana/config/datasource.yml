@@ -4,3 +4,7 @@ datasources:
     url: http://prometheus:9090
     access: proxy
     isDefault: true
+    editable: true
+    uid: "prometheus-uid"
+    jsonData:
+      httpMethod: POST
