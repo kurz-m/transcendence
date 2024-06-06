@@ -6,7 +6,8 @@ const FPS = 60;
 const INTERVAL = 1000 / FPS;
 const AI_INTERVAL = 1000;
 const INITIAL_PADDLE_SPEED = 12;
-const MAX_SCORE = 3;
+const MAX_SCORE = 11;
+const BALL_BOUNCE_DEPTH = 5;
 
 const POST_GAME_ID = 'https://transcendence.myprojekt.tech/api-game/game'
 const POST_SCORE_API = 'https://transcendence.myprojekt.tech/api-game/score'
@@ -70,7 +71,6 @@ class PongGame {
         this.paddleLeft = new this.Paddle(document.getElementById('paddle_l'));
         this.paddleRight = new this.Paddle(document.getElementById('paddle_r'));
 
-
         /* Declare all elements that are necessary for a pong game */
         this.app = document.getElementById('app');
         this.pauseMenu = document.getElementById('pause-window');
@@ -114,17 +114,14 @@ class PongGame {
         this.paddleSpeed = INITIAL_PADDLE_SPEED;
 
         /* countdown variables */
-this.seconds = 0;
+        this.seconds = 5;
         this.countdownInterval = 0;
 
         /* variables for AI opponent */
         this.isAI = (sessionStorage.getItem('opponent_name') == "AI");
-        console.log("is AI: " + this.isAI);
         this.aiRefreshInterval = 0;
         this.aiUpdateInterval = 0;
-        this.aiPrevBallX = this.ball.x;
-        this.aiPrevBallY = this.ball.y;
-        this.aiTargetY = this.ball.y;
+        this.aiKeyDuration = 0;
 
         if (this.options.game_type === 'tournament') {
             this.playerLeftID.textContent = options.player_one;
@@ -294,6 +291,7 @@ this.seconds = 0;
         this.ball.x = this.board.width * 0.5 + this.board.left - this.ball.width * 0.5;
         this.ball.y = this.board.height * 0.5 + this.board.top - this.ball.height * 0.5;
         this.updateBall();
+        this.aiKeyDuration = 0;
     }
 
     updatePaddle(paddle) {
@@ -318,16 +316,26 @@ this.seconds = 0;
         return { x: x, y: y };
     }
 
-    intersectPaddle(obj, center, centerNew) {
-        let bounds = obj.getBoundingClientRect();
-        let paddleCenterHeight = bounds.left + bounds.width * 0.5;
-        if (Math.sign(paddleCenterHeight - center.x) != Math.sign(paddleCenterHeight - centerNew.x)) {
-            if ((center.y > bounds.top && center.y < bounds.bottom) ||
-                (centerNew.y > bounds.top && centerNew.y < bounds.bottomw)) {
-                return true;
-            }
-        }
-        return false;
+    // intersectPaddle(obj, center, centerNew) {
+    //     let bounds = obj.getBoundingClientRect();
+    //     let paddleCenterHeight = bounds.left + bounds.width * 0.5;
+    //     if (Math.sign(paddleCenterHeight - center.x) != Math.sign(paddleCenterHeight - centerNew.x)) {
+    //         if ((center.y > bounds.top && center.y < bounds.bottom) ||
+    //             (centerNew.y > bounds.top && centerNew.y < bounds.bottom)) {
+    //                 return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+
+    intersectLine(lineX, pointX, newPointX) {
+        return (Math.sign(lineX - pointX) != Math.sign(lineX - newPointX));
+    }
+
+    ballIsOnPaddle(paddle, center, newCenter) {
+        let paddleBounds = paddle.object.getBoundingClientRect();
+        return ((center.y > paddleBounds.top && center.y < paddleBounds.bottom) ||
+                (newCenter.y > paddleBounds.top && newCenter.y < paddleBounds.bottom));
     }
 
     moveBall() {
@@ -359,22 +367,41 @@ this.seconds = 0;
         let centerPoint = this.getCenterPoint(this.ball.object);
         let centerPointNew = { x: centerPoint.x + this.ball.dx, y: centerPoint.y + this.ball.dy };
 
-        if (this.intersectPaddle(this.paddleLeft.object, centerPoint, centerPointNew) ||
-            this.intersectPaddle(this.paddleRight.object, centerPoint, centerPointNew)) {
-            this.ball.dx = -this.ball.dx;
-            if (this.ball.dx < 0) {
-                this.ball.dx -= Math.round(Math.random() * 2);
-            } else {
-                this.ball.dx += Math.round(Math.random() * 2);
-            }
-            if (this.ball.dy < 0) {
-                this.ball.dy -= Math.round(Math.random() * 2);
-            } else {
-                this.ball.dy += Math.round(Math.random() * 2);
-            }
-            this.paddleSpeed += Math.round(Math.random());
-            newLeft = this.ball.x + this.ball.dx;
+        // if (this.intersectPaddle(this.paddleLeft.object, centerPoint, centerPointNew) ||
+        //     this.intersectPaddle(this.paddleRight.object, centerPoint, centerPointNew)) {
+        //         this.ball.dx = -this.ball.dx;
+        //         if (this.ball.dx < 0) {
+        //             this.ball.dx -= Math.round(Math.random() * 2);
+        //         } else {
+        //             this.ball.dx += Math.round(Math.random() * 2);
+        //         }
+        //         if (this.ball.dy < 0) {
+        //             this.ball.dy -= Math.round(Math.random() * 2);
+        //         } else {
+        //             this.ball.dy += Math.round(Math.random() * 2);
+        //         }
+        //         this.paddleSpeed += Math.round(Math.random());
+        //         newLeft = this.ball.x + this.ball.dx;
+        // }
+        if ((this.intersectLine(this.paddleLeft.x + this.paddleLeft.width - BALL_BOUNCE_DEPTH, this.ball.x, newLeft) &&
+            this.ballIsOnPaddle(this.paddleLeft, centerPoint, centerPointNew) ||
+            (this.intersectLine(this.paddleRight.x + BALL_BOUNCE_DEPTH, this.ball.x + this.ball.width, newLeft + this.ball.width) &&
+            this.ballIsOnPaddle(this.paddleRight, centerPoint, centerPointNew)))) {
+                this.ball.dx = -this.ball.dx;
+                if (this.ball.dx < 0) {
+                    this.ball.dx -= Math.round(Math.random() * 2);
+                } else {
+                    this.ball.dx += Math.round(Math.random() * 2);
+                }
+                if (this.ball.dy < 0) {
+                    this.ball.dy -= Math.round(Math.random() * 2);
+                } else {
+                    this.ball.dy += Math.round(Math.random() * 2);
+                }
+                this.paddleSpeed += Math.round(Math.random());
+                newLeft = this.ball.x + this.ball.dx;
         }
+
         this.ball.x = newLeft;
         this.ball.y = newTop;
         this.updateBall();
@@ -419,30 +446,66 @@ this.seconds = 0;
     }
 
     refreshAI() {
-        // console.log("AI refresh");
-        if (this.ball.x > this.aiPrevBallX) {
-            let m = (this.aiPrevBallY - this.ball.y) / (this.aiPrevBallX - this.ball.x);
-            let b = this.ball.y - m * this.ball.x;
-            var yc = m * this.paddleRight.x + b;
-            if (yc >= 0 && yc <= this.board.height) {
-                this.aiTargetY = yc;
-            }
+        let dx = this.ball.dx;
+        let dy = this.ball.dy;
+        if (!this.loopInterval || dx == 0) {
+            return;
         }
-        // console.log("new target: " + this.aiTargetY);
 
-        this.aiPrevBallX = this.ball.x;
-        this.aiPrevBallY = this.ball.y;
+        let leftWall = this.paddleLeft.x + this.paddleLeft.width - BALL_BOUNCE_DEPTH;
+        let rightWall = this.paddleRight.x + BALL_BOUNCE_DEPTH;
+
+        let halfBall = this.ball.height / 2;
+        let current = this.getCenterPoint(this.ball.object);
+        let paddleCenterY = this.paddleRight.y + (this.paddleRight.height / 2);
+        let newY = paddleCenterY;
+        let timeToWall = 0;
+
+        while (current.x + halfBall < rightWall) {
+            if (dx > 0) { // ball moving to the right
+                timeToWall = (rightWall - (current.x + halfBall)) / dx;
+                newY = current.y + timeToWall * dy;
+                if (newY > this.board.top + halfBall && newY < this.board.bottom - halfBall) {
+                    break ;
+                }
+            } else { // moving to the left
+                timeToWall = (leftWall - (current.x - halfBall)) / dx;
+                newY = current.y + timeToWall * dy;
+                if (newY > this.board.top + halfBall && newY < this.board.bottom - halfBall) {
+                    current.x += timeToWall * dx;
+                    current.y = newY;
+                    dx = -dx;
+                    continue ;
+                }
+            }
+            timeToWall = 0;
+            if (dy < 0) { // ball moving up
+                timeToWall = (this.board.top - (current.y - halfBall)) / dy;
+            } else if (dy > 0) { // ball moving dowm
+                timeToWall = (this.board.bottom - (current.y + halfBall)) / dy;
+            }
+            current.x += timeToWall * dx;
+            current.y += timeToWall * dy;
+            dy = -dy;
+        }
+
+        // amount of loops required to move the paddle to the newY, UP(+) / DOWN(-)
+        this.aiKeyDuration = (paddleCenterY - newY) / Math.abs(this.paddleSpeed) - 1 + 2 * Math.random();
+        this.aiKeyDuration = Math.sign(this.aiKeyDuration) * Math.floor(Math.abs(this.aiKeyDuration));
+
+        // AI gets less accurate in a single round but more accurate the longer the game takes
+        let now = new Date().getTime();
+        let secPassed = (now - this.startTime) / 1000;
+        let failure = secPassed / 30 - this.timerSeconds / 420;
+        if (Math.random() < failure) {
+            this.aiKeyDuration = -this.aiKeyDuration;
+        }
     }
 
     loopAI() {
-        let buffer = this.paddleRight.height / 4;
-        if (this.aiTargetY > this.paddleRight.y + this.paddleRight.height - buffer) {
-            this.paddleRight.dy = this.paddleSpeed; // Moves paddle down
-        } else if (this.aiTargetY < this.paddleRight.y + buffer) {
-            this.paddleRight.dy = -this.paddleSpeed; // Moves paddle up
-        } else {
-            this.paddleRight.dy = 0;
-        }
+        // Sets velocity so that paddle moves up if aiKeyDuration is positive and vice versa
+        this.paddleRight.dy = -Math.sign(this.aiKeyDuration) * this.paddleSpeed;
+        this.aiKeyDuration -= Math.sign(this.aiKeyDuration);
     }
 
     startTimer() {
@@ -463,7 +526,6 @@ this.seconds = 0;
     }
 
     startGame() {
-        this.startTimer();
         this.ball.dx = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         this.ball.dy = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
         this.resumeGame()
