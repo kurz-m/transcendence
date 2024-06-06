@@ -118,15 +118,16 @@ class PongGame {
         this.countdownInterval = 0;
 
         /* variables for AI opponent */
-        this.isAI = (sessionStorage.getItem('opponent_name') == "AI");
         this.aiRefreshInterval = 0;
         this.aiUpdateInterval = 0;
         this.aiKeyDuration = 0;
-
+        
         if (this.options.game_type === 'tournament') {
             this.playerLeftID.textContent = options.player_one;
             this.playerRightID.textContent = options.player_two;
+            this.isAI = (options.player_two === 'AI');
         } else {
+            this.isAI = (sessionStorage.getItem('opponent_name') === "AI");
             this.setPlayerNames();
         }
         this.resetPaddles();
