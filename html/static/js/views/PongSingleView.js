@@ -1,4 +1,3 @@
-import { setOpponent } from "../pong.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -39,14 +38,14 @@ export default class extends AbstractView {
         const handlePlayButton = () => {
             let input = document.getElementById('opponent-name').value;
             if (!input && !localStorage.getItem('username')) {
-                setOpponent("");
+                sessionStorage.setItem('opponent_name', "");
             } else {
-                setOpponent(input || "Guest");
+                sessionStorage.setItem('opponent_name', input || "Guest");
             }
         }
-
+        
         const handleAIButton = () => {
-            setOpponent("AI");
+            sessionStorage.setItem('opponent_name', "AI");
         }
 
         playButton.addEventListener('click', handlePlayButton, {

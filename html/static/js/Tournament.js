@@ -202,7 +202,12 @@ class TournamentGame {
             for (let j = i + 1; j < this.playersArray.length; j++) {
                 const playerOne = this.playersArray[i].name;
                 const playerTwo = this.playersArray[j].name;
-                const randomMatchup = Math.random() < 0.5;
+                let randomMatchup = true;
+                if (playerOne === 'AI') {
+                    randomMatchup = false;
+                } else if (playerTwo !== 'AI') {
+                    randomMatchup = Math.random() < 0.5;
+                }
 
                 this.matchupArray.push({
                     left: randomMatchup ? playerOne : playerTwo,
