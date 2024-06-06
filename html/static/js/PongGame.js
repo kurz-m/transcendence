@@ -63,7 +63,6 @@ class PongGame {
                 let bounds = object.getBoundingClientRect();
                 this.width = bounds.width;
                 this.height = bounds.height;
-                this.x = bounds.x;
                 this.y = bounds.y;
                 this.dy = 0;
             }
@@ -121,7 +120,7 @@ class PongGame {
         this.aiRefreshInterval = 0;
         this.aiUpdateInterval = 0;
         this.aiKeyDuration = 0;
-        
+
         if (this.options.game_type === 'tournament') {
             this.playerLeftID.textContent = options.player_one;
             this.playerRightID.textContent = options.player_two;
@@ -310,6 +309,13 @@ class PongGame {
         paddle.object.style.top = newPos + 'px';
     }
 
+    getPaddleInnerBorder() {
+        let boundsLeft = this.paddleLeft.object.getBoundingClientRect();
+        let boundsRight = this.paddleRight.object.getBoundingClientRect();
+        return { left: boundsLeft.x + this.paddleLeft.width - BALL_BOUNCE_DEPTH,
+                 right: boundsRight.x + BALL_BOUNCE_DEPTH};
+    }
+
     getCenterPoint(obj) {
         let bounds = obj.getBoundingClientRect();
         let x = bounds.width * 0.5 + bounds.left;
@@ -384,9 +390,11 @@ class PongGame {
         //         this.paddleSpeed += Math.round(Math.random());
         //         newLeft = this.ball.x + this.ball.dx;
         // }
-        if ((this.intersectLine(this.paddleLeft.x + this.paddleLeft.width - BALL_BOUNCE_DEPTH, this.ball.x, newLeft) &&
+
+        let paddleBorderX = this.getPaddleInnerBorder();
+        if ((this.intersectLine(paddleBorderX.left, this.ball.x, newLeft) &&
             this.ballIsOnPaddle(this.paddleLeft, centerPoint, centerPointNew) ||
-            (this.intersectLine(this.paddleRight.x + BALL_BOUNCE_DEPTH, this.ball.x + this.ball.width, newLeft + this.ball.width) &&
+            (this.intersectLine(paddleBorderX.right, this.ball.x + this.ball.width, newLeft + this.ball.width) &&
             this.ballIsOnPaddle(this.paddleRight, centerPoint, centerPointNew)))) {
                 this.ball.dx = -this.ball.dx;
                 if (this.ball.dx < 0) {
@@ -453,8 +461,7 @@ class PongGame {
             return;
         }
 
-        let leftWall = this.paddleLeft.x + this.paddleLeft.width - BALL_BOUNCE_DEPTH;
-        let rightWall = this.paddleRight.x + BALL_BOUNCE_DEPTH;
+        let paddleBorderX = this.getPaddleInnerBorder();
 
         let halfBall = this.ball.height / 2;
         let current = this.getCenterPoint(this.ball.object);
@@ -462,15 +469,15 @@ class PongGame {
         let newY = paddleCenterY;
         let timeToWall = 0;
 
-        while (current.x + halfBall < rightWall) {
+        while (current.x + halfBall < paddleBorderX.right) {
             if (dx > 0) { // ball moving to the right
-                timeToWall = (rightWall - (current.x + halfBall)) / dx;
+                timeToWall = (paddleBorderX.right - (current.x + halfBall)) / dx;
                 newY = current.y + timeToWall * dy;
                 if (newY > this.board.top + halfBall && newY < this.board.bottom - halfBall) {
                     break ;
                 }
             } else { // moving to the left
-                timeToWall = (leftWall - (current.x - halfBall)) / dx;
+                timeToWall = (paddleBorderX.left - (current.x - halfBall)) / dx;
                 newY = current.y + timeToWall * dy;
                 if (newY > this.board.top + halfBall && newY < this.board.bottom - halfBall) {
                     current.x += timeToWall * dx;
