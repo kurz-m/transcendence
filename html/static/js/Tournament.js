@@ -125,7 +125,7 @@ class TournamentGame {
                 this.totalPlayersCount--;
                 this.totalPlayersElement.textContent = `Total Players: ${this.totalPlayersCount}`;
 
-                const index = this.playersArray.indexOf(playerName);
+                const index = this.playersArray.findIndex(player => player.name === playerName);
                 if (index > -1) {
                     this.playersArray.splice(index, 1);
                 }
