@@ -5,6 +5,5 @@ datasources:
     access: proxy
     isDefault: true
     editable: true
-    uid: "prometheus-uid"
     jsonData:
       httpMethod: POST
