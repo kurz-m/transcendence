@@ -49,17 +49,25 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
 
 class FriendRequestSerializer(serializers.HyperlinkedModelSerializer):
     sender = PlayerSerializer(read_only=True)
-    receiver = PlayerSerializer(read_only=True)
 
     class Meta:
         model = FriendRequest
-        fields = ['id', 'sender', 'receiver', 'status', 'created_at']
+        fields = ['id', 'sender', 'created_at']
 
 
 class FriendRequestCreateSerializer(serializers.ModelSerializer):
+    receiver = serializers.CharField()
+
     class Meta:
         model = FriendRequest
         fields = ['receiver']
+
+    def validate_receiver(self, value):
+        try:
+            receiver_user = User.objects.get(username=value)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Receiver user does not exist.")
+        return receiver_user
 
 
 class AcceptFriendRequestSerializer(serializers.Serializer):
