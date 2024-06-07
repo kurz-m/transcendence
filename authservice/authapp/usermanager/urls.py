@@ -20,14 +20,19 @@ from rest_framework import routers
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
-from leaderboard.views import LeaderboardViewSet
 from remoteauth.views import callbackCode, authorizeCall, loggedIn, logOut
 from remoteauth.utils import ServeMedia
 from players.friendrequest import FriendRequestSendView, AcceptFriendRequestView, FriendRequestsAPIView
+from rest_framework.routers import DefaultRouter
 
-router = routers.DefaultRouter()
+class CustomRouter(DefaultRouter):
+    def __init__(self):
+        super().__init__()
+        self.trailing_slash = '/?'
+
+router = CustomRouter()
 router.register(r'player', views.PlayerViewSet, basename='players')
-router.register(r'users', views.UserViewSet, basename='users')
+# router.register(r'users', views.UserViewSet, basename='users')
 
 urlpatterns = [
     path('api/', include(router.urls)),

@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'leaderboard',
     'players',
     'remoteauth',
     'rest_framework_simplejwt',
@@ -178,4 +177,4 @@ ALLOWED_HOSTS = ['authservice', 'localhost', '127.0.0.1', '159.223.18.127', 'tra
 # ]
 CORS_ALLOW_ALL_ORIGINS = True
 
-
+APPEND_SLASH = False
