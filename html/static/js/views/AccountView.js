@@ -40,9 +40,9 @@ export default class extends AbstractView {
                             </button>
                         </div>
                         <div class="list-item">
-                            <input id="email" class="list-field" type="text" value="" placeholder="Email" />
+                            <input id="email" class="list-field" type="text" value="" placeholder="Email" readonly/>
                             <button id="email-button" class="clean-button">
-                                <img class="small-icon" src="./static/media/checkmark.svg" draggable="false" (dragstart)="false;" />
+                                <img class="small-icon" src="./static/media/edit.svg" draggable="false" (dragstart)="false;" />
                             </button>
                         </div>
                     </div>
@@ -58,6 +58,7 @@ export default class extends AbstractView {
 
     handleInputChange = (event) => {
         const button = event.target.closest('button');
+        const img = event.target;
         if (button) {
             const inputField = button.previousElementSibling;
 
@@ -71,7 +72,11 @@ export default class extends AbstractView {
                 inputField.readOnly = !inputField.readOnly;
                 inputField.focus();
                 if (!inputField.readOnly) {
+                    img.src = './static/media/check-all.svg';
                     inputField.select();
+                } else {
+                    img.src = './static/media/edit.svg'
+                    inputField.blur();
                 }
             }
         }
