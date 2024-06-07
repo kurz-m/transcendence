@@ -5,7 +5,7 @@ from players.models import Players
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from players.permission import IsOwnerAndNotDelete, IsOwnerAndNotDeleteUsers
+from players.permission import IsOwnerAndNotDelete, IsOwnerAndNotDeleteUsers, IsOwnerAndFriends
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -29,16 +29,12 @@ class PlayerViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        player = Players.objects.get(user=user)
-
-        friends_ids = player.friends.values_list('id', flat=True)
-        ids_to_view = list(friends_ids) + [player.id]
-        return Players.objects.filter(id__in=ids_to_view).order_by('-user__date_joined')
+        return Players.objects.filter(user=user).order_by('-user__date_joined')
 
 
 
 class FriendsApiView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerAndFriends]
 
     def get(self, request, username=None):
         if username:
@@ -47,7 +43,7 @@ class FriendsApiView(APIView):
             except Players.DoesNotExist:
                 return Response({'error': 'Friend not found'}, status=status.HTTP_404_NOT_FOUND)
             
-            if friend in Players.objects.get(user=request.user).friends.all():
+            if friend not in Players.objects.get(user=request.user).friends.all():
                 return Response({'error': 'You are not friend with the user.'}, status=status.HTTP_404_NOT_FOUND)
             
             serializer = PlayerSerializer(friend, context={'request': request})
@@ -58,7 +54,9 @@ class FriendsApiView(APIView):
             serializer = PlayerSerializer(friends, many=True, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def delete(self, request, username):
+    def delete(self, request, username=None):
+        if username is None:
+            return Response({'error': 'Friend username not given.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             user_player = Players.objects.get(user=request.user)
             friend_player = Players.objects.get(user__username=username)
