@@ -82,6 +82,7 @@ const updateLoginState = () => {
         loginButton.classList.remove('logged-out');
         loginButton.classList.add('logged-in');
         toggleLoginButtonStyle();
+    }
 }
 
 const handleNavBar = () => {
