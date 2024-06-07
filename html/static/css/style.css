@@ -157,41 +157,19 @@ body {
 }
 
 .h-content {
-  display: flex;
-  flex-direction: row;
-  justify-content: right;
+  margin-top: 10px;
+  width: 100%;
+  display: grid;
+  grid-auto-flow: column;
+  grid-column-gap: 21px;
+  align-items: center;
   box-sizing: border-box;
-}
-
-.v-content {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.v-content:not(:last-child) {
-  margin-right: 21px;
-}
-
-.ai-selection {
-  width: 88px;
-  border: 3px solid var(--color-lightgray);
-  border-radius: var(--br);
-  padding: 8px 28px;
-}
-
-.stepper {
-  height: 47px;
-  width: 27px;
-  display: flex;
-  flex-direction: column;
-  margin: 9px 0px 0px 13px;
 }
 
 .people-list {
-  height: 420px;
+  height: 247px;
   width: 100%;
-  max-width: 414px;
+  max-width: 573px;
   border: 3px solid var(--color-lightgray);
   border-radius: var(--br);
   padding: 32px 8px 32px 32px;
@@ -448,16 +426,13 @@ body {
   align-items: center;
 }
 
-.v-spacer {
-  height: 100%;
-}
-
 /* BUTTONS */
 
 .a-large-button,
 .large-button,
 .large-button-red {
   max-height: 73px;
+  min-width: 100px;
   width: 100%;
   cursor: pointer;
   background: var(--color-clear);
@@ -523,26 +498,6 @@ body {
 .a-small-button {
   height: 41px;
   display: block;
-}
-
-.stepper-inc {
-  height: 22px;
-  width: 27px;
-  cursor: pointer;
-  background: var(--color-dimgray);
-  border: 3px solid var(--color-lightgray);
-  border-radius: var(--br) var(--br) 0px 0px;
-  border-bottom: 1.5px solid var(--color-lightgray);
-}
-
-.stepper-dec {
-  height: 22px;
-  width: 27px;
-  cursor: pointer;
-  background: var(--color-dimgray);
-  border: 3px solid var(--color-lightgray);
-  border-radius: 0px 0px var(--br) var(--br);
-  border-top: 1.5px solid var(--color-lightgray);
 }
 
 .friend-button {
@@ -655,18 +610,6 @@ body {
   background: var(--color-darkgray);
 }
 
-.stepper-dec:hover {
-  border: 3px solid var(--color-dimgray);
-  border-top: 1.5px solid var(--color-lightgray);
-  background: var(--color-darkgray);
-}
-
-.stepper-inc:hover {
-  border: 3px solid var(--color-dimgray);
-  border-bottom: 1.5px solid var(--color-lightgray);
-  background: var(--color-darkgray);
-}
-
 .clean-button {
   cursor: pointer;
   background: var(--color-clear);
@@ -714,8 +657,6 @@ a:active {
 .a-small-button:active,
 .small-button:active,
 .friend-button:active .field,
-.stepper-inc:active .stepper-text-inc,
-.stepper-dec:active .stepper-text-dec,
 .match-button:active,
 .logged-in:active .field,
 .logged-out:active .field,
@@ -738,21 +679,17 @@ a:active {
 
 /* INPUT */
 
-.label-field-button {
-  height: 38px;
-  max-width: 100%;
+.input-segment {
+  height: 70px;
+  width: 100%;
+  max-width: 452px;
   background: var(--color-clear);
   border: 3px solid var(--color-lightgray);
   border-radius: var(--br);
-  font-family: var(--font);
-  font-size: 40px;
-  font-weight: var(--font-semibold);
-  color: var(--color-white);
   align-items: center;
-  justify-content: space-between;
   display: flex;
-  margin-top: 42px;
   padding: 13px 9px 13px 32px;
+  box-sizing: border-box;
 }
 
 .twoFA-input,
@@ -768,7 +705,6 @@ a:active {
 
 .text-field {
   width: 100%;
-  max-width: 260px;
   max-height: 44px;
   font-size: 40px;
   border-bottom: 1px dashed var(--color-lightgray);
@@ -976,22 +912,6 @@ a:active {
   width: 130px;
   height: 151px;
   line-height: 175px;
-}
-
-.stepper-text-inc {
-  font-family: var(--font);
-  font-size: 15px;
-  line-height: 15px;
-  color: var(--color-white);
-  height: 22px;
-}
-
-.stepper-text-dec {
-  font-family: var(--font);
-  font-size: 15px;
-  line-height: 10px;
-  color: var(--color-white);
-  height: 22px;
 }
 
 .match-date {
