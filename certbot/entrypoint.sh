@@ -19,7 +19,6 @@ chmod 600 /tmp/credentials.ini
 while true
 do
 if [ -f "$CERT_FILE" ]; then
-    # stop running validation container
     # check modify date and renew if older than 24h
     modsecs=$(date --utc --reference="$CERT_FILE" +%s)
     nowsecs=$(date +%s)
@@ -27,8 +26,6 @@ if [ -f "$CERT_FILE" ]; then
     if [ $delta -lt 86400 ]; then
         certbot renew
     fi
-    docker stop nginx-validation || true
-    docker rm nginx-validation || true
     touch /healthy
 else
     # create certificates with certbot
@@ -46,8 +43,6 @@ else
     do
         sleep 2
     done
-    docker stop nginx-validation
-    docker rm nginx-validation
     touch /healthy
 fi
 # sleep for 10 minutes
