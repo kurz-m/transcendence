@@ -68,8 +68,7 @@ export const handleAuthenticationCallback = async () => {
     
         if (response.ok) {
             const data = await response.json();
-            console.log(data);
-            const { user, profile_image_uri, two_factor } = data.results[0];
+            const { user, profile_img_url, two_factor } = data.results[0];
             const extractedData = { user, profile_img_url, two_factor };
             updateCache(CACHE_KEY, extractedData);
         }

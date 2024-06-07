@@ -108,41 +108,27 @@ export default class extends AbstractView {
                 <img class="icon" src="./static/media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;" />
             </a>
         </div>
-
         <div class="content">
-            <div class="h-content">
-                <div class="v-content">
-                    <div class="people-list">
-                        <div class="scroll-people"></div>
-                    </div>
-                    <div class="label-field-button">
-                        <input id="player-input" class="text-field" type="text" placeholder="name" />
-                        <button id="add-player" class="small-button">add</button>
-                    </div>
-                </div>
-                <div class="v-content">
-                    <div class="ai-selection">
-                        <div class="subheading">AI</div>
-                        <div class="h-content">
-                            <div class="large-text">2</div>
-                            <div class="stepper">
-                                <button class="stepper-inc">
-                                    <div class="stepper-text-inc">+</div>
-                                </button>
-                                <!-- <hr class="stepper-divider"> -->
-                                <button class="stepper-dec">
-                                    <div class="stepper-text-dec">-</div>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="v-spacer"></div>
-                    <div id="total-players" class="small-text">Total Players: 0</div>
-                    <button id="start-tournament" class="large-button">Play</button>
+            <div class="people-list">
+                <div class="scroll-people">
+                    <div class="field">GJgj</div>
+                    <button class="clean-button">
+                        <img class="small-icon" src="../media/person-remove.svg" alt="Remove" draggable="false" (dragstart)="false;" />
+                    </button>
                 </div>
             </div>
         </div>
+        <div id="total-players" class="small-text">Total Players: 0</div>
+        <div class="h-content">
+            <button class="large-button">AI</button>
+            <div class="input-segment">
+                <input id="player-input" class="text-field" type="text" placeholder="name" />
+                <button id="add-player" class="small-button">add</button>
+            </div>
+        </div>
+        <button id="start-tournament" class="large-button">Play</button>
     </div>
+
 
     <div id="final-score-window" class="window hidden">
         <div class="topbar">
