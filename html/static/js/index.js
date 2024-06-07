@@ -16,7 +16,6 @@ let currentViewCleanup = null;
 const router = async () => {
     const routes = [
         { path: "/", view: Dashboard },
-        { path: "/friends", view: Friends },
         { path: "/match-history", view: MatchHistoryView },
         { path: "/account", view: Account },
         { path: "/pong-menu", view: PongMenuView },
