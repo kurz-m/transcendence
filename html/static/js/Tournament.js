@@ -143,6 +143,7 @@ class TournamentGame {
     attachEventListeners() {
         this.handleAddPlayer = () => {
             this.addPlayer(this.inputPlayer.value.trim());
+            this.inputPlayer.focus();
         }
         this.addPlayerButton.addEventListener('click', this.handleAddPlayer, {
             signal: this.controller.signal
@@ -164,6 +165,7 @@ class TournamentGame {
     handleStartTournament = () => {
         const startTournament = async () => {
             if (this.playersArray.length < 3) {
+                alert('You need at least 3 people to play a tournament');
                 return;
             }
             try {
