@@ -9,6 +9,7 @@ import PongTournamentView from "./views/PongTournamentView.js";
 import MatchHistoryView from "./views/MatchHistoryView.js";
 import { startPongGame } from "./PongGame.js";
 import { startTournament } from "./Tournament.js";
+import TestView from "./views/TestView.js";
 
 let currentViewCleanup = null;
 
@@ -22,6 +23,7 @@ const router = async () => {
         { path: "/pong-tournament", view: PongTournamentView, handler: startTournament },
         { path: "/pong-game", view: PongGame, handler: startPongGame },
         { path: "/callback", handler: handleAuthenticationCallback },
+        { path: "/test", view: TestView },
         // { path: "/two-factor", handler: handleTwoFactorCallback },
     ];
 

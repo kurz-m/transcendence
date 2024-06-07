@@ -609,7 +609,6 @@ class PongGame {
                 body: raw
             })
                 .then(response => {
-                    console.log(response.text());
                 })
                 .catch(error => console.log('error', error));
 
