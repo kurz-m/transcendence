@@ -353,8 +353,9 @@ class TournamentGame {
 
     postFinaleScore() {
         const header = getDefaultHeader();
+        const username = getUsername();
         let raw = JSON.stringify({
-            "rank": this.playersArray.indexOf(getUsername()) + 1,
+            "rank": this.playersArray.findIndex(player => player.name === username) + 1,
             "number_of_players": this.playersArray.length,
             "game_id": this.options.game_id
         });
