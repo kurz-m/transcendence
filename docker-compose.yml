@@ -150,18 +150,6 @@ services:
       - certbot_conf:/etc/nginx/ssl/:ro
       - static_files:${STATIC_DIRECTORY}
 
-  nginx-validation:
-    build: ./nginx-validation/
-    image: "nginx-validation:latest"
-    container_name: nginx-validation
-    restart: "no"
-    ports:
-      - "80:80"
-    networks:
-      - authnetwork
-    volumes:
-      - certbot_www:/var/www/certbot/:ro
-      - certbot_conf:/etc/nginx/ssl/:ro
 
   certbot:
     build: ./certbot/
@@ -178,7 +166,6 @@ services:
     volumes:
       - certbot_www:/var/www/certbot/:rw
       - certbot_conf:/etc/letsencrypt/:rw
-      - /var/run/docker.sock:/var/run/docker.sock:rw
     env_file:
       - .env
 
