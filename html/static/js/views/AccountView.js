@@ -3,7 +3,6 @@ import AbstractView from "./AbstractView.js";
 export default class extends AbstractView {
     constructor() {
         super();
-        this.controller = new AbortController();
     }
 
     getHtml = async () => {
@@ -29,21 +28,12 @@ export default class extends AbstractView {
                     <div id="event-container">
                         <div class="list-item">
                             <input id="first-name" class="list-field" type="text" value="Aaron" placeholder="First Name" readonly />
-                            <button id="first-name-button" class="clean-button">
-                                <img class="small-icon" src="./static/media/edit.svg" />
-                            </button>
                         </div>
                         <div class="list-item">
                             <input id="last-name" class="list-field" type="text" value="Rabenstein" placeholder="Last Name" readonly />
-                            <button id="last-name-button" class="clean-button">
-                                <img class="small-icon" src="./static/media/edit.svg" draggable="false" (dragstart)="false;" />
-                            </button>
                         </div>
                         <div class="list-item">
                             <input id="email" class="list-field" type="text" value="" placeholder="Email" readonly/>
-                            <button id="email-button" class="clean-button">
-                                <img class="small-icon" src="./static/media/edit.svg" draggable="false" (dragstart)="false;" />
-                            </button>
                         </div>
                     </div>
                     <div class="list-item">
@@ -56,32 +46,6 @@ export default class extends AbstractView {
         `
     }
 
-    handleInputChange = (event) => {
-        const button = event.target.closest('button');
-        const img = event.target;
-        if (button) {
-            const inputField = button.previousElementSibling;
-
-            if (!inputField.readOnly && inputField.value.trim() === '') {
-                alert('Please enter a value before saving!');
-                inputField.focus();
-                return;
-            }
-
-            if (inputField && inputField.type === 'text') {
-                inputField.readOnly = !inputField.readOnly;
-                inputField.focus();
-                if (!inputField.readOnly) {
-                    img.src = './static/media/check-all.svg';
-                    inputField.select();
-                } else {
-                    img.src = './static/media/edit.svg'
-                    inputField.blur();
-                }
-            }
-        }
-    }
-
     afterRender = async () => {
         const profileImage = document.querySelector('.large-pp');
 
@@ -91,11 +55,6 @@ export default class extends AbstractView {
         } else {
             profileImage.src = profileImageCached;
         }
-        this.eventContainer = document.getElementById('event-container');
-
-        this.eventContainer.addEventListener('click', this.handleInputChange, {
-            signal: this.controller.signal    
-        })
 
         return () => {
             this.controller.abort();
