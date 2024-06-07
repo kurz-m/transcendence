@@ -39,18 +39,18 @@ def create_player_from_user_info(user_info):
     first_name = user_info.get('first_name', '')
     last_name = user_info.get('last_name', '')
     email = user_info.get('email', '')
-    profile_img_uri = user_info.get('image', {}).get('link', '')
+    profile_img_url = user_info.get('image', {}).get('link', '')
 
     existing_user = User.objects.filter(username=username).first() or User.objects.filter(email=email).first()
 
     if existing_user:
         player = Players.objects.filter(user=existing_user).first()
         if not player:
-            player = Players.objects.create(user=existing_user, profile_img_uri=profile_img_uri)
+            player = Players.objects.create(user=existing_user, profile_img_url=profile_img_url)
         return player
     else:
         user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email)
-        player = Players.objects.create(user=user, profile_img_uri=profile_img_uri)
+        player = Players.objects.create(user=user, profile_img_url=profile_img_url)
         return player
 
 
@@ -115,7 +115,7 @@ class callbackCode(APIView):
                 refresh_str = data.get('referesh_jwt_token')
                 refresh = RefreshToken(refresh_str)
                 if player and refresh and player.two_factor is False:
-                    return_data = {'profile_image_url': player.profile_img_uri, 'detail': 'Successful operation. Cookies set with JWT token, username, and user ID'}
+                    return_data = {'profile_image_url': player.profile_img_url, 'detail': 'Successful operation. Cookies set with JWT token, username, and user ID'}
                     return_json = json.dumps(return_data)
                     oauth_response = HttpResponse(return_json, content_type='application/json')
                     oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=True)

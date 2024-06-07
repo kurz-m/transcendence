@@ -13,7 +13,7 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Players
-        fields = ['id', 'user', 'profile_img_uri', 'two_factor', 'online_status', 'friends']
+        fields = ['id', 'user', 'profile_img_url', 'two_factor', 'online_status', 'friends']
     
     def create(self, validated_data):
         user_data = validated_data.pop('user')
