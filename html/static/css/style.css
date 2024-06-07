@@ -303,7 +303,7 @@ body {
 }
 
 .score {
-  width: 72.5px;
+  width: 82.5px;
   display: flex;
   flex-direction: row;
 }
@@ -916,8 +916,8 @@ a:active {
 
 .match-date {
   font-weight: var(--font-light);
-  max-width: 222px;
-  min-width: 222px;
+  max-width: 330px;
+  min-width: 330px;
   margin-right: 21px;
   text-align: left;
 }
@@ -953,7 +953,7 @@ a:active {
 }
 
 .left-score {
-  width: 32px;
+  width: 37px;
   font-weight: var(--font-semibold);
   margin-left: 5px;
   text-align: right;
@@ -965,7 +965,7 @@ a:active {
 }
 
 .right-score {
-  width: 32px;
+  width: 37px;
   font-weight: var(--font-semibold);
   margin-right: 5px;
   text-align: left;
