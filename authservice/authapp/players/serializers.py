@@ -19,7 +19,7 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Players
-        fields = ['id', 'user', 'profile_img_uri', 'two_factor', 'online_status', 'friends']
+        fields = ['id', 'user', 'profile_img_url', 'two_factor', 'online_status', 'friends']
         extra_kwargs = {
             'url': {'view_name': 'players-detail'},
             'user': {'view_name': 'user-detail'}
@@ -39,7 +39,7 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
             user_data.pop('username', None)
             user_instance = user_serializer.update(user_instance, user_data)
 
-        instance.profile_img_uri = validated_data.get('profile_img_uri', instance.profile_img_uri)
+        instance.profile_img_url = validated_data.get('profile_img_url', instance.profile_img_url)
         instance.two_factor = validated_data.get('two_factor', instance.two_factor)
         instance.online_status = validated_data.get('online_status', instance.online_status)
         instance.friends.set(validated_data.get('friends', instance.friends.all()))
