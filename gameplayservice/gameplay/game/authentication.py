@@ -5,7 +5,6 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from rest_framework.response import Response
-# from tournament.models import Players
 
 class RemoteJWTAUthentication(BaseAuthentication):
     def authenticate(self, request):        
@@ -25,10 +24,10 @@ class RemoteJWTAUthentication(BaseAuthentication):
             user_response.raise_for_status()
             user_data = user_response.json()
             user, created = User.objects.get_or_create(
+                id=user_id,
                 username=user_data['username'],
                 defaults={'email': user_data['email']}
             )
-            # player, created = Players.objects.get_or_create(user=user)
             return (user, token)
         except requests.RequestException as e:
             raise AuthenticationFailed('Token validation failed', code='token_not_valid') from e

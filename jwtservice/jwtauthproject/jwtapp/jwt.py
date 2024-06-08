@@ -54,11 +54,12 @@ class GenerateTokenView(APIView):
             return HttpResponseBadRequest(f"Failed to verify 42 oauth token: {str(e)}")
         if response.status_code == 200:
             user, created = User.objects.get_or_create(
+                id=user_id,
                 username=username,
                 defaults={'email': email}
             )
             refresh = RefreshToken.for_user(user)
-            return Response({"referesh_jwt_token": str(refresh)})
+            return Response({"refresh_jwt_token": str(refresh)})
         else:
             return HttpResponseBadRequest("Failed to verify 42 oauth token.")
 
