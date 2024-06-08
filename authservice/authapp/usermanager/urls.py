@@ -32,7 +32,7 @@ class CustomRouter(DefaultRouter):
 
 router = CustomRouter()
 router.register(r'player', views.PlayerViewSet, basename='players')
-# router.register(r'users', views.UserViewSet, basename='users')
+router.register(r'users', views.UserViewSet, basename='users')
 
 urlpatterns = [
     path('api/', include(router.urls)),
