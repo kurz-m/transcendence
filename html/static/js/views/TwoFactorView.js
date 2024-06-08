@@ -1,5 +1,5 @@
-import { checkLoginStatus, setLoggedIn } from "../authentication.js";
-import { navigateTo, updateLoginState } from "../index.js";
+import { setLoggedIn } from "../authentication.js";
+import { navigateTo } from "../index.js";
 import { getDefaultHeader } from "../shared.js";
 import AbstractView from "./AbstractView.js";
 
@@ -16,13 +16,13 @@ export default class extends AbstractView {
         return `
         <div id="twoFA-login" class="window">
             <div class="topbar">
-                <button class="icon-button">
+                <button id="back-button" onclick="history.back()" class="icon-button">
                     <img class="icon" src="./static/media/back.svg" alt="Back" draggable="false" (dragstart)="false;" />
                 </button>
                 <div class="title">2FA - Login</div>
-                <button class="icon-button">
+                <a href="/" class="icon-button" data-link>
                     <img class="icon" src="./static/media/home.svg" alt="Home" draggable="false" (dragstart)="false;" />
-                </button>
+                </a>
             </div>
             <div class="content">
                 <div class="small-text">To login, please enter the 6-digit verification code from your authenticator app:</div>

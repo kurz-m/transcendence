@@ -1,5 +1,5 @@
 import { navigateTo } from "./index.js";
-import { getCookie, getDefaultHeader, toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
+import { getCookie, getDefaultHeader, getPlayerData, getUserCache, toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
 
 let isLoggedIn = false;
 
@@ -19,38 +19,13 @@ const LOGIN_API = 'https://transcendence.myprojekt.tech/api/auth/login';
 const JWT_CALLBACK_API = 'https://transcendence.myprojekt.tech/api/auth/callback';
 const CHECK_LOGIN_STATUS_API = 'https://transcendence.myprojekt.tech/api/auth/loggedin'
 const LOGOUT_API = 'https://transcendence.myprojekt.tech/api/auth/logout';
-const PLAYER_DATA_API = 'https://transcendence.myprojekt.tech/api/player';
-
-const CACHE_KEY = 'player_data'
 
 const loginButton = document.getElementById('login-button');
 const loginButtonField = document.getElementById('login-button-field');
 
-export const getPlayerData = async () => {
-    const profileImage = document.getElementById('small-profile-pic');
-    try {
-        const response = await fetch(PLAYER_DATA_API, {
-            method: 'GET',
-            headers: getDefaultHeader()
-        });
-    
-        if (response.ok) {
-            const data = await response.json();
-            const { user, profile_img_url, two_factor } = data.results[0];
-            const extractedData = { user, profile_img_url, two_factor };
-            updateCache(CACHE_KEY, extractedData);
-            if (!extractedData.profile_img_url) {
-                profileImage.src = './static/media/fallback-profile.png';
-            } else {
-                profileImage.src = extractedData.profile_img_url;
-            }
-        }
-    } catch (error) {
-        console.error('error', error);
-    }
-}
 
 export const handleAuthenticationCallback = async () => {
+    const profileImage = document.getElementById('small-profile-pic');
     try {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('code')) {
@@ -61,7 +36,6 @@ export const handleAuthenticationCallback = async () => {
                 headers: getDefaultHeader()
             });
             if (response.ok) {
-                console.log(response.status);
                 const data = await response.json();
                 if (data.two_factor === 'true') {
                     const params = new URLSearchParams();
@@ -70,7 +44,7 @@ export const handleAuthenticationCallback = async () => {
                     navigateTo(`/two-factor?${params.toString()}`);
                     return;
                 } else {
-                    isLoggedIn = true;
+                    setLoggedIn(true);
                     loginButton.classList.remove('logged-out');
                     loginButton.classList.add('logged-in');
                     toggleLoginButtonStyle();
@@ -87,15 +61,14 @@ export const handleAuthenticationCallback = async () => {
         console.error('Error fetching data:', error);
     }
     await getPlayerData();
+    const cache = await getUserCache();
+    if (!cache) {
+        profileImage.src = './static/media/fallback-profile.png';
+    } else {
+        profileImage.src = cache.data.profile_img_url;
+    }
     setUsername(getCookie('user'));
     navigateTo('/');
-}
-
-export const updateCache = (cacheKey, data) => {
-    localStorage.setItem(cacheKey, JSON.stringify({
-        data: data,
-        timestamp: Date.now()
-    }));
 }
 
 export const loginCallback = async () => {
@@ -124,7 +97,7 @@ export const logoutCallback = async () => {
         const response = await fetch(LOGOUT_API, {
             method: 'POST',
         });
-        
+
         if (response.ok) {
             toggleLoginButtonStyle(true);
             toggleDropdown();
@@ -137,7 +110,7 @@ export const logoutCallback = async () => {
         } else {
             console.error('Could not logout the user');
         }
-        
+
     } catch (error) {
         console.error('Error:', error);
     }
@@ -148,7 +121,7 @@ export const checkLoginStatus = async () => {
     try {
         const response = await fetch(CHECK_LOGIN_STATUS_API)
         setLoggedIn(response.ok);
-        
+
         if (getLoggedIn()) {
             setUsername(getCookie('user'));
         }

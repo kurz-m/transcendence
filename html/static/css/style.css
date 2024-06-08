@@ -19,6 +19,8 @@
     --color-highlightgray: #d9d9d9;
     --color-red: #c33232;
     --color-red-bg: #c3323242;
+    --color-green: #299329;
+    --color-green-bg: #29932942;
     --color-white: #fff;
     --color-clear: #00000000;
 
@@ -450,15 +452,7 @@ body {
   display: block;
 }
 
-.large-button-red {
-  border: 3px solid var(--color-red);
-  color: var(--color-red);
-}
 
-.large-button-red:hover,
-.medium-button-red:hover {
-  background-color: var(--color-red-bg)
-}
 
 .a-large-button:not(:first-child),
 .large-button:not(:first-child) {
@@ -480,6 +474,8 @@ body {
   margin-top: 19.5px;
 }
 
+.small-button-green,
+.small-button-red,
 .a-small-button,
 .small-button {
   height: 47px;
@@ -493,6 +489,32 @@ body {
   color: var(--color-white);
   text-align: top;
   padding: 0px 16px;
+}
+
+.small-button-green {
+  border: 3px solid var(--color-green);
+  background: var(--color-clear);
+  color: var(--color-green);
+}
+
+.small-button-green:hover {
+  background-color: var(--color-green-bg)
+}
+
+.small-button-red {
+  background: var(--color-clear)
+}
+
+.small-button-red,
+.large-button-red {
+  border: 3px solid var(--color-red);
+  color: var(--color-red);
+}
+
+.small-button-red:hover,
+.large-button-red:hover,
+.medium-button-red:hover {
+  background-color: var(--color-red-bg)
 }
 
 .a-small-button {

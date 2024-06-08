@@ -1,5 +1,5 @@
-import { checkLoginStatus, getLoggedIn, getPlayerData } from "../authentication.js";
-import { updateLoginState } from "../index.js";
+import { checkLoginStatus, getLoggedIn } from "../authentication.js";
+import { getPlayerData, updateLoginState } from "../shared.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
