@@ -66,9 +66,9 @@ export default class extends AbstractView {
             </div>
             <div class="content">
                 <div class="small-text">To enable Two-Factor-Authentication, please scan the QR-Code with your authenticator app:</div>
-                <img id="twoFA-img" class="twoFA-QR" src="" draggable="false" (dragstart)="false;" />
+                <img class="twoFA-QR" src="" draggable="false" (dragstart)="false;" />
                 <div class="small-text">And enter the 6-digit verification code:</div>
-                <input id="twoFA-input" class="twoFA-input" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="\d{6}" />
+                <input class="twoFA-input" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="\d{6}" />
             </div>
         </div>
         `
@@ -141,6 +141,7 @@ export default class extends AbstractView {
             if (event.key === 'Enter' && this.twoFaInput.value.length === 6) {
                 try {
                     const raw = JSON.stringify({
+                        "user_id": this.cache.data.user.id,
                         "token": this.twoFaInput.value
                     });
                     const response = await fetch(POST_MFA_VERIFY_API, {
@@ -170,10 +171,10 @@ export default class extends AbstractView {
         this.twoFactorWindow = document.getElementById('twoFA-window');
         this.accountWindow = document.getElementById('account-window');
         this.twoFaButton = document.getElementById('enable-button');
-        this.twoFaImg = document.getElementById('twoFA-img');
-        this.twoFaInput = document.getElementById('twoFA-input');
+        this.twoFaImg = document.querySelector('.twoFA-QR');
+        this.twoFaInput = document.querySelector('.twoFA-input');
 
-        this.attachEventListeners();
+        await this.attachEventListeners();
         /* display values */
         const profileImage = document.querySelector('.large-pp');
         const firstName = document.getElementById('first-name');

@@ -11,22 +11,23 @@ import { startPongGame } from "./PongGame.js";
 import { startTournament } from "./Tournament.js";
 import TestView from "./views/TestView.js";
 import ErrorView from "./views/ErrorView.js";
+import TwoFactorView from "./views/TwoFactorView.js";
 
 let currentViewCleanup = null;
 
 const router = async () => {
     const routes = [
-        { path: "/", view: Dashboard },
-        { path: "/match-history", view: MatchHistoryView },
-        { path: "/account", view: Account },
-        { path: "/pong-menu", view: PongMenuView },
-        { path: "/pong-single", view: PongSingleView },
-        { path: "/pong-tournament", view: PongTournamentView, handler: startTournament },
-        { path: "/pong-game", view: PongGame, handler: startPongGame },
-        { path: "/callback", handler: handleAuthenticationCallback },
-        { path: "/test", view: TestView },
-        { path: "/error", view: ErrorView },
-        // { path: "/two-factor", handler: handleTwoFactorCallback },
+        { path: "/", view: Dashboard, public: true },
+        { path: "/match-history", view: MatchHistoryView, public: false },
+        { path: "/account", view: Account, public: false },
+        { path: "/pong-menu", view: PongMenuView, public: true },
+        { path: "/pong-single", view: PongSingleView, public: true },
+        { path: "/pong-tournament", view: PongTournamentView, handler: startTournament, public: true },
+        { path: "/pong-game", view: PongGame, handler: startPongGame, public: true },
+        { path: "/callback", handler: handleAuthenticationCallback, public: true },
+        { path: "/test", view: TestView, public: false },
+        { path: "/error", view: ErrorView, public: true },
+        { path: "/two-factor", view: TwoFactorView, public: true },
     ];
 
     const potentialMatches = routes.map(route => {
@@ -43,6 +44,11 @@ const router = async () => {
             route: routes[0],
             isMatch: true
         };
+    }
+
+    if (match.route.public === false && !getLoggedIn()) {
+        navigateTo('/');
+        return;
     }
 
     if (match.route.view) {
@@ -68,17 +74,17 @@ export const navigateTo = url => {
     router();
 }
 
-const updateLoginState = () => {
+export const updateLoginState = () => {
     const loginButton = document.getElementById('login-button');
     const loginButtonText = document.getElementById('login-button-field');
     const profileImage = document.getElementById('small-profile-pic');
 
     if (getLoggedIn()) {
-        const profileImageCached = localStorage.getItem('profile_image');
-        if (!profileImageCached) {
+        const cache = JSON.parse(localStorage.getItem('player_data'));
+        if (!cache.data.profile_img_url) {
             profileImage.src = './static/media/fallback-profile.png';
         } else {
-            profileImage.src = profileImageCached;
+            profileImage.src = cache.data.profile_img_url;
         }
         loginButtonText.textContent = localStorage.getItem('username');
         loginButton.classList.remove('logged-out');

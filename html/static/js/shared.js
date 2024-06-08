@@ -1,3 +1,5 @@
+let navbarToggle = false;
+
 export const getCookie = (name) => {
     const value = `; ${document.cookie}`; 
     const parts = value.split(`; ${name}=`);
@@ -16,12 +18,14 @@ export const toggleDropdown = () => {
     loginButton.classList.toggle('profile-button');
 };
 
-export const toggleLoginButtonStyle = () => {
-    const profilePicture = document.getElementById('small-profile-pic');
-    const loginIcon = document.getElementById('login-icon-id');
-
-    profilePicture.classList.toggle('show');
-    loginIcon.classList.toggle('hidden');
+export const toggleLoginButtonStyle = (logout) => {
+    if (!navbarToggle || logout) {
+        navbarToggle = true;
+        const profilePicture = document.getElementById('small-profile-pic');
+        const loginIcon = document.getElementById('login-icon-id');
+        profilePicture.classList.toggle('show');
+        loginIcon.classList.toggle('hidden');
+    }
 }
 
 export const hideGamePauseMenu = () => {
