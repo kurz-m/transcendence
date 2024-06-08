@@ -79,7 +79,7 @@ export const handleAuthenticationCallback = async () => {
     navigateTo('/');
 }
 
-const updateCache = (cacheKey, data) => {
+export const updateCache = (cacheKey, data) => {
     localStorage.setItem(cacheKey, JSON.stringify({
         data: data,
         timestamp: Date.now()
