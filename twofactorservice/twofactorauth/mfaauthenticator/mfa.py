@@ -13,7 +13,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from mfaauthenticator.permission import IsOwnerAndNotDelete
+from django.contrib.auth.models import User
+import logging
 
+logger = logging.getLogger(__name__)
 
 class ServeMedia(APIView):
     permission_classes = [IsAuthenticated, IsOwnerAndNotDelete]
@@ -112,11 +115,16 @@ class DisableMFA(APIView):
 
 
 class VerifyMFA(APIView):
-    permission_classes = [IsAuthenticated, IsOwnerAndNotDelete]
+    # permission_classes = [IsAuthenticated, IsOwnerAndNotDelete]
     
     def post(self, request):
         token = request.data.get('token')
-        user = request.user
+        user_id = request.data.get('user_id')
+        logger.error("MFA: ")
+        logger.error(user_id)
+        user = User.objects.get(id=user_id)
+        if not user:
+            return Response({'error': 'User does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
         player = Players.objects.filter(user=user).first()
         is_valid = verify_token(user, token=token)
         if is_valid:

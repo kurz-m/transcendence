@@ -20,7 +20,7 @@ from rest_framework import routers
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
-from remoteauth.views import callbackCode, authorizeCall, loggedIn, logOut
+from remoteauth.views import callbackCode, authorizeCall, loggedIn, logOut, mfaLogin
 from remoteauth.utils import ServeMedia
 from players.friendrequest import FriendRequestSendView, AcceptFriendRequestView, FriendRequestsAPIView
 from rest_framework.routers import DefaultRouter
@@ -37,6 +37,7 @@ router.register(r'users', views.UserViewSet, basename='users')
 urlpatterns = [
     path('api/', include(router.urls)),
     path('api/auth/login', authorizeCall.as_view(), name='auth-authorizeRequest'),
+    path('api/auth/mfalogin', mfaLogin.as_view(), name='auth-mfa-login'),
     path('api/auth/logout', logOut.as_view(), name='auth-logout'),
     path('api/auth/callback', callbackCode.as_view(), name='auth-callback'),
     path('api/auth/loggedin', loggedIn.as_view(), name='auth-loggedin'),

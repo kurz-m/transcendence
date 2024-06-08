@@ -17,7 +17,9 @@ from rest_framework import permissions
 from django.http import JsonResponse
 from remoteauth.authentication import RemoteJWTAUthentication
 from rest_framework.permissions import AllowAny
+import logging
 
+logger = logging.getLogger(__name__)
 
 def get_user_info(access_token):
     url = 'https://api.intra.42.fr/v2/me'
@@ -85,6 +87,44 @@ class logOut(APIView):
         oauth_response.status_code = 200
         return oauth_response
 
+class mfaLogin(APIView):
+    def post(self, request, format=None):
+        mfa_token = request.data.get('token', None)
+        user_id = request.data.get('user_id', None)
+        oauth_token = request.data.get('oauth_token', None)
+
+        logger.error(mfa_token)
+        logger.error(user_id)
+        logger.error(oauth_token)
+
+        mfa_verify_url = 'http://twofactorservice:8000/api-mfa/verify'
+        data = {'token': mfa_token, 'user_id': user_id}
+        response = requests.post(mfa_verify_url, json=data, headers={'Content-Type': 'application/json'})
+        logger.error(response.status_code)
+        if response.status_code is status.HTTP_200_OK:
+            player = Players.objects.get(user__id=user_id)
+            logger.error(player.user.id)
+            jwt_service_url = 'http://jwtservice:8000/api-jwt/token/generate'
+            send_data = {'user_id': player.user.id, 'username': player.user.username, 'email': player.user.email, 'access_token': oauth_token}
+            logger.error(send_data)
+            response = requests.post(jwt_service_url, json=send_data, headers={'Content-Type': 'application/json'})
+            response.raise_for_status()
+            data = response.json()
+            refresh_str = data.get('referesh_jwt_token')
+            refresh = RefreshToken(refresh_str)
+
+            return_data = {'profile_image_url': player.profile_img_url, 'detail': 'Successful operation. Cookies set with JWT token, username, and user ID'}
+            return_json = json.dumps(return_data)
+            oauth_response = HttpResponse(return_json, content_type='application/json')
+            oauth_response.set_cookie('access_token', access_token, httponly=True, secure=True)
+            oauth_response.set_cookie('user', player.user, httponly=False, secure=True)
+            oauth_response.set_cookie('player_id', player.id, httponly=False, secure=True)
+            return oauth_response
+        else:
+            return Response({'Invalid mfa token.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 class callbackCode(APIView):
     def get(self, request, format=None):
         code = request.GET.get('code', None)
@@ -120,11 +160,10 @@ class callbackCode(APIView):
                     oauth_response = HttpResponse(return_json, content_type='application/json')
                     oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=True)
                     oauth_response.set_cookie('user', player.user, httponly=False, secure=True)
-                    oauth_response.set_cookie('2fa', player.two_factor, httponly=False, secure=True)
                     oauth_response.set_cookie('player_id', player.id, httponly=False, secure=True)
                     return oauth_response
                 else:
-                    return Response({'detail': 'Two-factor authentication is enabled for this user.'}, status=status.HTTP_200_OK)
+                    return Response({'two_factor': "true", 'player_id': player.user.id, 'oauth_token': access_token}, status=status.HTTP_100_CONTINUE)
             else:
                 return HttpResponseBadRequest('Invalid Authorization Request to 42 oauth.')
         else:
