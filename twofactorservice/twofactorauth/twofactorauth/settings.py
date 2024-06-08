@@ -148,7 +148,7 @@ REST_FRAMEWORK = {
     )
 }
 
-ALLOWED_HOSTS = ['twofactorauth', 'localhost', '127.0.0.1', '159.223.18.127', 'transcendence.myprojekt.tech']
+ALLOWED_HOSTS = ['twofactorservice', 'localhost', '127.0.0.1', '159.223.18.127', 'transcendence.myprojekt.tech']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
