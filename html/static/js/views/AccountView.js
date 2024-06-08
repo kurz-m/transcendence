@@ -141,7 +141,7 @@ export default class extends AbstractView {
                 this.accountWindow.classList.add('hidden');
                 this.twoFAInput.focus();
             } else {
-                this.updatePlayerEntry(false);
+                await this.updatePlayerEntry(false);
                 this.setButtonStyle();  
             }
         };
