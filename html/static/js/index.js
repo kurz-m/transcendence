@@ -2,7 +2,7 @@ import Dashboard from "./views/DashboardView.js";
 import Account from "./views/AccountView.js";
 import PongGame from "./views/PongGameView.js";
 import { checkLoginStatus, getLoggedIn, handleAuthenticationCallback, loginCallback, logoutCallback } from "./authentication.js";
-import { toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
+import { toggleDropdown, toggleLoginButtonStyle, updateLoginState } from "./shared.js";
 import PongMenuView from "./views/PongMenuView.js";
 import PongSingleView from "./views/PongSingleView.js";
 import PongTournamentView from "./views/PongTournamentView.js";
@@ -74,24 +74,7 @@ export const navigateTo = url => {
     router();
 }
 
-export const updateLoginState = () => {
-    const loginButton = document.getElementById('login-button');
-    const loginButtonText = document.getElementById('login-button-field');
-    const profileImage = document.getElementById('small-profile-pic');
 
-    if (getLoggedIn()) {
-        const cache = JSON.parse(localStorage.getItem('player_data'));
-        if (!cache.data.profile_img_url) {
-            profileImage.src = './static/media/fallback-profile.png';
-        } else {
-            profileImage.src = cache.data.profile_img_url;
-        }
-        loginButtonText.textContent = localStorage.getItem('username');
-        loginButton.classList.remove('logged-out');
-        loginButton.classList.add('logged-in');
-        toggleLoginButtonStyle();
-    }
-}
 
 const handleNavBar = () => {
     const loginButton = document.getElementById('login-button');

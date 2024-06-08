@@ -1,18 +1,18 @@
-import { updateCache } from "../authentication.js";
 import { navigateTo } from "../index.js";
-import { getDefaultHeader } from "../shared.js";
+import { getDefaultHeader, getUserCache, updateCache } from "../shared.js";
 import AbstractView from "./AbstractView.js";
 
-const POST_MFA_QR_API = 'https://transcendence.myprojekt.tech/api-mfa/enable'
-const POST_MFA_VERIFY_API = 'https://transcendence.myprojekt.tech/api-mfa/verify'
-const PUT_PLAYER_API = 'https://transcendence.myprojekt.tech/api/player'
-
-const CACHE_KEY = 'player_data'
+const POST_MFA_QR_API = 'https://transcendence.myprojekt.tech/api-mfa/enable';
+const POST_MFA_VERIFY_API = 'https://transcendence.myprojekt.tech/api-mfa/verify';
+const DELETE_MFA_API = 'https://transcendence.myprojekt.tech/api-mfa/verify';
+const PUT_PLAYER_API = 'https://transcendence.myprojekt.tech/api/player';
+const CACHE_KEY = 'player_data';
 
 export default class extends AbstractView {
     constructor() {
         super();
         this.controller = new AbortController();
+        this.qrRefreshIntervalId = null;
     }
 
     getHtml = async () => {
@@ -48,7 +48,7 @@ export default class extends AbstractView {
                     </div>
                     <div class="list-item">
                         <div class="field">2FA</div>
-                        <button id="enable-button" class="small-button">Enable</button>
+                        <button id="enable-button" class="small-button-red">Disable</button>
                     </div>
                 </div>
             </div>
@@ -74,75 +74,93 @@ export default class extends AbstractView {
         `
     }
 
-    getUserCache = async () => {
-        const data = localStorage.getItem('player_data');
-        return JSON.parse(data);
-    }
-
-    updateQrImage = async () => {
-        /* TODO: resend the same POST request again after a certain time */
-    }
-
-    updatePlayerEntry = async () => {
-        try {
-            this.cache.data.two_factor = true;
-            updateCache(CACHE_KEY, this.cache);
-            const response = fetch(`${PUT_PLAYER_API}/${this.cache.data.user.id}`, {
-                method: 'PUT',
-                headers: getDefaultHeader(),
-                body: JSON.stringify({
-                    "two_factor": this.cache.data.two_factor
-                })
-            });
-            if (response.ok) {
-
-            } else {
-
+    refreshQR = async (refreshInterval = 60000) => {
+        this.qrRefreshIntervalId = setInterval(async () => {
+            try {
+                const response = await fetch(POST_MFA_QR_API, {
+                    method: 'POST',
+                    headers: getDefaultHeader()
+                });
+    
+                if (response.ok) {
+                    const data = await response.json();
+                    this.twoFAImg.src = data.mfa_qrimage_url
+                } else {
+                    clearInterval(this.qrRefreshIntervalId);
+                    navigateTo(`/error?statuscode=${response.status}`)
+                }
+            } catch (error) {
+                clearInterval(this.qrRefreshIntervalId);
+                console.error('error', error);
             }
-        } catch (error) {
-            console.error('error', error);
+        }, refreshInterval);
+    }
+
+    updatePlayerEntry = async (status) => {
+        this.cache.data.two_factor = status;
+        updateCache(CACHE_KEY, this.cache);
+        if (status) {
+            try {
+                const response = await fetch(`${PUT_PLAYER_API}/${this.cache.data.user.id}`, {
+                    method: 'PUT',
+                    headers: getDefaultHeader(),
+                    body: JSON.stringify({
+                        "two_factor": this.cache.data.two_factor
+                    })
+                });
+                if (!response.ok) {
+                    navigateTo(`/error?statuscode=${response.status}`)
+                }
+            } catch (error) {
+                console.error('error', error);
+            }
         }
     }
 
     attachEventListeners = async () => {
 
         this.handleTwoFaButton = async () => {
-            try {
-                const response = await fetch(POST_MFA_QR_API, {
-                    method: 'POST',
-                    headers: getDefaultHeader()
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    this.twoFaImg.src = data.mfa_qrimage_url
-                } else {
-                    navigateTo(`/error?statuscode=${response.status}`)
+            if (this.twoFAButton.innerHTML === 'enable') {
+                try {
+                    const response = await fetch(POST_MFA_QR_API, {
+                        method: 'POST',
+                        headers: getDefaultHeader()
+                    });
+    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.twoFAImg.src = data.mfa_qrimage_url
+                    } else {
+                        navigateTo(`/error?statuscode=${response.status}`)
+                    }
+                    this.refreshQR();
+                } catch (error) {
+                    console.error('error', error);
                 }
-                this.updateQrImage();
-            } catch (error) {
-                console.error('error', error);
+                this.twoFactorWindow.classList.remove('hidden');
+                this.accountWindow.classList.add('hidden');
+                this.twoFAInput.focus();
+            } else {
+                this.updatePlayerEntry(false);
+                this.setButtonStyle();  
             }
-            this.twoFactorWindow.classList.remove('hidden');
-            this.accountWindow.classList.add('hidden');
-            this.twoFaInput.focus();
         };
-        this.twoFaButton.addEventListener('click', this.handleTwoFaButton, {
+        this.twoFAButton.addEventListener('click', this.handleTwoFaButton, {
             signal: this.controller.signal
         })
 
-        this.handleSendVerifyCode = async (event) => {
+        this.handleMFA = async (event) => {
             const allowedKeys = ["Enter", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Backspace"];
 
             if (!allowedKeys.includes(event.key)) {
                 event.preventDefault();
                 return;
             };
-            if (event.key === 'Enter' && this.twoFaInput.value.length === 6) {
+            if (event.key === 'Enter' && this.twoFAInput.value.length === 6) {
                 try {
                     const raw = JSON.stringify({
                         "user_id": this.cache.data.user.id,
-                        "token": this.twoFaInput.value
+                        "token": this.twoFAInput.value
                     });
                     const response = await fetch(POST_MFA_VERIFY_API, {
                         method: 'POST',
@@ -151,8 +169,13 @@ export default class extends AbstractView {
                     });
 
                     if (response.ok) {
+                        this.twoFactorWindow.classList.add('hidden');
+                        this.accountWindow.classList.remove('hidden');
                         /* update cache and player 2FA to true */
-                        this.updatePlayerEntry();
+                        clearInterval(this.qrRefreshIntervalId);
+                        this.qrRefreshIntervalId = null;
+                        this.updatePlayerEntry(true);
+                        this.setButtonStyle();
                     } else {
 
                     }
@@ -161,41 +184,55 @@ export default class extends AbstractView {
                 }
             }
         }
-        this.twoFaInput.addEventListener('keydown', this.handleSendVerifyCode, {
+        this.twoFAInput.addEventListener('keydown', this.handleMFA, {
             signal: this.controller.signal
         })
+    }
+
+    setButtonStyle() {
+        if (this.cache.data.two_factor) {
+            this.twoFAButton.innerHTML = 'disable';
+            this.twoFAButton.classList.remove('small-button-green');
+            this.twoFAButton.classList.add('small-button-red');
+        } else {
+            this.twoFAButton.innerHTML = 'enable';
+            this.twoFAButton.classList.add('small-button-green');
+            this.twoFAButton.classList.remove('small-button-red');
+        }
     }
 
     afterRender = async () => {
         /* elements for 2fa */
         this.twoFactorWindow = document.getElementById('twoFA-window');
         this.accountWindow = document.getElementById('account-window');
-        this.twoFaButton = document.getElementById('enable-button');
-        this.twoFaImg = document.querySelector('.twoFA-QR');
-        this.twoFaInput = document.querySelector('.twoFA-input');
+        this.twoFAButton = document.getElementById('enable-button');
+        this.twoFAImg = document.querySelector('.twoFA-QR');
+        this.twoFAInput = document.querySelector('.twoFA-input');
 
-        await this.attachEventListeners();
         /* display values */
         const profileImage = document.querySelector('.large-pp');
         const firstName = document.getElementById('first-name');
         const lastName = document.getElementById('last-name');
         const email = document.getElementById('email');
         const username = document.getElementById('username');
+        
 
-
-        this.cache = await this.getUserCache();
-        if (!this.cache) {
-            profileImage.src = './static/media/fallback-profile.png';
-        } else {
+        this.cache = await getUserCache();
+        if (this.cache) {
             profileImage.src = this.cache.data.profile_img_url;
             firstName.value = this.cache.data.user.first_name;
             lastName.value = this.cache.data.user.last_name;
             email.value = this.cache.data.user.email;
             username.innerHTML = this.cache.data.user.username;
+            this.setButtonStyle();   
+        } else {
+            profileImage.src = './static/media/fallback-profile.png';
         }
 
+        await this.attachEventListeners();
         return () => {
             this.controller.abort();
+            clearInterval(this.qrRefreshIntervalId);
         }
     }
 }

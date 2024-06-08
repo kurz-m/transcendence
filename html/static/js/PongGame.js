@@ -1,6 +1,6 @@
 import { getLoggedIn } from "./authentication.js";
 import { navigateTo } from "./index.js";
-import { showGamePauseMenu, hideGamePauseMenu, getDefaultHeader } from "./shared.js";
+import { getDefaultHeader } from "./shared.js";
 
 const FPS = 60;
 const INTERVAL = 1000 / FPS;
@@ -40,7 +40,7 @@ class PongGame {
         this.board = new this.Board(document.getElementById('board'));
 
         /* Declare an IIFE class for the Ball to be able to pass the board element */
-        this.Ball = (function(board) {
+        this.Ball = (function (board) {
             return class Ball {
                 constructor(object) {
                     this.object = object;
@@ -312,8 +312,10 @@ class PongGame {
     getPaddleInnerBorder() {
         let boundsLeft = this.paddleLeft.object.getBoundingClientRect();
         let boundsRight = this.paddleRight.object.getBoundingClientRect();
-        return { left: boundsLeft.x + this.paddleLeft.width - BALL_BOUNCE_DEPTH,
-                 right: boundsRight.x + BALL_BOUNCE_DEPTH};
+        return {
+            left: boundsLeft.x + this.paddleLeft.width - BALL_BOUNCE_DEPTH,
+            right: boundsRight.x + BALL_BOUNCE_DEPTH
+        };
     }
 
     getCenterPoint(obj) {
@@ -342,7 +344,7 @@ class PongGame {
     ballIsOnPaddle(paddle, center, newCenter) {
         let paddleBounds = paddle.object.getBoundingClientRect();
         return ((center.y > paddleBounds.top && center.y < paddleBounds.bottom) ||
-                (newCenter.y > paddleBounds.top && newCenter.y < paddleBounds.bottom));
+            (newCenter.y > paddleBounds.top && newCenter.y < paddleBounds.bottom));
     }
 
     moveBall() {
@@ -395,20 +397,20 @@ class PongGame {
         if ((this.intersectLine(paddleBorderX.left, this.ball.x, newLeft) &&
             this.ballIsOnPaddle(this.paddleLeft, centerPoint, centerPointNew) ||
             (this.intersectLine(paddleBorderX.right, this.ball.x + this.ball.width, newLeft + this.ball.width) &&
-            this.ballIsOnPaddle(this.paddleRight, centerPoint, centerPointNew)))) {
-                this.ball.dx = -this.ball.dx;
-                if (this.ball.dx < 0) {
-                    this.ball.dx -= Math.round(Math.random() * 2);
-                } else {
-                    this.ball.dx += Math.round(Math.random() * 2);
-                }
-                if (this.ball.dy < 0) {
-                    this.ball.dy -= Math.round(Math.random() * 2);
-                } else {
-                    this.ball.dy += Math.round(Math.random() * 2);
-                }
-                this.paddleSpeed += Math.round(Math.random());
-                newLeft = this.ball.x + this.ball.dx;
+                this.ballIsOnPaddle(this.paddleRight, centerPoint, centerPointNew)))) {
+            this.ball.dx = -this.ball.dx;
+            if (this.ball.dx < 0) {
+                this.ball.dx -= Math.round(Math.random() * 2);
+            } else {
+                this.ball.dx += Math.round(Math.random() * 2);
+            }
+            if (this.ball.dy < 0) {
+                this.ball.dy -= Math.round(Math.random() * 2);
+            } else {
+                this.ball.dy += Math.round(Math.random() * 2);
+            }
+            this.paddleSpeed += Math.round(Math.random());
+            newLeft = this.ball.x + this.ball.dx;
         }
 
         this.ball.x = newLeft;
@@ -474,7 +476,7 @@ class PongGame {
                 timeToWall = (paddleBorderX.right - (current.x + halfBall)) / dx;
                 newY = current.y + timeToWall * dy;
                 if (newY > this.board.top + halfBall && newY < this.board.bottom - halfBall) {
-                    break ;
+                    break;
                 }
             } else { // moving to the left
                 timeToWall = (paddleBorderX.left - (current.x - halfBall)) / dx;
@@ -483,7 +485,7 @@ class PongGame {
                     current.x += timeToWall * dx;
                     current.y = newY;
                     dx = -dx;
-                    continue ;
+                    continue;
                 }
             }
             timeToWall = 0;
@@ -571,12 +573,23 @@ class PongGame {
             }
         }
         if (!this.getPauseMenuVisibility()) {
-            showGamePauseMenu();
+            this.showGamePauseMenu();
         }
     }
 
+
+    hideGamePauseMenu() {
+        const pauseMenu = document.getElementById('pause-window');
+        pauseMenu.classList.add("hidden");
+    }
+
+    showGamePauseMenu() {
+        const pauseMenu = document.getElementById('pause-window');
+        pauseMenu.classList.remove("hidden");
+    }
+
     resumeGame() {
-        hideGamePauseMenu();
+        this.hideGamePauseMenu();
         if (this.isAI) {
             this.aiRefreshInterval = window.setInterval(() => this.refreshAI(), AI_INTERVAL);
             this.aiUpdateInterval = window.setInterval(() => this.loopAI(), INTERVAL);
