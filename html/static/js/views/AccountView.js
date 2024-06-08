@@ -1,3 +1,4 @@
+import { navigateTo } from "../index.js";
 import { getDefaultHeader } from "../shared.js";
 import AbstractView from "./AbstractView.js";
 
@@ -60,7 +61,7 @@ export default class extends AbstractView {
             </div>
             <div class="content">
                 <div class="small-text">To enable Two-Factor-Authentication, please scan the QR-Code with your authenticator app:</div>
-                <img id="twoFA-img" class="twoFA-QR" src="./static/media/2fa-qr.png" draggable="false" (dragstart)="false;" />
+                <img id="twoFA-img" class="twoFA-QR" src="" draggable="false" (dragstart)="false;" />
                 <div class="small-text">And enter the 6-digit verification code:</div>
                 <input class="twoFA-input" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="\d{6}" />
             </div>
@@ -73,29 +74,40 @@ export default class extends AbstractView {
         return JSON.parse(data);
     }
 
+    updateQrImage = async () => {
+        /* TODO: resend the same POST request again after a certain time */
+    }
+
     attachEventListeners = async () => {
 
         this.handleTwoFaButton = async () => {
             try {
                 const response = await fetch(GET_MFA_QR_API, {
-                    method: 'GET',
+                    method: 'POST',
                     headers: getDefaultHeader()
                 });
 
                 if (response.ok) {
-                    /* TODO: handle qr code as a picture? HOW? */
-                    console.log(response);
+                    const data = await response.json();
+                    this.twoFaImg.src = data.mfa_qrimage_url
                 } else {
                     navigateTo(`/error?statuscode=${response.status}`)
                 }
+                this.updateQrImage();
             } catch (error) {
                 console.error('error', error);
             }
             this.twoFactorWindow.classList.remove('hidden');
             this.accountWindow.classList.add('hidden');
-        }
-
+        };
         this.twoFaButton.addEventListener('click', this.handleTwoFaButton, {
+            signal: this.controller.signal
+        })
+
+        this.handleSendVerifyCode = async () => {
+
+        }
+        this.twoFactorWindow.addEventListener('keydown', this.handleSendVerifyCode, {
             signal: this.controller.signal
         })
     }
@@ -105,6 +117,7 @@ export default class extends AbstractView {
         this.twoFactorWindow = document.getElementById('twoFA-window');
         this.accountWindow = document.getElementById('account-window');
         this.twoFaButton = document.getElementById('enable-button');
+        this.twoFaImg = document.getElementById('twoFA-img');
 
         this.attachEventListeners();
         /* display values */
