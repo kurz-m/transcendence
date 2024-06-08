@@ -47,7 +47,7 @@ export default class extends AbstractView {
                 </div>
             </div>
         </div>
-        
+
         <div id="twoFA-window" class="window hidden">
             <div class="topbar">
                 <a href="/account" class="icon-button" data-link>
@@ -65,7 +65,6 @@ export default class extends AbstractView {
                 <input class="twoFA-input" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="\d{6}" />
             </div>
         </div>
-    
         `
     }
 
@@ -75,19 +74,19 @@ export default class extends AbstractView {
     }
 
     attachEventListeners = async () => {
-        
+
         this.handleTwoFaButton = async () => {
             try {
                 const response = await fetch(GET_MFA_QR_API, {
                     method: 'GET',
                     headers: getDefaultHeader()
                 });
-    
+
                 if (response.ok) {
                     /* TODO: handle qr code as a picture? HOW? */
                     console.log(response);
                 } else {
-                    alert('could not get a qr code');
+                    navigateTo(`/error?statuscode=${response.status}`)
                 }
             } catch (error) {
                 console.error('error', error);
