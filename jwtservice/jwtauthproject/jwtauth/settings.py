@@ -138,8 +138,9 @@ SIMPLE_JWT = {
     'SIGNING_KEY': os.getenv("JWT_SECRET_KEY"),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=240),  # Adjust the time as needed
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Adjust the time as needed
-    'ROTATE_REFRESH_TOKENS': False,
+    'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
+
 }
 
 REST_FRAMEWORK = {
