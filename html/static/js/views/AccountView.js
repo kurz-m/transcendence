@@ -79,7 +79,7 @@ export default class extends AbstractView {
         this.handleTwoFaButton = async () => {
             try {
                 const response = await fetch(GET_MFA_QR_API, {
-                    method: 'POST',
+                    method: 'GET',
                     headers: getDefaultHeader()
                 });
     
