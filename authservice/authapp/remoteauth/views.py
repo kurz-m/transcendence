@@ -146,6 +146,8 @@ class callbackCode(APIView):
                 if not access_token:
                     return HttpResponseBadRequest('Missing Access Token in response received from 42 oauth.')
                 player = get_user_info(access_token=access_token)
+                if player.two_factor is True:
+                    return Response({'two_factor': "true", 'user_id': player.user.id, 'oauth_token': access_token}, status=status.HTTP_100_CONTINUE)
                 jwt_service_url = 'http://jwtservice:8000/api-jwt/token/generate'
                 send_data = {'user_id': player.user.id, 'username': player.user.username, 'email': player.user.email, 'access_token': access_token}
                 send_json = json.dumps(send_data)
@@ -163,7 +165,7 @@ class callbackCode(APIView):
                     oauth_response.set_cookie('player_id', player.id, httponly=False, secure=True)
                     return oauth_response
                 else:
-                    return Response({'two_factor': "true", 'player_id': player.user.id, 'oauth_token': access_token}, status=status.HTTP_100_CONTINUE)
+                    return Response({'two_factor': "true", 'user_id': player.user.id, 'oauth_token': access_token}, status=status.HTTP_100_CONTINUE)
             else:
                 return HttpResponseBadRequest('Invalid Authorization Request to 42 oauth.')
         else:
