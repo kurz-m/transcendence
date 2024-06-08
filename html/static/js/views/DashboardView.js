@@ -16,7 +16,6 @@ export default class extends AbstractView {
         </div>
         <div class="content">
           <a class="a-large-button" href="/pong-menu" data-link>Pong</a>
-          <button class="large-button">Tetris</button>
         </div>
       </div>
         `
