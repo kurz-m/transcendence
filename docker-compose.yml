@@ -86,7 +86,6 @@ services:
     env_file:
       - .env
     volumes:
-      - ./authservice/authapp:/app
       - static_files:${STATIC_DIRECTORY}
     networks:
       - authnetwork
