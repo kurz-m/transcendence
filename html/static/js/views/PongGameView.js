@@ -63,7 +63,6 @@ export default class extends AbstractView {
                 </div>
 
                 <a id="back-home-button" class="a-large-button" href="/" data-link>Back to Menu</a>
-                <button class="large-button">Rematch</button>
             </div>
         </div>
 
