@@ -93,10 +93,6 @@ class mfaLogin(APIView):
         user_id = request.data.get('user_id', None)
         oauth_token = request.data.get('oauth_token', None)
 
-        logger.error(mfa_token)
-        logger.error(user_id)
-        logger.error(oauth_token)
-
         mfa_verify_url = 'http://twofactorservice:8000/api-mfa/verify'
         data = {'token': mfa_token, 'user_id': user_id}
         response = requests.post(mfa_verify_url, json=data, headers={'Content-Type': 'application/json'})
@@ -110,7 +106,7 @@ class mfaLogin(APIView):
             response = requests.post(jwt_service_url, json=send_data, headers={'Content-Type': 'application/json'})
             response.raise_for_status()
             data = response.json()
-            refresh_str = data.get('referesh_jwt_token')
+            refresh_str = data.get('refresh_jwt_token')
             refresh = RefreshToken(refresh_str)
 
             return_data = {'profile_image_url': player.profile_img_url, 'detail': 'Successful operation. Cookies set with JWT token, username, and user ID'}
@@ -147,14 +143,14 @@ class callbackCode(APIView):
                     return HttpResponseBadRequest('Missing Access Token in response received from 42 oauth.')
                 player = get_user_info(access_token=access_token)
                 if player.two_factor is True:
-                    return Response({'two_factor': "true", 'user_id': player.user.id, 'oauth_token': access_token}, status=status.HTTP_100_CONTINUE)
+                    return Response({'two_factor': "true", 'user_id': player.user.id, 'oauth_token': access_token}, status=status.HTTP_200_OK)
                 jwt_service_url = 'http://jwtservice:8000/api-jwt/token/generate'
                 send_data = {'user_id': player.user.id, 'username': player.user.username, 'email': player.user.email, 'access_token': access_token}
                 send_json = json.dumps(send_data)
                 response = requests.post(jwt_service_url, json=send_data, headers={'Content-Type': 'application/json'})
                 response.raise_for_status()
                 data = response.json()
-                refresh_str = data.get('referesh_jwt_token')
+                refresh_str = data.get('refresh_jwt_token')
                 refresh = RefreshToken(refresh_str)
                 if player and refresh and player.two_factor is False:
                     return_data = {'profile_image_url': player.profile_img_url, 'detail': 'Successful operation. Cookies set with JWT token, username, and user ID'}
