@@ -3,9 +3,11 @@ import { getCookie, getDefaultHeader, toggleDropdown, toggleLoginButtonStyle } f
 
 let isLoggedIn = false;
 
-export const getLoggedIn = () => isLoggedIn;
+export const getLoggedIn = () => {
+    return sessionStorage.getItem('logged_in') === 'true';
+}
 export const setLoggedIn = bool => {
-    isLoggedIn = bool;
+    sessionStorage.setItem('logged_in', bool.toString());
 }
 export const getUsername = () => localStorage.getItem('username');
 export const setUsername = name => {
@@ -24,42 +26,8 @@ const CACHE_KEY = 'player_data'
 const loginButton = document.getElementById('login-button');
 const loginButtonField = document.getElementById('login-button-field');
 
-export const handleAuthenticationCallback = async () => {
+export const getPlayerData = async () => {
     const profileImage = document.getElementById('small-profile-pic');
-    try {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('code')) {
-            const callbackURI = `${JWT_CALLBACK_API}?${urlParams.toString()}`;
-            const response = await fetch(callbackURI, {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (response.ok) {
-                const data = await response.json();
-                isLoggedIn = true;
-                loginButton.classList.remove('logged-out');
-                loginButton.classList.add('logged-in');
-                toggleLoginButtonStyle();
-                loginButtonField.textContent = getCookie('user');
-                localStorage.setItem('profile_image', data.profile_image_url);
-
-                if (!data.profile_image_url) {
-                    profileImage.src = './static/media/fallback-profile.png';
-                } else {
-                    profileImage.src = data.profile_image_url;
-                }
-            } else {
-                console.error('Authentication failed:', response.statusText);
-            }
-        } else {
-            console.error('Missing authorization code');
-        }
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
     try {
         const response = await fetch(PLAYER_DATA_API, {
             method: 'GET',
@@ -71,10 +39,54 @@ export const handleAuthenticationCallback = async () => {
             const { user, profile_img_url, two_factor } = data.results[0];
             const extractedData = { user, profile_img_url, two_factor };
             updateCache(CACHE_KEY, extractedData);
+            if (!extractedData.profile_img_url) {
+                profileImage.src = './static/media/fallback-profile.png';
+            } else {
+                profileImage.src = extractedData.profile_img_url;
+            }
         }
     } catch (error) {
         console.error('error', error);
     }
+}
+
+export const handleAuthenticationCallback = async () => {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('code')) {
+            const callbackURI = `${JWT_CALLBACK_API}?${urlParams.toString()}`;
+            const response = await fetch(callbackURI, {
+                method: 'GET',
+                credentials: 'include',
+                headers: getDefaultHeader()
+            });
+            if (response.ok) {
+                console.log(response.status);
+                const data = await response.json();
+                if (data.two_factor === 'true') {
+                    const params = new URLSearchParams();
+                    params.append('user_id', data.user_id);
+                    params.append('oauth_token', data.oauth_token);
+                    navigateTo(`/two-factor?${params.toString()}`);
+                    return;
+                } else {
+                    isLoggedIn = true;
+                    loginButton.classList.remove('logged-out');
+                    loginButton.classList.add('logged-in');
+                    toggleLoginButtonStyle();
+                    loginButtonField.textContent = getCookie('user');
+                    localStorage.setItem('profile_image', data.profile_image_url);
+                }
+            } else {
+                console.error('Authentication failed:', response.statusText);
+            }
+        } else {
+            console.error('Missing authorization code');
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+    await getPlayerData();
     setUsername(getCookie('user'));
     navigateTo('/');
 }
@@ -114,13 +126,13 @@ export const logoutCallback = async () => {
         });
         
         if (response.ok) {
-            toggleLoginButtonStyle();
+            toggleLoginButtonStyle(true);
             toggleDropdown();
             loginButtonField.textContent = 'login with';
             loginButton.classList.add('logged-out');
             loginButton.classList.remove('logged-in');
+            localStorage.removeItem('player_data');
             localStorage.removeItem('username');
-            localStorage.removeItem('profile_image');
             setLoggedIn(false);
         } else {
             console.error('Could not logout the user');
@@ -135,12 +147,12 @@ export const logoutCallback = async () => {
 export const checkLoginStatus = async () => {
     try {
         const response = await fetch(CHECK_LOGIN_STATUS_API)
-        isLoggedIn = response.ok;
+        setLoggedIn(response.ok);
         
-        if (isLoggedIn) {
+        if (getLoggedIn()) {
             setUsername(getCookie('user'));
         }
     } catch (error) {
-        isLoggedIn = false;
+        setLoggedIn(false);
     }
 };

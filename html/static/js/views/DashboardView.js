@@ -1,3 +1,5 @@
+import { checkLoginStatus, getLoggedIn, getPlayerData } from "../authentication.js";
+import { updateLoginState } from "../index.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -19,5 +21,13 @@ export default class extends AbstractView {
         </div>
       </div>
         `
+    }
+
+    afterRender = async () => {
+        if (getLoggedIn()) {
+            await getPlayerData();
+            await checkLoginStatus();
+            updateLoginState();
+        }
     }
 }
