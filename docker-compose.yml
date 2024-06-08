@@ -15,6 +15,11 @@ services:
     #   - "5432"
     ports:
       - "5654:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - authnetwork
   
@@ -30,6 +35,11 @@ services:
       - gameplay_data:/var/lib/postgresql/data
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${GDB_USER} -d ${GDB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     # expose:
     #   - "5432"
     ports:
@@ -49,6 +59,11 @@ services:
       - twofactordb_data:/var/lib/postgresql/data
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${TDB_USER} -d ${TDB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     # expose:
     #   - "5432"
     ports:
@@ -68,6 +83,11 @@ services:
       - jwtdb_data:/var/lib/postgresql/data
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${JDB_USER} -d ${JDB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     # expose:
     #   - "5432"
     ports:
@@ -79,14 +99,15 @@ services:
     build: ./authservice/
     container_name: authservice
     restart: always
-    depends_on:
-      - authdb
     expose:
       - "8000"
     env_file:
       - .env
     volumes:
       - static_files:${STATIC_DIRECTORY}
+    depends_on:
+      authdb: 
+        condition: service_healthy
     networks:
       - authnetwork
   
@@ -95,7 +116,8 @@ services:
     container_name: gameplayservice
     restart: always
     depends_on:
-      - gameplaydb
+      gameplaydb: 
+        condition: service_healthy
     expose:
       - "8000"
     env_file:
@@ -107,26 +129,27 @@ services:
     build: ./twofactorservice/
     container_name: twofactorservice
     restart: always
-    depends_on:
-      - authdb
     expose:
       - "8000"
     env_file:
       - .env
+    depends_on:
+      twofactordb: 
+        condition: service_healthy
     networks:
       - authnetwork
   
-
   jwtservice:
     build: ./jwtservice/
     container_name: jwtservice
     restart: always
-    depends_on:
-      - jwtdb
     expose:
       - "8000"
     env_file:
       - .env
+    depends_on:
+      jwtdb: 
+        condition: service_healthy
     networks:
       - authnetwork
 
@@ -136,6 +159,14 @@ services:
     restart: always
     depends_on:
       certbot:
+        condition: service_healthy
+      authdb: 
+        condition: service_healthy
+      jwtdb: 
+        condition: service_healthy
+      gameplaydb: 
+        condition: service_healthy
+      twofactordb: 
         condition: service_healthy
     ports:
       - "80:80"
