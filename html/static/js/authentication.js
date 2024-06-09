@@ -101,8 +101,7 @@ export const logoutCallback = async () => {
             loginButtonField.textContent = 'login with';
             loginButton.classList.add('logged-out');
             loginButton.classList.remove('logged-in');
-            localStorage.removeItem('player_data');
-            localStorage.removeItem('username');
+            localStorage.clear();
             setLoggedIn(false);
         } else {
             console.error('Could not logout the user');
@@ -122,8 +121,7 @@ export const checkLoginStatus = async () => {
         if (getLoggedIn()) {
             setUsername(getCookie('user'));
         } else {
-            localStorage.removeItem('player_data');
-            localStorage.removeItem('username');
+            localStorage.clear();
         }
     } catch (error) {
         setLoggedIn(false);
