@@ -43,7 +43,7 @@ export default class extends AbstractView {
                             <input id="last-name" class="list-field" type="text" value="" readonly />
                         </div>
                         <div class="list-item">
-                            <input id="email" class="list-field-small" type="text" value="nothing" readonly />
+                            <input id="email" class="list-field-small" type="text" value="" readonly />
                         </div>
                     </div>
                     <div class="list-item">
@@ -98,22 +98,20 @@ export default class extends AbstractView {
 
     updatePlayerEntry = async (status) => {
         this.cache.data.two_factor = status;
-        updateCache(CACHE_KEY, this.cache);
-        if (status) {
-            try {
-                const response = await fetch(`${PUT_PLAYER_API}/${this.cache.data.user.id}`, {
-                    method: 'PUT',
-                    headers: getDefaultHeader(),
-                    body: JSON.stringify({
-                        "two_factor": this.cache.data.two_factor
-                    })
-                });
-                if (!response.ok) {
-                    navigateTo(`/error?statuscode=${response.status}`)
-                }
-            } catch (error) {
-                console.error('error', error);
+        updateCache(CACHE_KEY, this.cache.data);
+        try {
+            const response = await fetch(`${PUT_PLAYER_API}/${this.cache.data.user.id}`, {
+                method: 'PUT',
+                headers: getDefaultHeader(),
+                body: JSON.stringify({
+                    "two_factor": this.cache.data.two_factor
+                })
+            });
+            if (!response.ok) {
+                navigateTo(`/error?statuscode=${response.status}`)
             }
+        } catch (error) {
+            console.error('error', error);
         }
     }
 
@@ -154,6 +152,8 @@ export default class extends AbstractView {
                 }
                 await this.updatePlayerEntry(false);
                 this.setButtonStyle();  
+                this.twoFactorWindow.classList.add('hidden');
+                this.accountWindow.classList.remove('hidden');
             }
         };
         this.twoFAButton.addEventListener('click', this.handleTwoFaButton, {
