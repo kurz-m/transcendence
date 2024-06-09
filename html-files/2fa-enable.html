@@ -26,7 +26,10 @@
           <div class="small-text">To enable Two-Factor-Authentication, please scan the QR-Code with your authenticator app:</div>
           <img class="twoFA-QR" src="../media/2fa-qr.png" draggable="false" (dragstart)="false;">
           <div class="small-text">And enter the 6-digit verification code:</div>
-          <input class="twoFA-input" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="\d{6}">
+          <div class="input-segment twoFA-input-style">
+            <input class="twoFA-input" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="\d{6}">
+            <button class="small-button">Verify</button>
+          </div>
         </div>
       </div>
     </div>
