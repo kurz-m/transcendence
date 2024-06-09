@@ -18,10 +18,7 @@
             <img class="icon" src="../media/back.svg" alt="Back" draggable="false" (dragstart)="false;">
           </button>
           <div class="user-header">
-            <button class="edit-pp-button">
-              <img class="large-pp" src="../media/profile.jpg" draggable="false" (dragstart)="false;">
-              <img class="edit-pp-overlay" src="../media/edit.svg" alt="Edit" draggable="false" (dragstart)="false;">
-            </button>
+            <img class="large-pp" src="../media/profile.jpg" draggable="false" (dragstart)="false;">
             <div class="medium-text">arabenst</div>
           </div>
           <button class="icon-button">
@@ -31,30 +28,14 @@
         <div class="content">
           <div class="account-details">
             <div class="list-item">
-              <input class="list-field" type="text" value="Aaron" placeholder="First Name" readonly>
-              <button class="clean-button">
-                <img class="small-icon" src="../media/edit.svg">
-              </button>
+              <div class="field">Aaron Rabenstein</div>
             </div>
-            <div class="list-item">
-              <input class="list-field" type="text" value="Rabenstein" placeholder="Last Name" readonly>
-              <button class="clean-button">
-                <img class="small-icon" src="../media/edit.svg" draggable="false" (dragstart)="false;">
-              </button>
+            <div class="list-item" style="border-bottom: 0px;">
+              <div class="field">arabenst@student.42heilbronn.de</div>
             </div>
-            <!-- Above is the default state. once the edit button is clicked, input is made editable and button becomes checkmark! -->
-            <div class="list-item">
-              <input class="list-field" type="text" value="" placeholder="Email">
-              <button class="clean-button">
-                <img class="small-icon" src="../media/checkmark.svg" draggable="false" (dragstart)="false;">
-              </button>
-            </div>
-            <div class="list-item">
-              <div class="field">2FA</div>
-              <button class="small-button">
-                <div class="small-button-text">Enable</div>
-              </button>
-
+            <button class="small-button" style="margin-top: 21px;">
+              <div class="small-button-text">Enable 2FA</div>
+            </button>
           </div>
         </div>
       </div>

@@ -24,7 +24,10 @@
         </div>
         <div class="content">
           <div class="small-text">To login, please enter the 6-digit verification code from your authenticator app:</div>
-          <input class="twoFA-input" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="\d{6}">
+          <div class="input-segment twoFA-input-style">
+            <input class="twoFA-input" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="\d{6}">
+            <button class="small-button">Verify</button>
+          </div>
         </div>
       </div>
     </div>
