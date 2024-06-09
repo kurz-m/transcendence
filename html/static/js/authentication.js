@@ -102,6 +102,7 @@ export const logoutCallback = async () => {
             loginButton.classList.add('logged-out');
             loginButton.classList.remove('logged-in');
             localStorage.clear();
+            sessionStorage.clear();
             setLoggedIn(false);
         } else {
             console.error('Could not logout the user');
@@ -122,6 +123,7 @@ export const checkLoginStatus = async () => {
             setUsername(getCookie('user'));
         } else {
             localStorage.clear();
+            sessionStorage.clear();
         }
     } catch (error) {
         setLoggedIn(false);
