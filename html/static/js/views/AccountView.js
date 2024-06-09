@@ -23,10 +23,7 @@ export default class extends AbstractView {
                     <img class="icon" src="./static/media/back.svg" alt="Back" draggable="false" (dragstart)="false;" />
                 </button>
                 <div class="user-header">
-                    <button class="edit-pp-button">
-                        <img class="large-pp" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;" />
-                        <img class="edit-pp-overlay" src="./static/media/edit.svg" alt="Edit" draggable="false" (dragstart)="false;" />
-                    </button>
+                    <img class="large-pp" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;" />
                     <div id="username" class="medium-text">User</div>
                 </div>
                 <a href="/" class="icon-button" data-link>
@@ -35,21 +32,15 @@ export default class extends AbstractView {
             </div>
             <div class="content">
                 <div class="account-details">
-                    <div id="event-container">
-                        <div class="list-item">
-                            <input id="first-name" class="list-field" type="text" value="" readonly />
-                        </div>
-                        <div class="list-item">
-                            <input id="last-name" class="list-field" type="text" value="" readonly />
-                        </div>
-                        <div class="list-item">
-                            <input id="email" class="list-field-small" type="text" value="" readonly />
-                        </div>
-                    </div>
                     <div class="list-item">
-                        <div class="field">2FA</div>
-                        <button id="enable-button" class="small-button-red">Disable</button>
+                        <div id="name" class="field"></div>
                     </div>
+                    <div class="list-item" style="border-bottom: 0px;">
+                        <div id="email" class="field"></div>
+                    </div>
+                    <button id="enable-button" class="small-button-green" style="margin-top: 21px;">
+                        <div class="small-button-text">Enable 2FA</div>
+                    </button>
                 </div>
             </div>
         </div>
@@ -68,7 +59,10 @@ export default class extends AbstractView {
                 <div class="small-text">To enable Two-Factor-Authentication, please scan the QR-Code with your authenticator app:</div>
                 <img class="twoFA-QR" src="" draggable="false" (dragstart)="false;" />
                 <div class="small-text">And enter the 6-digit verification code:</div>
-                <input class="twoFA-input" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="\d{6}" />
+                <div class="input-segment twoFA-input-style">
+                    <input class="twoFA-input" type="text" maxlength="6" pattern="\d{6}" />
+                    <button id="verify-button" class="small-button-green">Verify</button>
+                </div>
             </div>
         </div>
         `
@@ -115,10 +109,41 @@ export default class extends AbstractView {
         }
     }
 
+    sendVerifyCode = async () => {
+        if (this.twoFAInput.value.length === 6) {
+            try {
+                const raw = JSON.stringify({
+                    "user_id": this.cache.data.user.id,
+                    "token": this.twoFAInput.value
+                });
+                const response = await fetch(POST_MFA_VERIFY_API, {
+                    method: 'POST',
+                    headers: getDefaultHeader(),
+                    body: raw
+                });
+
+                if (response.ok) {
+                    this.twoFactorWindow.classList.add('hidden');
+                    this.accountWindow.classList.remove('hidden');
+                    /* update cache and player 2FA to true */
+                    clearInterval(this.qrRefreshIntervalId);
+                    this.qrRefreshIntervalId = null;
+                    this.updatePlayerEntry(true);
+                    this.setButtonStyle();
+                    this.twoFAInput.value = '';
+                } else {
+                    /* TODO: handle error */
+                }
+            } catch (error) {
+                console.error('error', error);
+            }
+        }
+    }
+
     attachEventListeners = async () => {
 
         this.handleTwoFaButton = async () => {
-            if (this.twoFAButton.innerHTML === 'enable') {
+            if (this.twoFAButton.innerHTML === 'Enable 2FA') {
                 try {
                     const response = await fetch(POST_MFA_QR_API, {
                         method: 'POST',
@@ -160,53 +185,42 @@ export default class extends AbstractView {
             signal: this.controller.signal
         })
 
-        this.handleMFA = async (event) => {
-            const allowedKeys = ["Enter", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Backspace"];
+        this.handleSendVerifyCode = () => {
+            this.sendVerifyCode().catch(error => {
+                console.error('error sending verify code:', error);
+            });
+        }
+        this.verifyButton.addEventListener('click', this.handleSendVerifyCode, {
+            signal: this.controller.signal
+        });
 
-            if (!allowedKeys.includes(event.key)) {
-                event.preventDefault();
-                return;
-            };
-            if (event.key === 'Enter' && this.twoFAInput.value.length === 6) {
-                try {
-                    const raw = JSON.stringify({
-                        "user_id": this.cache.data.user.id,
-                        "token": this.twoFAInput.value
-                    });
-                    const response = await fetch(POST_MFA_VERIFY_API, {
-                        method: 'POST',
-                        headers: getDefaultHeader(),
-                        body: raw
-                    });
-
-                    if (response.ok) {
-                        this.twoFactorWindow.classList.add('hidden');
-                        this.accountWindow.classList.remove('hidden');
-                        /* update cache and player 2FA to true */
-                        clearInterval(this.qrRefreshIntervalId);
-                        this.qrRefreshIntervalId = null;
-                        this.updatePlayerEntry(true);
-                        this.setButtonStyle();
-                    } else {
-
-                    }
-                } catch (error) {
-                    console.error('error', error);
-                }
+        this.handleSendVerifyCodeOnEnter = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.sendVerifyCode().catch(error => {
+                    console.error('error sending verify code:', error);
+                });
             }
         }
-        this.twoFAInput.addEventListener('keydown', this.handleMFA, {
+        this.twoFAInput.addEventListener('keydown', this.handleSendVerifyCodeOnEnter, {
             signal: this.controller.signal
         })
+
+        this.handleNumerics = () => {
+            this.twoFAInput.value = this.twoFAInput.value.replace(/[^0-9]/g, '');
+        }
+        this.twoFAInput.addEventListener('input', this.handleNumerics, {
+            signal: this.controller.signal
+        });
     }
 
     setButtonStyle() {
         if (this.cache.data.two_factor) {
-            this.twoFAButton.innerHTML = 'disable';
+            this.twoFAButton.innerHTML = 'Disable 2FA';
             this.twoFAButton.classList.remove('small-button-green');
             this.twoFAButton.classList.add('small-button-red');
         } else {
-            this.twoFAButton.innerHTML = 'enable';
+            this.twoFAButton.innerHTML = 'Enable 2FA';
             this.twoFAButton.classList.add('small-button-green');
             this.twoFAButton.classList.remove('small-button-red');
         }
@@ -219,11 +233,11 @@ export default class extends AbstractView {
         this.twoFAButton = document.getElementById('enable-button');
         this.twoFAImg = document.querySelector('.twoFA-QR');
         this.twoFAInput = document.querySelector('.twoFA-input');
+        this.verifyButton = document.getElementById('verify-button');
 
         /* display values */
         const profileImage = document.querySelector('.large-pp');
-        const firstName = document.getElementById('first-name');
-        const lastName = document.getElementById('last-name');
+        const fullName = document.getElementById('name');
         const email = document.getElementById('email');
         const username = document.getElementById('username');
         
@@ -231,9 +245,8 @@ export default class extends AbstractView {
         this.cache = await getUserCache();
         if (this.cache) {
             profileImage.src = this.cache.data.profile_img_url;
-            firstName.value = this.cache.data.user.first_name;
-            lastName.value = this.cache.data.user.last_name;
-            email.value = this.cache.data.user.email;
+            fullName.innerHTML = `${this.cache.data.user.first_name} ${this.cache.data.user.last_name}`;
+            email.innerHTML = this.cache.data.user.email;
             username.innerHTML = this.cache.data.user.username;
             this.setButtonStyle();   
         } else {

@@ -24,7 +24,7 @@ export default class extends AbstractView {
                 <div class="input-segment">
                     <div class="label">Play vs.</div>
                     <input id="opponent-name" class="text-field" type="text" placeholder="Guest" />
-                    <a id="play-button" href="/pong-game" class="a-small-button" data-link>play</a>
+                    <a id="play-button" href="/pong-game" class="small-button-green" data-link>play</a>
                 </div>
             </div>
         </div>
