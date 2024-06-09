@@ -461,7 +461,8 @@ body {
 }
 
 
-
+.large-button-red:not(:first-child),
+.large-button-green:not(:first-child),
 .a-large-button:not(:first-child),
 .large-button:not(:first-child) {
   margin-top: 42px;

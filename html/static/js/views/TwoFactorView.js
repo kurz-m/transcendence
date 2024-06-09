@@ -26,52 +26,74 @@ export default class extends AbstractView {
             </div>
             <div class="content">
                 <div class="small-text">To login, please enter the 6-digit verification code from your authenticator app:</div>
-                <input class="twoFA-input" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="\d{6}" />
+                <div class="input-segment twoFA-input-style">
+                    <input class="twoFA-input" type="text" maxlength="6" pattern="\d{6}" />
+                    <button id="verify-button" class="small-button-green">Verify</button>
+                </div>
             </div>
         </div>
         `;
     }
 
-    attachEventListeners = async () => {
-        this.handleSendVerifyCode = async (event) => {
-            const allowedKeys = ["Enter", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Backspace"];
-
-            if (!allowedKeys.includes(event.key)) {
-                event.preventDefault();
-                return;
-            };
-            if (event.key === 'Enter' && this.twoFAInput.value.length === 6) {
-                try {
-                    const urlParams = new URLSearchParams(location.search);
-                    const raw = JSON.stringify({
-                        "token": this.twoFAInput.value,
-                        "user_id": urlParams.get('user_id'),
-                        "oauth_token": urlParams.get('oauth_token'),
-                    });
-                    const response = await fetch(POST_MFA_LOGIN_API, {
-                        method: 'POST',
-                        headers: getDefaultHeader(),
-                        body: raw
-                    });
-
-                    if (response.ok) {
-                        setLoggedIn(true);
-                        navigateTo('/');
-                        return
-                    } else {
-                        /* TODO: handle error */
-                    }
-                } catch (error) {
-                    console.error('error', error);
+    sendVerifyCode = async () => {
+        if (this.twoFAInput.value.length === 6) {
+            try {
+                const urlParams = new URLSearchParams(location.search);
+                const raw = JSON.stringify({
+                    "token": this.twoFAInput.value,
+                    "user_id": urlParams.get('user_id'),
+                    "oauth_token": urlParams.get('oauth_token'),
+                });
+                const response = await fetch(POST_MFA_LOGIN_API, {
+                    method: 'POST',
+                    headers: getDefaultHeader(),
+                    body: raw
+                });
+    
+                if (response.ok) {
+                    setLoggedIn(true);
+                    navigateTo('/');
+                    return
+                } else {
+                    /* TODO: handle error */
                 }
+            } catch (error) {
+                console.error('error', error);
             }
         }
-        this.twoFAInput.addEventListener('keydown', this.handleSendVerifyCode, {
+    }
+
+    attachEventListeners = async () => {
+        this.handleSendVerifyCode = () => {
+            this.sendVerifyCode().catch(error => {
+                console.error('error sending verify code:', error);
+            });
+        }
+        this.verifyButton.addEventListener('click', this.handleSendVerifyCode, {
+            signal: this.controller.signal
+        });
+
+        this.handleSendVerifyCodeOnEnter = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.sendVerifyCode().catch(error => {
+                    console.error('error sending verify code:', error);
+                });
+            }
+        }
+        this.twoFAInput.addEventListener('keydown', this.handleSendVerifyCodeOnEnter, {
             signal: this.controller.signal
         })
+        this.handleNumerics = () => {
+            this.twoFAInput.value = this.twoFAInput.value.replace(/[^0-9]/g, '');
+        }
+        this.twoFAInput.addEventListener('input', this.handleNumerics, {
+            signal: this.controller.signal
+        });
     }
 
     afterRender = async () => {
+        this.verifyButton = document.getElementById('verify-button');
         this.twoFAInput = document.querySelector('.twoFA-input');
         this.twoFAInput.focus();
 

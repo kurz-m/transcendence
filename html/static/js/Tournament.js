@@ -141,6 +141,10 @@ class TournamentGame {
                     this.addAI.classList.remove('large-button-red');
                 }
                 playerItem.remove();
+                if (this.playersArray.length < 3) {
+                    this.startTournamentButton.classList.remove('large-button-green');
+                    this.startTournamentButton.classList.add('large-button-red');
+                }
             };
             if (playerName === getUsername()) {
                 deleteButton.classList.add('hidden');
@@ -151,6 +155,10 @@ class TournamentGame {
             /* attach the new created player to the tournament */
             this.playerListContainer.appendChild(playerItem);
             this.inputPlayer.value = '';
+            if (this.playersArray.length > 2) {
+                this.startTournamentButton.classList.add('large-button-green');
+                this.startTournamentButton.classList.remove('large-button-red');
+            }
         }
     }
 

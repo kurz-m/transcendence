@@ -123,10 +123,10 @@ export default class extends AbstractView {
             <button id="ai-button" class="large-button-green">AI</button>
             <div class="input-segment">
                 <input id="player-input" class="text-field" type="text" placeholder="name" />
-                <button id="add-player" class="small-button">add</button>
+                <button id="add-player" class="small-button-green">add</button>
             </div>
         </div>
-        <button id="start-tournament" class="large-button">Play</button>
+        <button id="start-tournament" class="large-button-red">Play</button>
     </div>
 
 
