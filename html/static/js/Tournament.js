@@ -32,7 +32,7 @@ class TournamentGame {
         this.playerListContainer.innerHTML = '';
         this.totalPlayersCount = 0;
         this.totalPlayersElement = document.getElementById('total-players');
-        this.playersArray = [];
+        this.playersArray = new Set();
         this.matchupArray = [];
         this.mIndex = 0;
 
@@ -108,6 +108,12 @@ class TournamentGame {
 
     addPlayer(playerName) {
         if (playerName) {
+            const check = this.playersArray.find(p => p.name === playerName);
+            if (check) {
+                alert('please provide a unique name');
+                this.inputPlayer.focus();
+                return;
+            }
             const playerItem = document.createElement('div');
             playerItem.classList.add('list-item');
             playerItem.innerHTML = this.getPlayerTemplate(playerName);
