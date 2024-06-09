@@ -120,7 +120,7 @@ export default class extends AbstractView {
         </div>
         <div id="total-players" class="small-text">Total Players: 0</div>
         <div class="h-content">
-            <button class="large-button">AI</button>
+            <button id="ai-button" class="large-button-green">AI</button>
             <div class="input-segment">
                 <input id="player-input" class="text-field" type="text" placeholder="name" />
                 <button id="add-player" class="small-button">add</button>
