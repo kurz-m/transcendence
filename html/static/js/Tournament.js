@@ -32,7 +32,7 @@ class TournamentGame {
         this.playerListContainer.innerHTML = '';
         this.totalPlayersCount = 0;
         this.totalPlayersElement = document.getElementById('total-players');
-        this.playersArray = new Set();
+        this.playersArray = [];
         this.matchupArray = [];
         this.mIndex = 0;
 
@@ -40,6 +40,7 @@ class TournamentGame {
         this.inputPlayer = document.getElementById('player-input');
         this.addPlayerButton = document.getElementById('add-player');
         this.startTournamentButton = document.getElementById('start-tournament');
+        this.addAI = document.getElementById('ai-button');
 
         this.gameObject = null;
         this.options = null;
@@ -111,6 +112,7 @@ class TournamentGame {
             const check = this.playersArray.find(p => p.name === playerName);
             if (check) {
                 alert('please provide a unique name');
+                this.inputPlayer.value = '';
                 this.inputPlayer.focus();
                 return;
             }
@@ -135,10 +137,16 @@ class TournamentGame {
                 if (index > -1) {
                     this.playersArray.splice(index, 1);
                 }
-
+                if (playerName == 'AI') {
+                    this.addAI.classList.remove('large-button-red');
+                }
                 playerItem.remove();
             };
-            deleteButton.addEventListener('click', deleteHandler.bind(null, playerName), { once: true });
+            if (playerName === getUsername()) {
+                deleteButton.classList.add('hidden');
+            } else {
+                deleteButton.addEventListener('click', deleteHandler.bind(null, playerName), { once: true });
+            }
 
             /* attach the new created player to the tournament */
             this.playerListContainer.appendChild(playerItem);
@@ -150,7 +158,7 @@ class TournamentGame {
         this.handleAddPlayer = () => {
             this.addPlayer(this.inputPlayer.value.trim());
             this.inputPlayer.focus();
-        }
+        };
         this.addPlayerButton.addEventListener('click', this.handleAddPlayer, {
             signal: this.controller.signal
         });
@@ -160,11 +168,21 @@ class TournamentGame {
                 e.preventDefault();
                 this.addPlayer(this.inputPlayer.value.trim());
             }
-        }
+        };
         this.inputPlayer.addEventListener('keydown', this.handleAddPlayerOnEnter, {
             signal: this.controller.signal
         });
 
+        this.handleAddAI = () => {
+            if (this.playersArray.find(p => p.name === 'AI')) {
+                return;
+            }
+            this.addPlayer('AI');
+            this.addAI.classList.add('large-button-red');
+        };
+        this.addAI.addEventListener('click', this.handleAddAI, {
+            signal: this.controller.signal
+        });
         this.handleStartTournament();
     }
 

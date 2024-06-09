@@ -437,6 +437,7 @@ body {
 
 /* BUTTONS */
 
+.large-button-green,
 .a-large-button,
 .large-button,
 .large-button-red {
@@ -498,12 +499,14 @@ body {
   padding: 0px 16px;
 }
 
+.large-button-green,
 .small-button-green {
   border: 3px solid var(--color-green);
   background: var(--color-clear);
   color: var(--color-green);
 }
 
+.large-button-green:hover,
 .small-button-green:hover {
   background-color: var(--color-green-bg)
 }
