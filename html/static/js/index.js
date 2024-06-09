@@ -40,14 +40,12 @@ const router = async () => {
     let match = potentialMatches.find(potentialMatch => potentialMatch.isMatch);
 
     if (!match) {
-        match = {
-            route: routes[0],
-            isMatch: true
-        };
+        navigateTo('/error?statuscode=404');
+        return;
     }
 
     if (match.route.public === false && !getLoggedIn()) {
-        navigateTo('/');
+        navigateTo('/error?statuscode=403');
         return;
     }
 

@@ -10,7 +10,14 @@ export default class extends AbstractView {
     getHtml = async () => {
         this.urlParams = new URLSearchParams(location.search);
         const statusCode = this.urlParams.get('statuscode');
-
+        
+        const STATUS_CODE = {
+            403: 'Forbidden',
+            404: 'Not Found',
+            500: 'Internal Server Error'
+        }; 
+        const statusCodeText = STATUS_CODE[statusCode] || 'Unknown Error';
+            
         return `
         <div class="window">
             <div class="topbar">
@@ -22,7 +29,7 @@ export default class extends AbstractView {
                     <img class="icon" src="./static/media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;" />
                 </a>
             </div>
-            <div class="error-code">${statusCode}</div>
+            <div class="error-code">${statusCode}: ${statusCodeText}</div>
         </div>
         `
     }
