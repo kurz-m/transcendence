@@ -366,7 +366,6 @@ class TournamentGame {
             body: raw
         })
         .then(response => {
-            console.log(response.text());
         })
         .catch(error => console.log('error', error));
     }
@@ -430,7 +429,6 @@ class TournamentGame {
         }
         this.finalScoreWindow.classList.remove('hidden');
         this.createFinalScoreContent();
-        console.log('game is finished now');
     }
 }
 

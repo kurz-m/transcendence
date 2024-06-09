@@ -1,4 +1,5 @@
 import { getUsername } from "../authentication.js";
+import { getDefaultHeader, getUserCache } from "../shared.js";
 import AbstractView from "./AbstractView.js";
 
 const TROPHY_IMAGES = {
@@ -7,6 +8,8 @@ const TROPHY_IMAGES = {
     3: "./static/media/trophy-bronze.svg",
     4: "./static/media/loose.svg"
 };
+
+const GET_SCORE_API = 'https://transcendence.myprojekt.tech/api-game/user_games';
 
 const mockMatches = {
     "games": [
@@ -72,55 +75,57 @@ export default class extends AbstractView {
         `
     }
 
-    getSingleScoreTemplate(user, userScore, opponent, opponentScore, date) {
-        const image = (userScore > opponentScore)
+    getSingleScoreTemplate(match) {
+        const image = (match.own_score > match.opponent_score)
             ? TROPHY_IMAGES[1]
             : TROPHY_IMAGES[4];
 
         return `
         <div class="list-item">
             <div class="match-icon">S</div>
-            <div class="match-date">${date}</div>
+            <div class="match-date">${match.created_date}</div>
             <img class="trophy" src="${image}" draggable="false" (dragstart)="false;">
             <div class="match-result">
-                <div class="left-player">${user}</div>
+                <div class="left-player">${this.cache.data.user.username}</div>
                 <div class="score">
-                    <div class="left-score">${userScore}</div>
+                    <div class="left-score">${match.own_score}</div>
                     <div class="score-colon">:</div>
-                    <div class="right-score">${opponentScore}</div>
+                    <div class="right-score">${match.opponent_score}</div>
                 </div>
-                <div class="right-player">${opponent}</div>
+                <div class="right-player">${match.opponent}</div>
             </div>
         </div>
         `;
 
     }
 
-    getTournamentScoreTemplate(rank, number_of_players, date) {
-        const image = TROPHY_IMAGES[rank] || TROPHY_IMAGES[4];
+    getTournamentScoreTemplate(match) {
+        const image = TROPHY_IMAGES[match.rank] || TROPHY_IMAGES[4];
 
         return `
         <div class="list-item">
             <button class="match-button">T</button>
-            <div class="match-date">${date}</div>
+            <div class="match-date">${match.created_date}</div>
             <img class="trophy" src="${image}" draggable="false" (dragstart)="false;">
             <div class="match-result">
-                <div class="tournament-rank">${rank + '. '}</div>
+                <div class="tournament-rank">${match.rank}.&nbsp</div>
                 <div class="match-text">out of</div>
-                <div class="tournament-players">${number_of_players}</div>
+                <div class="tournament-players">${match.number_of_players}</div>
                 <div class="match-text"> players</div>
             </div>
         </div>
         `;
     }
 
-    async getMatches() {
+    async getMatches(playerId) {
         try {
-            /* placeholder for the fetch call */
-            const response = JSON.parse(mockResponse);
+            const response = await fetch(`${GET_SCORE_API}/${playerId}`, {
+                method: 'GET',
+                headers: getDefaultHeader()
+            });
 
-            if (response) {
-                return response.games;
+            if (response.ok) {
+                return await response.json();
             }
         } catch (error) {
             console.error('error fetching games:', error);
@@ -128,11 +133,14 @@ export default class extends AbstractView {
     }
 
     afterRender = async () => {
+        this.cache = await getUserCache();
         this.matchListContainer = document.querySelector('.scroll-matches');
         this.matchListContainer.innerHTML = '';
-
+        if (!this.cache) {
+            /* TODO: add some error handling */
+        }
         try {
-            const matches = await this.getMatches();
+            const matches = await this.getMatches(this.cache.data.user.id);
 
             if (matches.length === 0) {
                 const emptyMessage = document.createElement('div');
@@ -149,8 +157,8 @@ export default class extends AbstractView {
                 const matchItem = document.createElement('div');
                 matchItem.classList.add('list-item');
                 matchItem.innerHTML = (match.game_type === 'single')
-                    ? this.getSingleScoreTemplate(getUsername(), match.own_score, match.opponent, match.opponent_score, match.game_id)
-                    : this.getTournamentScoreTemplate(match.rank, match.number_of_players, match.game_id);
+                    ? this.getSingleScoreTemplate(match)
+                    : this.getTournamentScoreTemplate(match);
 
                 fragment.appendChild(matchItem);
             });

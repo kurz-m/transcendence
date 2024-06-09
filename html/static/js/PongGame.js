@@ -6,7 +6,7 @@ const FPS = 60;
 const INTERVAL = 1000 / FPS;
 const AI_INTERVAL = 1000;
 const INITIAL_PADDLE_SPEED = 12;
-const MAX_SCORE = 11;
+const MAX_SCORE = 5;
 const BALL_BOUNCE_DEPTH = 5;
 
 const POST_GAME_ID = 'https://transcendence.myprojekt.tech/api-game/game'
