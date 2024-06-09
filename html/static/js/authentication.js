@@ -1,8 +1,6 @@
 import { navigateTo } from "./index.js";
 import { getCookie, getDefaultHeader, getPlayerData, getUserCache, toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
 
-let isLoggedIn = false;
-
 export const getLoggedIn = () => {
     return sessionStorage.getItem('logged_in') === 'true';
 }
@@ -49,7 +47,6 @@ export const handleAuthenticationCallback = async () => {
                     loginButton.classList.add('logged-in');
                     toggleLoginButtonStyle();
                     loginButtonField.textContent = getCookie('user');
-                    localStorage.setItem('profile_image', data.profile_image_url);
                 }
             } else {
                 console.error('Authentication failed:', response.statusText);
@@ -124,6 +121,9 @@ export const checkLoginStatus = async () => {
 
         if (getLoggedIn()) {
             setUsername(getCookie('user'));
+        } else {
+            localStorage.removeItem('player_data');
+            localStorage.removeItem('username');
         }
     } catch (error) {
         setLoggedIn(false);
