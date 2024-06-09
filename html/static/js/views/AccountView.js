@@ -4,7 +4,7 @@ import AbstractView from "./AbstractView.js";
 
 const POST_MFA_QR_API = 'https://transcendence.myprojekt.tech/api-mfa/enable';
 const POST_MFA_VERIFY_API = 'https://transcendence.myprojekt.tech/api-mfa/verify';
-const DELETE_MFA_API = 'https://transcendence.myprojekt.tech/api-mfa/verify';
+const DELETE_MFA_API = 'https://transcendence.myprojekt.tech/api-mfa/disable';
 const PUT_PLAYER_API = 'https://transcendence.myprojekt.tech/api/player';
 const CACHE_KEY = 'player_data';
 
@@ -141,6 +141,17 @@ export default class extends AbstractView {
                 this.accountWindow.classList.add('hidden');
                 this.twoFAInput.focus();
             } else {
+                try {
+                    const response = await fetch(DELETE_MFA_API, {
+                        method: 'PUT',
+                        headers: getDefaultHeader()
+                    });
+                    if (!response.ok) {
+                        navigateTo(`/error?statuscode=${response.status}`)
+                    }
+                } catch (error) {
+                    navigateTo('/error?statuscode=500');
+                }
                 await this.updatePlayerEntry(false);
                 this.setButtonStyle();  
             }
