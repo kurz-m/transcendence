@@ -133,6 +133,7 @@ class PongGame {
         this.resetBall();
 
         this.onGameOver = null;
+        this.controller = new AbortController();
     }
 
     async run() {
@@ -248,20 +249,16 @@ class PongGame {
         }
 
         /* add the event listeners */
-        this.app.addEventListener('click', this.handlePauseWindow);
-        this.backHomeButton.addEventListener('click', this.handleBackHome);
-        document.addEventListener('keydown', this.handleKeyDown);
-        document.addEventListener('keyup', this.handleKeyUp);
-        window.addEventListener('resize', this.handleResize);
+        this.app.addEventListener('click', this.handlePauseWindow, { signal: this.controller.signal });
+        this.backHomeButton.addEventListener('click', this.handleBackHome, { signal: this.controller.signal });
+        document.addEventListener('keydown', this.handleKeyDown, { signal: this.controller.signal });
+        document.addEventListener('keyup', this.handleKeyUp, { signal: this.controller.signal });
+        window.addEventListener('resize', this.handleResize, { signal: this.controller.signal });
     }
 
     removeEventListeners() {
         /* remove the event listeners for a clean exit */
-        this.app.removeEventListener('click', this.handlePauseWindow);
-        this.backHomeButton.removeEventListener('click', this.handleBackHome);
-        document.removeEventListener('keydown', this.handleKeyDown);
-        document.removeEventListener('keyup', this.handleKeyUp);
-        window.removeEventListener('resize', this.handleResize);
+        this.controller.abort();
     }
 
     resetPaddles() {
@@ -325,18 +322,6 @@ class PongGame {
         return { x: x, y: y };
     }
 
-    // intersectPaddle(obj, center, centerNew) {
-    //     let bounds = obj.getBoundingClientRect();
-    //     let paddleCenterHeight = bounds.left + bounds.width * 0.5;
-    //     if (Math.sign(paddleCenterHeight - center.x) != Math.sign(paddleCenterHeight - centerNew.x)) {
-    //         if ((center.y > bounds.top && center.y < bounds.bottom) ||
-    //             (centerNew.y > bounds.top && centerNew.y < bounds.bottom)) {
-    //                 return true;
-    //         }
-    //     }
-    //     return false;
-    // }
-
     intersectLine(lineX, pointX, newPointX) {
         return (Math.sign(lineX - pointX) != Math.sign(lineX - newPointX));
     }
@@ -375,23 +360,6 @@ class PongGame {
 
         let centerPoint = this.getCenterPoint(this.ball.object);
         let centerPointNew = { x: centerPoint.x + this.ball.dx, y: centerPoint.y + this.ball.dy };
-
-        // if (this.intersectPaddle(this.paddleLeft.object, centerPoint, centerPointNew) ||
-        //     this.intersectPaddle(this.paddleRight.object, centerPoint, centerPointNew)) {
-        //         this.ball.dx = -this.ball.dx;
-        //         if (this.ball.dx < 0) {
-        //             this.ball.dx -= Math.round(Math.random() * 2);
-        //         } else {
-        //             this.ball.dx += Math.round(Math.random() * 2);
-        //         }
-        //         if (this.ball.dy < 0) {
-        //             this.ball.dy -= Math.round(Math.random() * 2);
-        //         } else {
-        //             this.ball.dy += Math.round(Math.random() * 2);
-        //         }
-        //         this.paddleSpeed += Math.round(Math.random());
-        //         newLeft = this.ball.x + this.ball.dx;
-        // }
 
         let paddleBorderX = this.getPaddleInnerBorder();
         if ((this.intersectLine(paddleBorderX.left, this.ball.x, newLeft) &&
@@ -716,6 +684,7 @@ export const startPongGame = async (options) => {
 
     return currentPongGame.run().then(() => ({
         'left': currentPongGame.scoreLeft,
-        'right': currentPongGame.scoreRight
+        'right': currentPongGame.scoreRight,
+        'cleanup': this.controller.abort
     }));
 };
