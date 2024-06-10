@@ -10,6 +10,7 @@ export default class extends AbstractView {
         super();
         this.setTitle("Two Factor");
         this.controller = new AbortController();
+        document.getElementById('login-button').classList.add('hidden');
     }
 
     getHtml = async () => {
@@ -30,6 +31,7 @@ export default class extends AbstractView {
                     <input class="twoFA-input" type="text" maxlength="6" pattern="\d{6}" />
                     <button id="verify-button" class="small-button-green">Verify</button>
                 </div>
+                <div id="error" class="small-text"></div>
             </div>
         </div>
         `;
@@ -49,15 +51,17 @@ export default class extends AbstractView {
                     headers: getDefaultHeader(),
                     body: raw
                 });
-    
+                const data = await response.json();
                 if (response.ok) {
                     setLoggedIn(true);
                     navigateTo('/');
                     return
                 } else {
                     /* TODO: handle error */
+                    this.error.innerHTML = data[0];
                 }
             } catch (error) {
+                this.
                 console.error('error', error);
             }
         }
@@ -85,6 +89,7 @@ export default class extends AbstractView {
             signal: this.controller.signal
         })
         this.handleNumerics = () => {
+            this.error.innerHTML = '';
             this.twoFAInput.value = this.twoFAInput.value.replace(/[^0-9]/g, '');
         }
         this.twoFAInput.addEventListener('input', this.handleNumerics, {
@@ -95,6 +100,7 @@ export default class extends AbstractView {
     afterRender = async () => {
         this.verifyButton = document.getElementById('verify-button');
         this.twoFAInput = document.querySelector('.twoFA-input');
+        this.error = document.getElementById('error');
         this.twoFAInput.focus();
 
         await this.attachEventListeners();

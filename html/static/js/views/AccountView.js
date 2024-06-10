@@ -11,6 +11,7 @@ const CACHE_KEY = 'player_data';
 export default class extends AbstractView {
     constructor() {
         super();
+        this.setTitle("Account");
         this.controller = new AbortController();
         this.qrRefreshIntervalId = null;
     }
