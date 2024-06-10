@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from game.models import Game, Score
+from game.middleware.logstashmiddleware import LogstashMiddleware
 
 
 class GameSerializer(serializers.ModelSerializer):
@@ -34,7 +35,10 @@ class ScoreSerializer(serializers.ModelSerializer):
     
     def validate_opponent(self, value: str):
         """validate opponent name"""
+        middleware_instance = LogstashMiddleware(get_response=None)
+        request = self.context.get('request', None)
         for char in value:
             if not (char.isalnum() or char == '-' or char == '_'):
+                middleware_instance.log_info(request, "ERROR: opponent name invalid!")
                 raise serializers.ValidationError("opponent name contains forbidden characters!")
         return value
