@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'game.middleware.logstashmiddleware.LogstashMiddleware',
 ]
 
 ROOT_URLCONF = 'gameplay.urls'
@@ -149,6 +150,8 @@ REST_FRAMEWORK = {
     #     'rest_framework.renderers.JSONRenderer',
     # ],
 }
+
+
 
 ALLOWED_HOSTS = ['gameplayservice', 'localhost', '127.0.0.1', '159.223.18.127', 'transcendence.myprojekt.tech']
 
