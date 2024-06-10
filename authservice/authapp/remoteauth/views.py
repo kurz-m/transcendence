@@ -77,16 +77,19 @@ class loggedIn(APIView):
 class logOut(APIView):
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request, format=None):
+        middleware_instance = LogstashMiddleware(get_response=None)
         oauth_response = HttpResponse("Successful operation. User logged out and cookies cleared.")
         oauth_response.delete_cookie('access_token', path='/', domain=None)
         oauth_response.delete_cookie('user', path='/', domain=None)
         oauth_response.delete_cookie('2fa', path='/', domain=None)
         oauth_response.delete_cookie('player_id', path='/', domain=None)
         oauth_response.status_code = 200
+        middleware_instance.log_info(request, "user logged out")
         return oauth_response
 
 class mfaLogin(APIView):
     def post(self, request, format=None):
+        middleware_instance = LogstashMiddleware(get_response=None)
         mfa_token = request.data.get('token', None)
         user_id = request.data.get('user_id', None)
         oauth_token = request.data.get('oauth_token', None)
@@ -110,8 +113,10 @@ class mfaLogin(APIView):
             oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=True, samesite='Lax')
             oauth_response.set_cookie('user', player.user, httponly=False, secure=True, samesite='Lax')
             oauth_response.set_cookie('player_id', player.id, httponly=False, secure=True, samesite='Lax')
+            middleware_instance.log_info(request, "Valid MFA Token!")
             return oauth_response
         else:
+            middleware_instance.log_info(request, "Invalid MFA Token!")
             return Response({'Invalid mfa token.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
