@@ -12,3 +12,6 @@ qrcode
 
 #cors
 django-cors-headers
+
+#logging
+python-logstash
