@@ -61,8 +61,8 @@ export default class extends AbstractView {
                         <div id="looser-name" class="subheading">Player 2</div>
                     </div>
                 </div>
-
                 <a id="back-home-button" class="a-large-button" href="/" data-link>Back to Menu</a>
+                <div id="error" class="small-text"></div>
             </div>
         </div>
 

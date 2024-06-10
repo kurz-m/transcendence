@@ -61,7 +61,6 @@ export default class extends AbstractView {
                     this.error.innerHTML = data[0];
                 }
             } catch (error) {
-                this.
                 console.error('error', error);
             }
         }
