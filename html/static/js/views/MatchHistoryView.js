@@ -3,10 +3,10 @@ import { getDefaultHeader, getUserCache } from "../shared.js";
 import AbstractView from "./AbstractView.js";
 
 const TROPHY_IMAGES = {
-    1: "./static/media/trophy-gold.svg",
-    2: "./static/media/trophy-silver.svg",
-    3: "./static/media/trophy-bronze.svg",
-    4: "./static/media/loose.svg"
+    1: ['bi-trophy-fill', 'gold-trophy'],
+    2: ['bi-trophy-fill', 'silver-trophy'],
+    3: ['bi-trophy-fill', 'bronze-trophy'],
+    4: ['bi-emoji-tear-fill', 'emoji-tears']
 };
 
 const GET_SCORE_API = 'https://transcendence.myprojekt.tech/api-game/user_games';
@@ -59,11 +59,11 @@ export default class extends AbstractView {
     <div class="window">
         <div class="topbar">
             <button id="back-button" onclick="history.back()" class="icon-button">
-                <img class="icon" src="./static/media/back.svg" alt="Back" draggable="false" (dragstart)="false;" />
+                <i class="bi bi-caret-left-fill"></i>
             </button>
             <div class="title">Match History</div>
-            <a href="/" class="icon-button" data-link>
-                <img class="icon" src="./static/media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;" />
+            <a href="/" class="icon-button" (dragstart)="false;" draggable="false" data-link>
+                <i class="bi bi-house-fill"></i>
             </a>
         </div>
         <div class="content">
@@ -76,7 +76,7 @@ export default class extends AbstractView {
     }
 
     getSingleScoreTemplate(match) {
-        const image = (match.own_score > match.opponent_score)
+        const icon = (match.own_score > match.opponent_score)
             ? TROPHY_IMAGES[1]
             : TROPHY_IMAGES[4];
 
@@ -84,7 +84,7 @@ export default class extends AbstractView {
         <div class="list-item">
             <div class="match-icon">S</div>
             <div class="match-date">${match.created_date}</div>
-            <img class="trophy" src="${image}" draggable="false" (dragstart)="false;">
+            <i class="bi ${icon.join(' ')} trophy"></i>
             <div class="match-result">
                 <div class="left-player">${this.cache.data.user.username}</div>
                 <div class="score">
@@ -100,13 +100,13 @@ export default class extends AbstractView {
     }
 
     getTournamentScoreTemplate(match) {
-        const image = TROPHY_IMAGES[match.rank] || TROPHY_IMAGES[4];
+        const icon = TROPHY_IMAGES[match.rank] || TROPHY_IMAGES[4];
 
         return `
         <div class="list-item">
             <button class="match-button">T</button>
             <div class="match-date">${match.created_date}</div>
-            <img class="trophy" src="${image}" draggable="false" (dragstart)="false;">
+            <i class="bi ${icon.join(' ')} trophy"></i>
             <div class="match-result">
                 <div class="tournament-rank">${match.rank}.&nbsp</div>
                 <div class="match-text">out of</div>

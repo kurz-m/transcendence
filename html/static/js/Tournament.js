@@ -18,10 +18,10 @@ const states = {
 }
 
 const TROPHY_IMAGES = {
-    1: "./static/media/trophy-gold.svg",
-    2: "./static/media/trophy-silver.svg",
-    3: "./static/media/trophy-bronze.svg",
-    4: "./static/media/loose.svg"
+    1: ['bi-trophy-fill', 'gold-trophy'],
+    2: ['bi-trophy-fill', 'silver-trophy'],
+    3: ['bi-trophy-fill', 'bronze-trophy'],
+    4: ['bi-emoji-tear-fill', 'emoji-tears']
 };
 
 class TournamentGame {
@@ -102,7 +102,7 @@ class TournamentGame {
         return `
         <div class="field">${player}</div>
         <button class="clean-button">
-            <img class="small-icon" src="./static/media/person-remove.svg" alt="Remove">
+            <i class="bi bi-person-fill-dash"></i>
         </button>
         `;
     }
@@ -376,7 +376,7 @@ class TournamentGame {
             /* find direct match */
             const directMatch = this.matchupArray.find(match => {
                 return (match.left === a.name && match.right === b.name) ||
-                       (match.left === b.name && match.right === a.name);
+                    (match.left === b.name && match.right === a.name);
             })
 
             if (directMatch.left === a.name) {
@@ -403,17 +403,16 @@ class TournamentGame {
             headers: header,
             body: raw
         })
-        .then(response => {
-        })
-        .catch(error => console.log('error', error));
+            .then(response => {
+            })
+            .catch(error => console.log('error', error));
     }
 
     getRankScrollTemplate(player, rank) {
-        const image = TROPHY_IMAGES[rank + 1] ||
-                        TROPHY_IMAGES[4];
+        const icon = TROPHY_IMAGES[rank + 1] || TROPHY_IMAGES[4];
 
         return `
-        <img class="trophy" src="${image}" draggable="false" (dragstart)="false;" />
+        <i class="bi ${icon.join(' ')} trophy"></i>
         <div class="tournament-place">${rank + 1}</div>
         <div class="field">${player}</div>
         `;

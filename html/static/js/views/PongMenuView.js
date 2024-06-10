@@ -11,11 +11,11 @@ export default class extends AbstractView {
             <div class="window">
                 <div class="topbar">
                 <button id="back-button" onclick="history.back()" class="icon-button">
-                    <img class="icon" src="./static/media/back.svg" alt="Back" draggable="false" (dragstart)="false;">
+                    <i class="bi bi-caret-left-fill"></i>
                 </button>
                 <div class="title">Pong</div>
-                <a href="/" class="icon-button" data-link>
-                    <img class="icon" src="./static/media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;">
+                <a href="/" class="icon-button" (dragstart)="false;" draggable="false" data-link>
+                    <i class="bi bi-house-fill"></i>
                 </a>
                 </div>
                 <div class="content">
