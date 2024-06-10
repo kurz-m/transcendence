@@ -21,14 +21,14 @@ export default class extends AbstractView {
         <div id="account-window" class="window">
             <div class="topbar">
                 <button id="back-button" onclick="history.back()" class="icon-button">
-                    <img class="icon" src="./static/media/back.svg" alt="Back" draggable="false" (dragstart)="false;" />
+                    <i class="bi bi-caret-left-fill"></i>
                 </button>
                 <div class="user-header">
                     <img class="large-pp" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;" />
                     <div id="username" class="medium-text">User</div>
                 </div>
-                <a href="/" class="icon-button" data-link>
-                    <img class="icon" src="./static/media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;" />
+                <a href="/" class="icon-button" (dragstart)="false;" draggable="false" data-link>
+                    <i class="bi bi-house-fill"></i>
                 </a>
             </div>
             <div class="content">
@@ -49,11 +49,11 @@ export default class extends AbstractView {
         <div id="twoFA-window" class="window hidden">
             <div class="topbar">
                 <a href="/account" class="icon-button" data-link>
-                    <img class="icon" src="./static/media/back.svg" alt="Back" draggable="false" (dragstart)="false;" />
+                    <i class="bi bi-caret-left-fill"></i>
                 </a>
                 <div class="title">Enable 2FA</div>
-                <a href="/" class="icon-button" data-link>
-                    <img class="icon" src="./static/media/home.svg" alt="Home" draggable="false" (dragstart)="false;" />
+                <a href="/" class="icon-button" (dragstart)="false;" draggable="false" data-link>
+                    <i class="bi bi-house-fill"></i>
                 </a>
             </div>
             <div class="content">

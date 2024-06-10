@@ -48,7 +48,7 @@ export default class extends AbstractView {
             <div class="content">
                 <div class="game-result">
                     <div class="game-result-player">
-                        <img class="large-trophy" src="./static/media/trophy-gold.svg" draggable="false" (dragstart)="false;" />
+                        <i class="bi bi-trophy-fill gold-trophy large-trophy"></i>
                         <div id="winner-name" class="subheading">Player 1</div>
                     </div>
                     <div class="hud-score">
@@ -57,7 +57,7 @@ export default class extends AbstractView {
                         <div id="looser-score" class="hud-score-right">0</div>
                     </div>
                     <div class="game-result-player">
-                        <img class="large-trophy" src="./static/media/loose.svg" draggable="false" (dragstart)="false;" />
+                        <i class="bi bi-emoji-tear-fill emoji-tears large-trophy"></i>
                         <div id="looser-name" class="subheading">Player 2</div>
                     </div>
                 </div>
