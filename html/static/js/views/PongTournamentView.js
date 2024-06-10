@@ -110,12 +110,7 @@ export default class extends AbstractView {
         </div>
         <div class="content">
             <div class="people-list">
-                <div class="scroll-people">
-                    <div class="field">GJgj</div>
-                    <button class="clean-button">
-                        <img class="small-icon" src="../media/person-remove.svg" alt="Remove" draggable="false" (dragstart)="false;" />
-                    </button>
-                </div>
+                <div class="scroll-people"></div>
             </div>
         </div>
         <div id="total-players" class="small-text">Total Players: 0</div>

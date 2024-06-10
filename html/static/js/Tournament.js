@@ -181,6 +181,13 @@ class TournamentGame {
             signal: this.controller.signal
         });
 
+        this.handlePlayerName = () => {
+            this.inputPlayer.value = this.inputPlayer.value.replace(/[^a-zA-Z0-9_-]/g, '');
+        }
+        this.inputPlayer.addEventListener('input', this.handlePlayerName, {
+            signal: this.controller.signal
+        });
+
         this.handleAddAI = () => {
             if (this.playersArray.find(p => p.name === 'AI')) {
                 return;
@@ -322,14 +329,7 @@ class TournamentGame {
         this.options.player_two = this.currentMatch.right;
 
         try {
-            const gameReturn = await startPongGame(this.options);
-            this.currentMatch.score = {
-                left: gameReturn.left,
-                right: gameReturn.right
-            };
-            if (gameReturn.cleanup) {
-                gameReturn.cleanup();
-            }
+            this.currentMatch.score = await startPongGame(this.options);
             this.transition(states.SHOW_SCORE);
         } catch (error) {
             console.error('error:', error);

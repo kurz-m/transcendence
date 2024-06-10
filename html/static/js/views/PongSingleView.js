@@ -31,12 +31,9 @@ export default class extends AbstractView {
         `
     }
 
-    afterRender = async () => {
-        const playButton = document.getElementById('play-button');
-        const aiButton = document.getElementById('ai-button');
-
-        const handlePlayButton = () => {
-            let input = document.getElementById('opponent-name').value;
+    attachEventListeners() {
+        this.handlePlayButton = () => {
+            let input = this.opponentInput.value;
             if (!input && !localStorage.getItem('username')) {
                 sessionStorage.setItem('opponent_name', "");
             } else {
@@ -44,16 +41,31 @@ export default class extends AbstractView {
             }
         }
         
-        const handleAIButton = () => {
+        this.handleAIButton = () => {
             sessionStorage.setItem('opponent_name', "AI");
         }
 
-        playButton.addEventListener('click', handlePlayButton, {
+        this.playButton.addEventListener('click', this.handlePlayButton, {
             signal: this.controller.signal
         });
-        aiButton.addEventListener('click', handleAIButton, {
+        this.aiButton.addEventListener('click', this.handleAIButton, {
             signal: this.controller.signal
         });
+
+        this.handleOpponentName = () => {
+            this.opponentInput.value = this.opponentInput.value.replace(/[^a-zA-Z0-9_-]/g, '');
+        }
+        this.opponentInput.addEventListener('input', this.handleOpponentName, {
+            signal: this.controller.signal
+        });
+    }
+
+    afterRender = async () => {
+        this.playButton = document.getElementById('play-button');
+        this.aiButton = document.getElementById('ai-button');
+        this.opponentInput = document.getElementById('opponent-name');
+
+        this.attachEventListeners();
 
         return () => {
             this.controller.abort();
