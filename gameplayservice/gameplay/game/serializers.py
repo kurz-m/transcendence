@@ -31,3 +31,10 @@ class ScoreSerializer(serializers.ModelSerializer):
             created_date = created_date.replace(microsecond=0)
             ret['created_date'] = created_date.strftime("%Y-%m-%d %H:%M:%S")
         return ret
+    
+    def validate_opponent(self, value: str):
+        """validate opponent name"""
+        for char in value:
+            if not (char.isalnum() or char == '-' or char == '_'):
+                raise serializers.ValidationError("opponent name contains forbidden characters!")
+        return value
