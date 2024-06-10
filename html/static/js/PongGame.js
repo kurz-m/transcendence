@@ -127,7 +127,7 @@ class PongGame {
             this.isAI = (options.player_two === 'AI');
         } else {
             this.isAI = (sessionStorage.getItem('opponent_name') === "AI");
-            this.error = document.getElementById('error'); 
+            this.error = document.getElementById('error');
             this.setPlayerNames();
         }
         this.resetPaddles();
@@ -598,7 +598,9 @@ class PongGame {
                     }
                 })
                 .then(data => {
-                    this.error.innerHTML = data.opponent[0];
+                    if (data) {
+                        this.error.innerHTML = data.opponent[0];
+                    }
                 })
                 .catch(error => console.log('error', error));
 
