@@ -138,7 +138,7 @@ class TournamentGame {
                     this.playersArray.splice(index, 1);
                 }
                 if (playerName == 'AI') {
-                    this.addAI.classList.remove('large-button-red');
+                    this.addAI.disabled = false;
                 }
                 playerItem.remove();
                 if (this.playersArray.length < 3) {
@@ -186,7 +186,7 @@ class TournamentGame {
                 return;
             }
             this.addPlayer('AI');
-            this.addAI.classList.add('large-button-red');
+            this.addAI.disabled = true;
         };
         this.addAI.addEventListener('click', this.handleAddAI, {
             signal: this.controller.signal
@@ -197,7 +197,6 @@ class TournamentGame {
     handleStartTournament = () => {
         const startTournament = async () => {
             if (this.playersArray.length < 3) {
-                alert('You need at least 3 people to play a tournament');
                 return;
             }
             try {

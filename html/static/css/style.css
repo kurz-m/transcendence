@@ -489,7 +489,7 @@ body {
 .small-button {
   height: 47px;
   cursor: pointer;
-  background: var(--color-dimgray);
+  background: var(--color-clear);
   border: 3px solid var(--color-lightgray);
   border-radius: var(--br);
   font-family: var(--font);
@@ -631,10 +631,14 @@ body {
 }
 
 .match-button:hover,
-.a-small-button:hover,
-.small-button:hover {
+.a-small-button:hover {
   border-color: var(--color-dimgray);
   background: var(--color-darkgray);
+}
+
+.small-button:hover {
+  border-color: var(--color-dimgray);
+  background: var(--color-clear);
 }
 
 .logged-out:hover,
@@ -685,6 +689,11 @@ a:active {
 .large-button-red:active,
 .medium-button-red:active {
   color: red;
+}
+
+.large-button:disabled {
+    border-color: var(--color-dimgray);
+    color: var(--color-dimgray);
 }
 
 /* INPUT */
