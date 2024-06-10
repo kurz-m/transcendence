@@ -17,9 +17,7 @@ from rest_framework import permissions
 from django.http import JsonResponse
 from remoteauth.authentication import RemoteJWTAUthentication
 from rest_framework.permissions import AllowAny
-import logging
-
-logger = logging.getLogger(__name__)
+from remoteauth.middleware.logstashmiddleware import LogstashMiddleware
 
 def get_user_info(access_token):
     url = 'https://api.intra.42.fr/v2/me'
@@ -96,13 +94,10 @@ class mfaLogin(APIView):
         mfa_verify_url = 'http://twofactorservice:8000/api-mfa/verify'
         data = {'token': mfa_token, 'user_id': user_id}
         response = requests.post(mfa_verify_url, json=data, headers={'Content-Type': 'application/json'})
-        logger.error(response.status_code)
         if response.status_code is status.HTTP_200_OK:
             player = Players.objects.get(user__id=user_id)
-            logger.error(player.user.id)
             jwt_service_url = 'http://jwtservice:8000/api-jwt/token/generate'
             send_data = {'user_id': player.user.id, 'username': player.user.username, 'email': player.user.email, 'access_token': oauth_token}
-            logger.error(send_data)
             response = requests.post(jwt_service_url, json=send_data, headers={'Content-Type': 'application/json'})
             response.raise_for_status()
             data = response.json()
@@ -123,6 +118,7 @@ class mfaLogin(APIView):
 
 class callbackCode(APIView):
     def get(self, request, format=None):
+        middleware_instance = LogstashMiddleware(get_response=None)
         code = request.GET.get('code', None)
         state = request.GET.get('state', None)
         if 'code' in request.GET and 'state' in request.GET:
@@ -159,8 +155,10 @@ class callbackCode(APIView):
                     oauth_response.set_cookie('access_token', refresh.access_token, httponly=True, secure=True, samesite='Lax')
                     oauth_response.set_cookie('user', player.user, httponly=False, secure=True, samesite='Lax')
                     oauth_response.set_cookie('player_id', player.id, httponly=False, secure=True, samesite='Lax')
+                    middleware_instance.log_info(request, "User logged in successfully.")
                     return oauth_response
                 else:
+                    middleware_instance.log_info(request, "Two factor is active for user.")
                     return Response({'two_factor': "true", 'user_id': player.user.id, 'oauth_token': access_token}, status=status.HTTP_100_CONTINUE)
             else:
                 return HttpResponseBadRequest('Invalid Authorization Request to 42 oauth.')
