@@ -8,6 +8,10 @@ __pycache__/
 # C extensions
 *.so
 
+#elastic_data
+data/
+logstash_ingest_data/
+
 # Distribution / packaging
 .Python
 build/
