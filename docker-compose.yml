@@ -168,6 +168,8 @@ services:
         condition: service_healthy
       twofactordb: 
         condition: service_healthy
+      kibana: 
+        condition: service_healthy
     ports:
       - "80:80"
       - "443:443"
@@ -179,7 +181,6 @@ services:
       - certbot_www:/var/www/certbot/:ro
       - certbot_conf:/etc/nginx/ssl/:ro
       - static_files:${STATIC_DIRECTORY}
-
 
   certbot:
     build: ./certbot/
@@ -253,6 +254,120 @@ services:
     restart: always
     privileged: true
 
+  elkcertsetup:
+    container_name: elkcertsetup
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_STACK_VERSION}
+    volumes:
+      - elkcerts:/usr/share/elasticsearch/config/certs
+      - ./elk/elkcertsetup/config/instances.yml:/usr/share/elasticsearch/config/certs/instances.yml
+      - ./elk/elkcertsetup/tools/certinit.sh:/tmp/certinit.sh
+    user: root
+    env_file: 
+      - .env
+    command: bash -c /tmp/certinit.sh
+    networks:
+      - authnetwork
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f config/certs/elasticsearch/elasticsearch.crt ]"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_STACK_VERSION}
+    volumes:
+      - elkcerts:/usr/share/elasticsearch/config/certs
+      - elasticdata:/usr/share/elasticsearch/data
+      - ./elk/elasticsearch/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    environment:
+      - CLI_JAVA_OPTS=-Xms2g -Xmx2g 
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    ports:
+      - 9200:9200
+    networks:
+      - authnetwork
+    env_file: 
+      - .env
+    depends_on:
+      elkcertsetup:
+        condition: service_healthy
+    mem_limit: ${ES_MEM_LIMIT}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://elasticsearch:9200 | grep -q 'missing authentication credentials'",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 100
+    restart: always
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${ELK_STACK_VERSION}
+    container_name: kibana
+    volumes:
+      - elkcerts:/usr/share/kibana/config/certs
+      - kibanadata:/usr/share/kibana/data
+      - ./elk/kibana/conf/kibana.yml:/usr/share/kibana/config/kibana.yml
+    environment:
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
+      - XPACK_SECURITY_ENCRYPTIONKEY=${ENCRYPTION_KEY}
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${ENCRYPTION_KEY}
+      - XPACK_REPORTING_ENCRYPTIONKEY=${ENCRYPTION_KEY}
+    ports:
+      - 5601:5601
+    networks:
+      - authnetwork
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    env_file:
+      - .env
+    mem_limit: ${KB_MEM_LIMIT}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s -I --cacert config/certs/ca/ca.crt https://kibana:5601 | grep -q 'HTTP/1.1 302 Found'",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 100
+
+  logstash:
+    container_name: logstash
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    image: docker.elastic.co/logstash/logstash:${ELK_STACK_VERSION}
+    user: root
+    volumes:
+      - elkcerts:/usr/share/logstash/config/certs
+      - logstashdata:/usr/share/logstash/data
+      - "./elk/logstash/logstash_ingest_data/:/usr/share/logstash/ingest_data/"
+      - "./elk/logstash/conf/logstash.conf:/usr/share/logstash/pipeline/logstash.conf"
+      - "./elk/logstash/conf/logstash.yml:/usr/share/logstash/config/logstash.yml"
+    mem_limit: ${LS_MEM_LIMIT}
+    environment:
+      - CLI_JAVA_OPTS=-Xms256m -Xmx256m 
+      - xpack.monitoring.enabled=true
+      - xpack.monitoring.elasticsearch.ssl.certificate_authority=/usr/share/logstash/config/certs/ca/ca.crt
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_HOSTS=https://elasticsearch:9200
+    ports:
+      - 5959:5959
+    networks:
+      - authnetwork
+    restart: always
+
 volumes:
   postgres_data:
   gameplay_data:
@@ -263,6 +378,10 @@ volumes:
   certbot_www:
   prometheus_data:
   grafana_data:
+  elkcerts:
+  logstashdata:
+  elasticdata:
+  kibanadata:
 
 networks:
   authnetwork:
