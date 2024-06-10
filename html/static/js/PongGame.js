@@ -594,6 +594,8 @@ class PongGame {
                 .catch(error => console.log('error', error));
 
             sessionStorage.removeItem('opponent_name');
+        } else if (this.options.game_type === 'tournament') {
+            this.removeEventListeners();
         }
         this.onGameOver();
     }
@@ -684,7 +686,6 @@ export const startPongGame = async (options) => {
 
     return currentPongGame.run().then(() => ({
         'left': currentPongGame.scoreLeft,
-        'right': currentPongGame.scoreRight,
-        'cleanup': this.controller.abort
+        'right': currentPongGame.scoreRight
     }));
 };
