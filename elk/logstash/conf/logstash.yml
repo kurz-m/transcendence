@@ -1,0 +1,8 @@
+http.host: 0.0.0.0
+node.name: logstash
+xpack.management.elasticsearch.username: ${ELASTIC_PASSWORD}
+xpack.monitoring.elasticsearch.hosts: ${ELASTIC_HOSTS}
+xpack.monitoring.elasticsearch.password: ${ELASTIC_PASSWORD}
+xpack.monitoring.elasticsearch.ssl.certificate_authority: ${xpack.monitoring.elasticsearch.ssl.certificate_authority}
+xpack.monitoring.elasticsearch.username: ${ELASTIC_USER}
+xpack.monitoring.enabled: ${xpack.monitoring.enabled}
