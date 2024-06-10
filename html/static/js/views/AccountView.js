@@ -123,7 +123,7 @@ export default class extends AbstractView {
                     headers: getDefaultHeader(),
                     body: raw
                 });
-
+                const data = await response.json();
                 if (response.ok) {
                     this.twoFactorWindow.classList.add('hidden');
                     this.accountWindow.classList.remove('hidden');
@@ -134,7 +134,7 @@ export default class extends AbstractView {
                     this.setButtonStyle();
                     this.twoFAInput.value = '';
                 } else {
-                    this.error.innerHTML = data[0];
+                    this.error.innerHTML = data.detail;
                 }
             } catch (error) {
                 console.error('error', error);

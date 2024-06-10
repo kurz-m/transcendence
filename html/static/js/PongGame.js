@@ -598,7 +598,7 @@ class PongGame {
                     }
                 })
                 .then(data => {
-                    this.error.innerHTML = data[0];
+                    this.error.innerHTML = data.opponent[0];
                 })
                 .catch(error => console.log('error', error));
 
