@@ -322,7 +322,14 @@ class TournamentGame {
         this.options.player_two = this.currentMatch.right;
 
         try {
-            this.currentMatch.score = await startPongGame(this.options);
+            const gameReturn = await startPongGame(this.options);
+            this.currentMatch.score = {
+                left: gameReturn.left,
+                right: gameReturn.right
+            };
+            if (gameReturn.cleanup) {
+                gameReturn.cleanup();
+            }
             this.transition(states.SHOW_SCORE);
         } catch (error) {
             console.error('error:', error);
