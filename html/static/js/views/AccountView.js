@@ -64,6 +64,7 @@ export default class extends AbstractView {
                     <input class="twoFA-input" type="text" maxlength="6" pattern="\d{6}" />
                     <button id="verify-button" class="small-button-green">Verify</button>
                 </div>
+                <div id="error" class="small-text"></div>
             </div>
         </div>
         `
@@ -133,7 +134,7 @@ export default class extends AbstractView {
                     this.setButtonStyle();
                     this.twoFAInput.value = '';
                 } else {
-                    /* TODO: handle error */
+                    this.error.innerHTML = data[0];
                 }
             } catch (error) {
                 console.error('error', error);
@@ -208,6 +209,7 @@ export default class extends AbstractView {
         })
 
         this.handleNumerics = () => {
+            this.error.innerHTML = '';
             this.twoFAInput.value = this.twoFAInput.value.replace(/[^0-9]/g, '');
         }
         this.twoFAInput.addEventListener('input', this.handleNumerics, {
@@ -235,6 +237,7 @@ export default class extends AbstractView {
         this.twoFAImg = document.querySelector('.twoFA-QR');
         this.twoFAInput = document.querySelector('.twoFA-input');
         this.verifyButton = document.getElementById('verify-button');
+        this.error = document.getElementById('error');
 
         /* display values */
         const profileImage = document.querySelector('.large-pp');

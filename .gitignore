@@ -166,6 +166,6 @@ node_modules
 .vscode
 package*.json
 
-css/
-media/
+./css/
+./media/
 server.py
