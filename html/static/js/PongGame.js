@@ -150,20 +150,20 @@ class PongGame {
 
     setPlayerNames() {
         /* set the name for the left player */
-        const playerOne = localStorage.getItem('username');
-        if (!playerOne) {
+        this.playerOne = localStorage.getItem('username');
+        if (!this.playerOne) {
             this.playerLeftID.textContent = 'Player 1';
         } else {
-            this.playerLeftID.textContent = playerOne;
+            this.playerLeftID.textContent = this.playerOne;
         }
 
         /* set the name for the right player */
-        const playerTwo = sessionStorage.getItem('opponent_name');
-        if (!playerTwo) {
+        this.playerTwo = sessionStorage.getItem('opponent_name');
+        if (!this.playerTwo) {
             this.playerRightID.textContent = 'Player 2';
         } else {
-            this.playerRightID.textContent = playerTwo;
-            if (!playerOne) {
+            this.playerRightID.textContent = this.playerTwo;
+            if (!this.playerOne) {
                 this.playerLeftID.textContent = 'Me';
             }
         }
@@ -576,7 +576,7 @@ class PongGame {
 
         if (getLoggedIn() && this.options.game_type === 'single') {
             let raw = JSON.stringify({
-                "opponent": this.playerRightID.textContent,
+                "opponent": this.playerTwo,
                 "own_score": this.scoreLeft,
                 "opponent_score": this.scoreRight,
                 "win": this.scoreLeft > this.scoreRight,

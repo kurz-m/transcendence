@@ -51,6 +51,7 @@ class TournamentGame {
         /* elements for the game */
         this.currentState = states.ANNOUNCE_GAME;
         this.announceWindow = document.getElementById('announce-window');
+        this.rightControl = document.getElementById('right-control');
         this.hudWindow = document.getElementById('hud-window');
         this.announceWindow = document.getElementById('announce-window');
         this.scoreWindow = document.getElementById('score-window');
@@ -304,6 +305,11 @@ class TournamentGame {
         this.tournamentWindow.classList.add('hidden');
         this.announceLeft.textContent = this.currentMatch.left;
         this.announceRight.textContent = this.currentMatch.right;
+        if (this.currentMatch.right === 'AI') {
+            this.rightControl.classList.add('hidden');
+        } else if (this.rightControl.classList.contains('hidden')) {
+            this.rightControl.classList.remove('hidden');
+        }
         this.announceWindow.classList.remove('hidden');
         this.transition(states.WAIT_GAME);
     }

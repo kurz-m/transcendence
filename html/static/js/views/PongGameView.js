@@ -65,33 +65,6 @@ export default class extends AbstractView {
                 <div id="error" class="small-text"></div>
             </div>
         </div>
-
-        <div id="announce-window" class="window hidden">
-            <div class="title">Next Game</div>
-            <div class="content">
-                <div class="h-content">
-                    <div class="announce-player">
-                        <div class="subheading">Aaron</div>
-                        <div class="controls">
-                            <div class="small-text">Controls:</div>
-                            <div class="small-text-bold">WS</div>
-                        </div>
-                    </div>
-                    <div class="announce-vs">
-                        <div class="subheading">vs.</div>
-                    </div>
-                    <div class="announce-player">
-                        <div class="subheading">Sanjok</div>
-                        <div class="controls">
-                            <div class="small-text">Controls:</div>
-                            <div class="small-text-bold">↑↓</div>
-                        </div>
-                    </div>
-                </div>
-                <button class="large-button">Play</button>
-            </div>
-        </div>
-
         <div id="countdown-window" class="window hidden">
             <div id="countdown-text" class="countdown">5</div>
         </div>
