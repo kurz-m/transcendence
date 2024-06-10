@@ -9,7 +9,7 @@ export default class extends AbstractView {
 
     getHtml = async () => {
         return `
-        <div class="window">
+        <div id="single-window" class="window">
             <div class="topbar">
                 <button id="back-button" onclick="history.back()" class="icon-button">
                     <i class="bi bi-caret-left-fill"></i>
@@ -20,32 +20,76 @@ export default class extends AbstractView {
                 </a>
             </div>
             <div class="content">
-                <a id="ai-button" href="/pong-game" class="a-large-button" data-link>Play vs. AI</a>
+                <button id="ai-button" class="a-large-button">Play vs. AI</button>
                 <div class="input-segment">
                     <div class="label">Play vs.</div>
                     <input id="opponent-name" class="text-field" type="text" placeholder="Guest" />
-                    <a id="play-button" href="/pong-game" class="small-button-green" data-link>play</a>
+                    <button id="to-announce-window" class="small-button-green">Play</button>
                 </div>
+            </div>
+        </div>
+
+        <div id="announce-window" class="window hidden">
+            <div class="title">Next Game</div>
+            <div class="content">
+                <div class="h-content">
+                    <div class="announce-player">
+                        <div id="announce-left" class="subheading">Player 1</div>
+                        <div class="controls">
+                            <div class="small-text">Controls:&nbsp</div>
+                            <div class="small-text-bold">WS</div>
+                        </div>
+                    </div>
+                    <div class="announce-vs">
+                        <div class="subheading">vs.</div>
+                    </div>
+                    <div class="announce-player">
+                        <div id="announce-right" class="subheading">Player 2</div>
+                        <div id="right-control" class="controls">
+                            <div class="small-text">Controls:&nbsp</div>
+                            <div class="small-text-bold">↑↓</div>
+                        </div>
+                    </div>
+                </div>
+                <a id="play-button" href="/pong-game" class="large-button-green" data-link>Play</a>
             </div>
         </div>
         `
     }
 
+    announceGame() {
+
+    }
+
     attachEventListeners() {
-        this.handlePlayButton = () => {
-            let input = this.opponentInput.value;
-            if (!input && !localStorage.getItem('username')) {
-                sessionStorage.setItem('opponent_name', "");
-            } else {
-                sessionStorage.setItem('opponent_name', input || "Guest");
+        this.handleToAnnounceButton = () => {
+            if (this.opponentInput.value.length === 0) {
+                return;
             }
+            // let input = this.opponentInput.value;
+            // if (!input && !localStorage.getItem('username')) {
+            //     sessionStorage.setItem('opponent_name', "");
+            // } else {
+            //     sessionStorage.setItem('opponent_name', input || "Guest");
+            // }
+            if (!localStorage.getItem('username')) {
+                this.announceLeft.innerHTML = 'Anonymous';
+            } else {
+                this.announceLeft.innerHTML = localStorage.getItem('username');
+            }
+            this.announceRight.innerHTML = this.opponentInput.value;
+            sessionStorage.setItem('opponent_name', this.opponentInput.value);
+            this.singleWindow.classList.add('hidden');
+            this.announceWindow.classList.remove('hidden');
         }
         
         this.handleAIButton = () => {
-            sessionStorage.setItem('opponent_name', "AI");
+            this.rightControl.classList.add('hidden');
+            this.opponentInput.value = 'AI';
+            this.handleToAnnounceButton();
         }
 
-        this.playButton.addEventListener('click', this.handlePlayButton, {
+        this.toAnnounceWindowButton.addEventListener('click', this.handleToAnnounceButton, {
             signal: this.controller.signal
         });
         this.aiButton.addEventListener('click', this.handleAIButton, {
@@ -61,9 +105,15 @@ export default class extends AbstractView {
     }
 
     afterRender = async () => {
-        this.playButton = document.getElementById('play-button');
+        this.singleWindow = document.getElementById('single-window');
+        this.announceWindow = document.getElementById('announce-window');
+        this.toAnnounceWindowButton = document.getElementById('to-announce-window');
+        this.announceLeft = document.getElementById('announce-left');
+        this.announceRight = document.getElementById('announce-right');
         this.aiButton = document.getElementById('ai-button');
         this.opponentInput = document.getElementById('opponent-name');
+        this.startGameButton = document.getElementById('play-button');
+        this.rightControl = document.getElementById('right-control');
 
         this.attachEventListeners();
 
