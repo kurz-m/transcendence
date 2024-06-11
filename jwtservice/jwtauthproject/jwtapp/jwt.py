@@ -44,7 +44,7 @@ class GenerateTokenView(APIView):
         user_id = request.data.get('user_id')
         username = request.data.get('username')
         email = request.data.get('email')
-        token = request.data.get('access_token')
+        token = request.data.get('oauth_token')
         url = 'https://api.intra.42.fr/v2/me'
         header = {'Authorization': f'Bearer {token}'} 
 
