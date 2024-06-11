@@ -154,7 +154,10 @@ class callbackCode(APIView):
                 player = get_user_info(oauth_token=oauth_token)
                 if player and player.two_factor is True:
                     middleware_instance.log_info(request, "Two factor is active for user.")
-                    oauth_token = encrypt_token(oauth_token, settings.ENCRYPTION_KEY)
+                    if settings.ENCRYPTION_KEY and oauth_token:
+                        oauth_token = encrypt_token(oauth_token, settings.ENCRYPTION_KEY)
+                    else:
+                        return HttpResponseBadRequest("Missing ENCRYPTION_KEY or Oauth Key")
                     return Response({'two_factor': "true", 'user_id': player.user.id, 'oauth_token': oauth_token}, status=status.HTTP_200_OK)
                 middleware_instance.log_info(request, "User logged in successfully.")
                 return success_login(player, oauth_token)
