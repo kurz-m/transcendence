@@ -14,9 +14,6 @@ from django.conf import settings
 from django.http import HttpResponse, Http404
 from mfaauthenticator.permission import IsOwnerAndNotDelete
 from django.contrib.auth.models import User
-import logging
-
-logger = logging.getLogger(__name__)
 
 class ServeMedia(APIView):
     permission_classes = [IsAuthenticated, IsOwnerAndNotDelete]
@@ -86,21 +83,8 @@ class EnableMFA(APIView):
         mfa_qr_url = generate_qrcode_url(player.user.username, player.mfa_secret_key, filename)
         qr_image_path = f"../media/{filename}"
         api_media_url = request.build_absolute_uri('/api-mfa/media/' + qr_image_path)
-        return Response({'secret_key': mfa_secret_key, 'mfa_qr_url': mfa_qr_url, 'mfa_qrimage_url': api_media_url})
-
-
-class UpdateMFA(APIView):
-    permission_classes = [IsAuthenticated, IsOwnerAndNotDelete]
-
-    def put(self, request):
-        user = request.user
-        player = Players.objects.filter(user=user).first()
-        new_secret_key = generate_secret_key()
-        player.mfa_secret_key = new_secret_key
-        player.save()
-        mfa_qr_url = generate_qrcode_url(player.user.username, player.mfa_secret_key)
-
-        return Response({'secret_key': new_secret_key, 'mfa_qr_url': mfa_qr_url})
+        api_media_url = api_media_url.replace('http://', 'https://')
+        return Response({'mfa_qrimage_url': api_media_url})
 
 
 class DisableMFA(APIView):
@@ -115,15 +99,13 @@ class DisableMFA(APIView):
 
 
 class VerifyMFA(APIView):
-    # permission_classes = [IsAuthenticated, IsOwnerAndNotDelete]
     
     def post(self, request):
         token = request.data.get('token')
         user_id = request.data.get('user_id')
-        logger.error("MFA: ")
-        logger.error(user_id)
-        user = User.objects.get(id=user_id)
-        if not user:
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
             return Response({'error': 'User does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
         player = Players.objects.filter(user=user).first()
         is_valid = verify_token(user, token=token)
