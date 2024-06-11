@@ -1,3 +1,4 @@
+import { navigateTo } from "../index.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -5,6 +6,7 @@ export default class extends AbstractView {
         super();
         this.setTitle("Single Game");
         this.controller = new AbortController();
+        document.getElementById('login-button').classList.add('hidden');
     }
 
     getHtml = async () => {
@@ -51,7 +53,7 @@ export default class extends AbstractView {
                         </div>
                     </div>
                 </div>
-                <a id="play-button" href="/pong-game" class="large-button-green" data-link>Play</a>
+                <button id="play-button" class="large-button-green" data-link>Play</button>
             </div>
         </div>
         `
@@ -66,12 +68,6 @@ export default class extends AbstractView {
             if (this.opponentInput.value.length === 0) {
                 return;
             }
-            // let input = this.opponentInput.value;
-            // if (!input && !localStorage.getItem('username')) {
-            //     sessionStorage.setItem('opponent_name', "");
-            // } else {
-            //     sessionStorage.setItem('opponent_name', input || "Guest");
-            // }
             if (!localStorage.getItem('username')) {
                 this.announceLeft.innerHTML = 'Anonymous';
             } else {
@@ -100,6 +96,18 @@ export default class extends AbstractView {
             this.opponentInput.value = this.opponentInput.value.replace(/[^a-zA-Z0-9_-]/g, '');
         }
         this.opponentInput.addEventListener('input', this.handleOpponentName, {
+            signal: this.controller.signal
+        });
+
+        this.handleStartGame = () => {
+            if (!navigator.onLine) {
+                navigateTo('/error?statuscode=0');
+            } else {
+                navigateTo('/pong-game');
+            }
+        }
+
+        this.startGameButton.addEventListener('click', this.handleStartGame, {
             signal: this.controller.signal
         });
     }
