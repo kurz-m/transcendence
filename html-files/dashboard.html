@@ -8,17 +8,148 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@100..900"
     />
-    <title>Menu - Transcendence</title>
+    <title>My Dashboard - Transcendence</title>
   </head>
   <body>
     <div class="background">
       <div class="window">
         <div class="topbar">
-          <div class="title">Menu</div>
+          <button class="icon-button">
+            <img class="icon" src="../media/back.svg" alt="Back" draggable="false" (dragstart)="false;">
+          </button>
+          <div class="title">My Dashboard</div>
+          <button class="icon-button">
+            <img class="icon" src="../media/home.svg" alt="Main Menu" draggable="false" (dragstart)="false;">
+          </button>
         </div>
         <div class="content">
-          <a class="a-large-button" href="/pong" data-link>Pong</a>
-          <a class="a-large-button" href="/tetris" data-link>Tetris</a>
+          <div class="match-list">
+            <div class="scroll-matches">
+              <div class="list-item">
+                <div class="match-icon">S</div>
+                <div class="match-date">28.08.28 08:58</div>
+                <img class="trophy" src="../media/trophy-gold.svg" draggable="false" (dragstart)="false;">
+                <div class="match-result">
+                  <div class="left-player">Aaron Rabenstein</div>
+                  <div class="score">
+                    <div class="left-score">11</div>
+                    <div class="score-colon">:</div>
+                    <div class="right-score">8</div>
+                  </div>
+                  <div class="right-player">Markuz Kurz</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <button class="match-button">T</button>
+                <div class="match-date">21.04.24 16:04</div>
+                <img class="trophy" src="../media/trophy-gold.svg" draggable="false" (dragstart)="false;">
+                <div class="match-result">
+                  <div class="tournament-place">1st</div>
+                  <div class="match-text">out of</div>
+                  <div class="tournament-players">5</div>
+                  <div class="match-text"> players</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <div class="match-icon">S</div>
+                <div class="match-date">22.05.24 14:29</div>
+                <img class="trophy" src="../media/loose.svg" draggable="false" (dragstart)="false;">
+                <div class="match-result">
+                  <div class="left-player">Me</div>
+                  <div class="score">
+                    <div class="left-score">3</div>
+                    <div class="score-colon">:</div>
+                    <div class="right-score">11</div>
+                  </div>
+                  <div class="right-player">Sanjok Bhatta</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <button class="match-button">T</button>
+                <div class="match-date">21.04.24 16:04</div>
+                <img class="trophy" src="../media/trophy-silver.svg" draggable="false" (dragstart)="false;">
+                <div class="match-result">
+                  <div class="tournament-place">2nd</div>
+                  <div class="match-text">out of</div>
+                  <div class="tournament-players">3</div>
+                  <div class="match-text"> players</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <button class="match-button">T</button>
+                <div class="match-date">21.04.24 16:04</div>
+                <img class="trophy" src="../media/trophy-bronze.svg" draggable="false" (dragstart)="false;">
+                <div class="match-result">
+                  <div class="tournament-place">3rd</div>
+                  <div class="match-text">out of</div>
+                  <div class="tournament-players">10</div>
+                  <div class="match-text"> players</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <div class="match-icon">S</div>
+                <div class="match-date">28.08.28 08:58</div>
+                <img class="trophy" src="../media/trophy-gold.svg" draggable="false" (dragstart)="false;">
+                <div class="match-result">
+                  <div class="left-player">Aaron Rabenstein</div>
+                  <div class="score">
+                    <div class="left-score">11</div>
+                    <div class="score-colon">:</div>
+                    <div class="right-score">8</div>
+                  </div>
+                  <div class="right-player">Markuz Kurz</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <button class="match-button">T</button>
+                <div class="match-date">21.04.24 16:04</div>
+                <img class="trophy" src="../media/trophy-gold.svg" draggable="false" (dragstart)="false;">
+                <div class="match-result">
+                  <div class="tournament-place">1st</div>
+                  <div class="match-text">out of</div>
+                  <div class="tournament-players">5</div>
+                  <div class="match-text"> players</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <div class="match-icon">S</div>
+                <div class="match-date">22.05.24 14:29</div>
+                <img class="trophy" src="../media/loose.svg" draggable="false" (dragstart)="false;">
+                <div class="match-result">
+                  <div class="left-player">Me</div>
+                  <div class="score">
+                    <div class="left-score">3</div>
+                    <div class="score-colon">:</div>
+                    <div class="right-score">11</div>
+                  </div>
+                  <div class="right-player">Sanjok Bhatta</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <button class="match-button">T</button>
+                <div class="match-date">21.04.24 16:04</div>
+                <img class="trophy" src="../media/trophy-silver.svg" draggable="false" (dragstart)="false;">
+                <div class="match-result">
+                  <div class="tournament-place">2nd</div>
+                  <div class="match-text">out of</div>
+                  <div class="tournament-players">3</div>
+                  <div class="match-text"> players</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <button class="match-button">T</button>
+                <div class="match-date">21.04.24 16:04</div>
+                <img class="trophy" src="../media/trophy-bronze.svg" draggable="false" (dragstart)="false;">
+                <div class="match-result">
+                  <div class="tournament-place">3rd</div>
+                  <div class="match-text">out of</div>
+                  <div class="tournament-players">10</div>
+                  <div class="match-text"> players</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
         </div>
       </div>
     </div>
