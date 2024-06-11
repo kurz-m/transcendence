@@ -221,8 +221,6 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/config/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
-      - ./monitoring/grafana/config/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml
-      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
     ports:
       - 3000:3000
     env_file:
