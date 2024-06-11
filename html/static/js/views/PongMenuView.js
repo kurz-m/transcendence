@@ -4,6 +4,10 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Pong Menu");
+        this.loginButton = document.getElementById('login-button');
+        if (this.loginButton.classList.contains('hidden')) {
+            this.loginButton.classList.remove('hidden');
+        }
     }
 
     getHtml = async () => {

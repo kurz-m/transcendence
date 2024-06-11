@@ -7,24 +7,31 @@ export default class extends AbstractView {
         document.getElementById('login-button').classList.remove('hidden');
     }
 
+    isNumber(str) {
+        return /^-?\d+$/.test(str);
+    }
+
     getHtml = async () => {
         this.urlParams = new URLSearchParams(location.search);
         const statusCode = this.urlParams.get('statuscode');
-        
-        if (Number(statusCode) < 100 || Number(statusCode) > 599) {
-            statusCode = '400';
+
+        if (this.isNumber(statusCode)) {
+            if ((Number(statusCode) !== 0) && Number(statusCode) < 100 || Number(statusCode) > 599) {
+                statusCode = '418';
+            }
         }
 
         const STATUS_CODE = {
+            0: 'You appear to be offline',
             400: 'Bad Request',
             401: 'Unauthorized',
             403: 'Forbidden',
             404: 'Not Found',
-            500: 'Internal Server Error',
+            418: `I'm a teapot`,
             503: 'Service Unavailable'
-        }; 
+        };
         const statusCodeText = STATUS_CODE[statusCode] || 'Unknown Error';
-            
+
         return `
         <div class="window">
             <div class="topbar">
