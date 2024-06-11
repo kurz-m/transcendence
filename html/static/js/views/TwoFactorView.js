@@ -57,7 +57,6 @@ export default class extends AbstractView {
                     navigateTo('/');
                     return
                 } else {
-                    /* TODO: handle error */
                     this.error.innerHTML = data[0];
                 }
             } catch (error) {
@@ -88,6 +87,11 @@ export default class extends AbstractView {
             signal: this.controller.signal
         })
         this.handleNumerics = () => {
+            if (this.twoFAInput.value.lengt !== 6) {
+                this.verifyButton.disable = true;
+            } else {
+                this.verifyButton.disable = false;
+            }
             this.error.innerHTML = '';
             this.twoFAInput.value = this.twoFAInput.value.replace(/[^0-9]/g, '');
         }
