@@ -114,10 +114,13 @@ class mfaLogin(APIView):
         mfa_token = request.data.get('token', None)
         user_id = request.data.get('user_id', None)
         encrypted_oauth_token = request.data.get('oauth_token', None)
-        try:
-            oauth_token = decrypt_token(encrypted_oauth_token, settings.ENCRYPTION_KEY)
-        except:
-            return Response("Token decryption failed", status=status.HTTP_400_BAD_REQUEST)
+        if settings.ENCRYPTION_KEY and encrypted_oauth_token:
+            try:
+                oauth_token = decrypt_token(encrypted_oauth_token, settings.ENCRYPTION_KEY)
+            except:
+                return Response("Token decryption failed", status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return HttpResponseBadRequest("Missing ENCRYPTION_KEY or Oauth Key")
         mfa_verify_url = 'http://twofactorservice:8000/api-mfa/verify'
         data = {'token': mfa_token, 'user_id': user_id}
         response = requests.post(mfa_verify_url, json=data, headers={'Content-Type': 'application/json'})
