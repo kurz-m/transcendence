@@ -15,3 +15,6 @@ django-cors-headers
 
 #logging
 python-logstash
+
+#encryption
+cryptography

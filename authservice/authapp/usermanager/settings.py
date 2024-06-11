@@ -179,3 +179,5 @@ ALLOWED_HOSTS = ['authservice', 'localhost', '127.0.0.1', '159.223.18.127', 'tra
 CORS_ALLOW_ALL_ORIGINS = True
 
 APPEND_SLASH = False
+
+ENCRYPTION_KEY = os.getenv('TOKEN_ENCRYPTION_KEY')
