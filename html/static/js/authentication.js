@@ -49,10 +49,12 @@ export const handleAuthenticationCallback = async () => {
                     loginButtonField.textContent = getCookie('user');
                 }
             } else {
-                console.error('Authentication failed:', response.statusText);
+                navigateTo(`/error?statuscode=${response.status}`);
+                return;
             }
         } else {
-            console.error('Missing authorization code');
+            navigateTo('/error?statuscode=401');
+            return;
         }
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -80,10 +82,12 @@ export const loginCallback = async () => {
                 const data = await response.json();
                 window.location.href = data.location;
             } else {
-                console.error('Authentication failed:', response.statusText);
+                navigateTo(`/error?statuscode=${response.status}`);
+                return;
             }
         } catch (error) {
-            console.error('Error:', error);
+            navigateTo('/error?statuscode=500');
+            return;
         }
 
     }
@@ -105,7 +109,8 @@ export const logoutCallback = async () => {
             sessionStorage.clear();
             setLoggedIn(false);
         } else {
-            console.error('Could not logout the user');
+            navigateTo('/error?statuscode=503');
+            return;
         }
 
     } catch (error) {
