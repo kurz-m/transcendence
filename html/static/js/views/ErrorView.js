@@ -11,10 +11,17 @@ export default class extends AbstractView {
         this.urlParams = new URLSearchParams(location.search);
         const statusCode = this.urlParams.get('statuscode');
         
+        if (Number(statusCode) < 100 || Number(statusCode) > 599) {
+            statusCode = '400';
+        }
+
         const STATUS_CODE = {
+            400: 'Bad Request',
+            401: 'Unauthorized',
             403: 'Forbidden',
             404: 'Not Found',
-            500: 'Internal Server Error'
+            500: 'Internal Server Error',
+            503: 'Service Unavailable'
         }; 
         const statusCodeText = STATUS_CODE[statusCode] || 'Unknown Error';
             
