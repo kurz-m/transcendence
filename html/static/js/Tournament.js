@@ -175,6 +175,9 @@ class TournamentGame {
         this.handleAddPlayerOnEnter = e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
+                if (this.inputPlayer.value === 'AI') {
+                    return;
+                }
                 this.addPlayer(this.inputPlayer.value.trim());
             }
         };
@@ -183,6 +186,11 @@ class TournamentGame {
         });
 
         this.handlePlayerName = () => {
+            if (this.inputPlayer.value === 'AI') {
+                this.addPlayerButton.disabled = true;
+            } else {
+                this.addPlayerButton.disabled = false;
+            }
             this.inputPlayer.value = this.inputPlayer.value.replace(/[^a-zA-Z0-9_-]/g, '');
         }
         this.inputPlayer.addEventListener('input', this.handlePlayerName, {
