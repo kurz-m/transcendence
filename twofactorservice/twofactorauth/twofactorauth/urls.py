@@ -21,16 +21,12 @@ from rest_framework import routers
 from django.conf import settings
 from django.conf.urls.static import static
 from mfaauthenticator.mfa import ServeMedia
-from mfaauthenticator.mfa import EnableMFA, UpdateMFA, VerifyMFA, DisableMFA
+from mfaauthenticator.mfa import EnableMFA, VerifyMFA, DisableMFA
 
-# router = routers.DefaultRouter()
-# router.register(r'player', views.PlayerViewSet, basename='player')
 
 urlpatterns = [
-    # path('api-mfa/', include(router.urls)),
     path('api-mfa/enable', EnableMFA.as_view(), name='enable_mfa'),
     path('api-mfa/disable', DisableMFA.as_view(), name='disable_mfa'),
-    path('api-mfa/update', UpdateMFA.as_view(), name='update_mfa'),
     path('api-mfa/verify', VerifyMFA.as_view(), name='verify_mfa'),
     path('api-mfa/media/<path:filename>', ServeMedia.as_view(), name='serve_media'),
 ]
