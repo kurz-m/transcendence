@@ -691,6 +691,7 @@ a:active {
   color: red;
 }
 
+.small-button:disabled,
 .large-button:disabled {
     border-color: var(--color-dimgray);
     color: var(--color-dimgray);
