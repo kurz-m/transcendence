@@ -77,6 +77,10 @@ body {
   justify-content: center;
 }
 
+.make-opaque {
+  visibility: hidden;
+}
+
 /* LOADER */
 
 .loader {
