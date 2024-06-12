@@ -65,6 +65,7 @@ class TournamentGame {
         /* elements for the final score window */
         this.rankScroll = document.getElementById('rank-scroll');
         this.matchScroll = document.getElementById('match-scroll');
+        this.error = document.getElementById('error');
     }
 
     async run() {
@@ -219,11 +220,17 @@ class TournamentGame {
                 if (getLoggedIn()) {
                     this.gameObject = await this.createNewTournamentId();
                 } else {
-                    this.gameObject = mockObject;
+                    this.gameObject = {
+                        game_type: 'tournament',
+                        id: -1
+                    };
                 }
             } catch (error) {
-                console.error('Error starting tournament:', error);
-                return;
+                console.error('Could not create tournament ID:', error);
+                this.gameObject = {
+                    game_type: 'tournament',
+                    id: -1
+                };
             }
             this.options = {
                 game_type: this.gameObject.game_type,
@@ -409,7 +416,7 @@ class TournamentGame {
         let raw = JSON.stringify({
             "rank": this.playersArray.findIndex(player => player.name === username) + 1,
             "number_of_players": this.playersArray.length,
-            "game_id": this.options.game_id
+            "game_id": (this.options.game_id !== -1) ? this.options.game_id : undefined
         });
 
         fetch(POST_SCORE_API, {
@@ -418,8 +425,18 @@ class TournamentGame {
             body: raw
         })
             .then(response => {
+                if (!response.ok) {
+                    console.error('API error:', response.status, response.statusText);
+                    return response.json();
+                }
+            })
+            .then(data => {
+                if (data) {
+                    this.error.innerHTML = 'Could not post game score.';
+                }
             })
             .catch(error => console.log('error', error));
+
     }
 
     getRankScrollTemplate(player, rank) {

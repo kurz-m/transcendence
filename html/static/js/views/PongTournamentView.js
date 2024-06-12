@@ -143,6 +143,7 @@ export default class extends AbstractView {
                 <div id="match-scroll" class="scroll-tournament-result"></div>
             </div>
         </div>
+        <div id="error" class="small-text"></div>
     </div>
     `
     }
