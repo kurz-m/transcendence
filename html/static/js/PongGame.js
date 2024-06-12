@@ -588,28 +588,32 @@ class PongGame {
 
             const header = getDefaultHeader();
 
-            fetch(POST_SCORE_API, {
-                method: 'POST',
-                headers: header,
-                body: raw,
-                signal: AbortSignal.timeout(5000)
-            })
-                .then(response => {
-
-                    if (!response.ok) {
-                        console.error('API error:', response.status, response.statusText);
-                        return response.json();
-                    }
+            if (navigator.onLine) {
+                fetch(POST_SCORE_API, {
+                    method: 'POST',
+                    headers: header,
+                    body: raw,
+                    signal: AbortSignal.timeout(5000)
                 })
-                .then(data => {
-                    if (data) {
-                        toastErrorMessage(data.opponent[0]);
-                    }
-                })
-                .catch(error => {
-                    toastErrorMessage('Could not post game score.');
-                    console.log('error', error);
-                });
+                    .then(response => {
+    
+                        if (!response.ok) {
+                            console.error('API error:', response.status, response.statusText);
+                            return response.json();
+                        }
+                    })
+                    .then(data => {
+                        if (data) {
+                            toastErrorMessage(data.opponent[0]);
+                        }
+                    })
+                    .catch(error => {
+                        toastErrorMessage('Could not post game score.');
+                        console.log('error', error);
+                    });
+            } else {
+                toastErrorMessage('Could not post game score.');
+            }
 
             sessionStorage.removeItem('opponent_name');
         } else if (this.options.game_type === 'tournament') {
@@ -649,21 +653,26 @@ const createNewSingleGame = async () => {
         "game_type": "single"
     });
 
-    try {
-        const response = await fetch(POST_GAME_ID, {
-            method: 'POST',
-            headers: header,
-            body: raw,
-            signal: AbortSignal.timeout(5000)
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+    if (navigator.onLine) {
+        try {
+            const response = await fetch(POST_GAME_ID, {
+                method: 'POST',
+                headers: header,
+                body: raw,
+                signal: AbortSignal.timeout(5000)
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            toastErrorMessage('Timeout for creating a new game ID');
+            console.error('Error creating single game:', error);
+            throw error;
         }
-        return await response.json();
-    } catch (error) {
-        toastErrorMessage('Timeout for creating a new game ID');
-        console.error('Error creating single game:', error);
+    } else {
+        toastErrorMessage('Could not create game ID');
         throw error;
     }
 }
@@ -684,7 +693,7 @@ export const startPongGame = async (options) => {
                     game_id: gameObject.id
                 };
             } catch (error) {
-                console.error('Error starting single game:', error);
+                console.error('Error creating game ID:', error);
                 gameOptions = {
                     game_type: 'single'
                 };

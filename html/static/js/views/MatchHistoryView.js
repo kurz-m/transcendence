@@ -120,19 +120,24 @@ export default class extends AbstractView {
     }
 
     async getMatches(playerId) {
-        try {
-            const response = await fetch(`${GET_SCORE_API}/${playerId}`, {
-                method: 'GET',
-                headers: getDefaultHeader(),
-                signal: AbortSignal.timeout(5000)
-            });
-
-            if (response.ok) {
-                return await response.json();
+        if (navigator.onLine) {
+            try {
+                const response = await fetch(`${GET_SCORE_API}/${playerId}`, {
+                    method: 'GET',
+                    headers: getDefaultHeader(),
+                    signal: AbortSignal.timeout(5000)
+                });
+    
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (error) {
+                toastErrorMessage('Could not fetch match history');
+                console.error('error fetching games:', error);
+                return [];
             }
-        } catch (error) {
+        } else {
             toastErrorMessage('Could not fetch match history');
-            console.error('error fetching games:', error);
             return [];
         }
     }
@@ -149,7 +154,8 @@ export default class extends AbstractView {
         this.matchListContainer = document.querySelector('.scroll-matches');
         this.matchListContainer.innerHTML = '';
         if (!this.cache) {
-            /* TODO: add some error handling */
+            toastErrorMessage('Could not get user cache');
+            return;
         }
         try {
             const matches = await this.getMatches(this.cache.data.user.id);
