@@ -26,7 +26,7 @@ export default class extends AbstractView {
                     <i class="bi bi-caret-left-fill"></i>
                 </button>
                 <div class="user-header">
-                    <img class="large-pp" src="./static/media/fallback-profile.png" draggable="false" (dragstart)="false;" />
+                    <img class="large-pp" src="" draggable="false" (dragstart)="false;" />
                     <div id="username" class="medium-text">User</div>
                 </div>
                 <a href="/" class="icon-button" (dragstart)="false;" draggable="false" data-link>
