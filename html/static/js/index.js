@@ -15,6 +15,7 @@ import TwoFactorView from "./views/TwoFactorView.js";
 
 let currentViewCleanup = null;
 let isOnline = navigator.onLine;
+let reloadIconTimeout;
 
 setInterval(() => {
     const newStatus = navigator.onLine;
@@ -23,10 +24,18 @@ setInterval(() => {
         if (!isOnline) {
             /* TODO: show popup when offline */
         } else {
-            /* TODO: show popup for being online again */
+            /* TODO: show popup for being online again */     
+            clearTimeout(reloadIconTimeout);
+            reloadIconTimeout = setTimeout(() => {
+                const bootstrapIconsLink = document.querySelector('link[href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"]');
+                if (bootstrapIconsLink) {
+                  const newLink = bootstrapIconsLink.cloneNode();
+                  bootstrapIconsLink.parentNode.replaceChild(newLink, bootstrapIconsLink);
+                }
+            }, 1000);
         }
     }
-}, 3000);
+}, 5000);
 
 const router = async () => {
     const routes = [
