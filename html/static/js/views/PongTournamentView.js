@@ -4,7 +4,7 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Tournament");
-        document.getElementById('login-button').classList.add('hidden');
+        document.getElementById('login-button').classList.add('make-opaque');
     }
 
     getHtml = async () => {
@@ -143,7 +143,6 @@ export default class extends AbstractView {
                 <div id="match-scroll" class="scroll-tournament-result"></div>
             </div>
         </div>
-        <div id="error" class="small-text"></div>
     </div>
     `
     }

@@ -6,7 +6,7 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Transcendence");
-        document.getElementById('login-button').classList.remove('hidden');
+        document.getElementById('login-button').classList.remove('make-opaque');
         sessionStorage.removeItem('opponent_name');
     }
 

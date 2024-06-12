@@ -1,5 +1,5 @@
 import { navigateTo } from "../index.js";
-import { getDefaultHeader, getUserCache, updateCache } from "../shared.js";
+import { getDefaultHeader, getUserCache, toastErrorMessage, updateCache } from "../shared.js";
 import AbstractView from "./AbstractView.js";
 
 const POST_MFA_QR_API = 'https://transcendence.myprojekt.tech/api-mfa/enable';
@@ -64,9 +64,8 @@ export default class extends AbstractView {
                 <div class="small-text">And enter the 6-digit verification code:</div>
                 <div class="input-segment twoFA-input-style">
                     <input class="twoFA-input" type="text" maxlength="6" pattern="\d{6}" />
-                    <button id="verify-button" class="small-button-green">Verify</button>
+                    <button id="verify-button" class="small-button-red">Verify</button>
                 </div>
-                <div id="error" class="small-text"></div>
             </div>
         </div>
         `
@@ -136,11 +135,13 @@ export default class extends AbstractView {
                     this.setButtonStyle();
                     this.twoFAInput.value = '';
                 } else {
-                    this.error.innerHTML = data.detail;
+                    toastErrorMessage(data.detail);
                 }
             } catch (error) {
                 console.error('error', error);
             }
+        } else {
+            this.twoFAInput.focus();
         }
     }
 
@@ -213,8 +214,17 @@ export default class extends AbstractView {
         })
 
         this.handleNumerics = () => {
-            this.error.innerHTML = '';
             this.twoFAInput.value = this.twoFAInput.value.replace(/[^0-9]/g, '');
+
+            const isValid = this.twoFAInput.value.length === 6;
+
+            if (isValid) {
+                this.verifyButton.classList.add('small-button-green');
+                this.verifyButton.classList.remove('small-button-red');
+            } else {    
+                this.verifyButton.classList.add('small-button-red');
+                this.verifyButton.classList.remove('small-button-green');
+            }
         }
         this.twoFAInput.addEventListener('input', this.handleNumerics, {
             signal: this.controller.signal
@@ -245,7 +255,6 @@ export default class extends AbstractView {
         this.twoFAImg = document.querySelector('.twoFA-QR');
         this.twoFAInput = document.querySelector('.twoFA-input');
         this.verifyButton = document.getElementById('verify-button');
-        this.error = document.getElementById('error');
 
         /* display values */
         const profileImage = document.querySelector('.large-pp');

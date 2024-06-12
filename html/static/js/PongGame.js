@@ -1,12 +1,12 @@
 import { getLoggedIn } from "./authentication.js";
 import { navigateTo } from "./index.js";
-import { getDefaultHeader } from "./shared.js";
+import { getDefaultHeader, toastErrorMessage } from "./shared.js";
 
 const FPS = 60;
 const INTERVAL = 1000 / FPS;
 const AI_INTERVAL = 1000;
 const INITIAL_PADDLE_SPEED = 12;
-const MAX_SCORE = 5;
+const MAX_SCORE = 1;
 const BALL_BOUNCE_DEPTH = 5;
 
 const POST_GAME_ID = 'https://transcendence.myprojekt.tech/api-game/game'
@@ -127,12 +127,14 @@ class PongGame {
             this.isAI = (options.player_two === 'AI');
         } else {
             this.isAI = (sessionStorage.getItem('opponent_name') === "AI");
-            this.error = document.getElementById('error');
             this.setPlayerNames();
         }
         this.resetPaddles();
         this.resetBall();
 
+        if (document.getElementById('app').classList.contains('make-opaque')) {
+            document.getElementById('app').classList.remove('make-opaque');
+        }
         this.onGameOver = null;
         this.controller = new AbortController();
     }
@@ -589,7 +591,8 @@ class PongGame {
             fetch(POST_SCORE_API, {
                 method: 'POST',
                 headers: header,
-                body: raw
+                body: raw,
+                signal: AbortSignal.timeout(5000)
             })
                 .then(response => {
 
@@ -600,10 +603,13 @@ class PongGame {
                 })
                 .then(data => {
                     if (data) {
-                        this.error.innerHTML = data.opponent[0];
+                        toastErrorMessage(data.opponent[0]);
                     }
                 })
-                .catch(error => console.log('error', error));
+                .catch(error => {
+                    toastErrorMessage('Could not post game score.');
+                    console.log('error', error);
+                });
 
             sessionStorage.removeItem('opponent_name');
         } else if (this.options.game_type === 'tournament') {
@@ -647,7 +653,8 @@ const createNewSingleGame = async () => {
         const response = await fetch(POST_GAME_ID, {
             method: 'POST',
             headers: header,
-            body: raw
+            body: raw,
+            signal: AbortSignal.timeout(5000)
         });
 
         if (!response.ok) {
@@ -655,6 +662,7 @@ const createNewSingleGame = async () => {
         }
         return await response.json();
     } catch (error) {
+        toastErrorMessage('Timeout for creating a new game ID');
         console.error('Error creating single game:', error);
         throw error;
     }

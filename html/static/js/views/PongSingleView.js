@@ -5,7 +5,7 @@ export default class extends AbstractView {
         super();
         this.setTitle("Single Game");
         this.controller = new AbortController();
-        document.getElementById('login-button').classList.add('hidden');
+        document.getElementById('login-button').classList.add('make-opaque');
     }
 
     getHtml = async () => {

@@ -4,7 +4,7 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Error");
-        document.getElementById('login-button').classList.remove('hidden');
+        document.getElementById('login-button').classList.remove('make-opaque');
     }
 
     isNumber(str) {

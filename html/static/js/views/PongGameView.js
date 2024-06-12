@@ -4,7 +4,8 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Pong Game");
-        document.getElementById('login-button').classList.add('hidden');
+        document.getElementById('login-button').classList.add('make-opaque');
+        document.getElementById('app').classList.add('make-opaque');
     }
 
     getHtml = async () => {
@@ -62,7 +63,6 @@ export default class extends AbstractView {
                     </div>
                 </div>
                 <a id="back-home-button" class="a-large-button" href="/" data-link>Back to Menu</a>
-                <div id="error" class="small-text"></div>
             </div>
         </div>
         <div id="countdown-window" class="window hidden">
