@@ -195,8 +195,9 @@ class PongGame {
                 }
             }
             if (event.key == 'Escape') {
-                if (this.countdownWindow.classList.contains('hidden') &&
-                    this.finalScoreWindow.classList.contains('hidden')) {
+                if (this.countdownWindow.classList.contains('hidden') && 
+                    this.finalScoreWindow.classList.contains('hidden') &&
+                    (!this.pauseMenu.classList.contains('hidden') || this.loopInterval)) { 
                     this.pauseGame();
                 }
             }
