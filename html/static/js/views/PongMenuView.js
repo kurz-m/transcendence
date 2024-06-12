@@ -5,8 +5,8 @@ export default class extends AbstractView {
         super();
         this.setTitle("Pong Menu");
         this.loginButton = document.getElementById('login-button');
-        if (this.loginButton.classList.contains('hidden')) {
-            this.loginButton.classList.remove('hidden');
+        if (this.loginButton.classList.contains('make-opaque')) {
+            this.loginButton.classList.remove('make-opaque');
         }
     }
 

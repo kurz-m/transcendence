@@ -1,5 +1,5 @@
 import { navigateTo } from "./index.js";
-import { getCookie, getDefaultHeader, getPlayerData, getUserCache, toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
+import { getCookie, getDefaultHeader, getPlayerData, getUserCache, toastErrorMessage, toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
 
 let isLoggedIn = false;
 
@@ -35,7 +35,8 @@ export const handleAuthenticationCallback = async () => {
             const response = await fetch(callbackURI, {
                 method: 'GET',
                 credentials: 'include',
-                headers: getDefaultHeader()
+                headers: getDefaultHeader(),
+                signal: AbortSignal.timeout(5000)
             });
             if (response.ok) {
                 const data = await response.json();
@@ -81,6 +82,7 @@ export const loginCallback = async () => {
         try {
             const response = await fetch(LOGIN_API, {
                 method: 'POST',
+                signal: AbortSignal.timeout(5000)
             });
             if (response.ok) {
                 const data = await response.json();
@@ -90,7 +92,7 @@ export const loginCallback = async () => {
                 return;
             }
         } catch (error) {
-            navigateTo('/error?statuscode=500');
+            navigateTo('/error?statuscode=0');
             return;
         }
 
@@ -101,6 +103,7 @@ export const logoutCallback = async () => {
     try {
         const response = await fetch(LOGOUT_API, {
             method: 'POST',
+            signal: AbortSignal.timeout(5000)
         });
 
         if (response.ok) {
@@ -118,6 +121,7 @@ export const logoutCallback = async () => {
         }
 
     } catch (error) {
+        toastErrorMessage('Could not logout.')
         console.error('Error:', error);
     }
     navigateTo('/');
@@ -125,7 +129,9 @@ export const logoutCallback = async () => {
 
 export const checkLoginStatus = async () => {
     try {
-        const response = await fetch(CHECK_LOGIN_STATUS_API)
+        const response = await fetch(CHECK_LOGIN_STATUS_API, {
+            signal: AbortSignal.timeout(5000)
+        });
         setLoggedIn(response.ok);
 
         if (getLoggedIn()) {

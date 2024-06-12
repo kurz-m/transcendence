@@ -1,6 +1,6 @@
 import { getLoggedIn, getUsername } from "./authentication.js";
 import { startPongGame } from "./PongGame.js";
-import { getDefaultHeader } from "./shared.js";
+import { getDefaultHeader, toastErrorMessage } from "./shared.js";
 
 const POST_GAME_ID = 'https://transcendence.myprojekt.tech/api-game/game'
 const POST_SCORE_API = 'https://transcendence.myprojekt.tech/api-game/score'
@@ -65,7 +65,6 @@ class TournamentGame {
         /* elements for the final score window */
         this.rankScroll = document.getElementById('rank-scroll');
         this.matchScroll = document.getElementById('match-scroll');
-        this.error = document.getElementById('error');
     }
 
     async run() {
@@ -87,7 +86,8 @@ class TournamentGame {
             const response = await fetch(POST_GAME_ID, {
                 method: 'POST',
                 headers: header,
-                body: raw
+                body: raw,
+                signal: AbortSignal.timeout(5000)
             });
 
             if (!response.ok) {
@@ -226,6 +226,7 @@ class TournamentGame {
                     };
                 }
             } catch (error) {
+                toastErrorMessage('Could not create tournament ID.');
                 console.error('Could not create tournament ID:', error);
                 this.gameObject = {
                     game_type: 'tournament',
@@ -422,7 +423,8 @@ class TournamentGame {
         fetch(POST_SCORE_API, {
             method: 'POST',
             headers: header,
-            body: raw
+            body: raw,
+            signal: AbortSignal.timeout(5000)
         })
             .then(response => {
                 if (!response.ok) {
@@ -432,10 +434,13 @@ class TournamentGame {
             })
             .then(data => {
                 if (data) {
-                    this.error.innerHTML = 'Could not post game score.';
+                    toastErrorMessage('Could not post game score.');
                 }
             })
-            .catch(error => console.log('error', error));
+            .catch(error => {
+                toastErrorMessage('Could not post game score.');
+                console.log('error', error)
+            });
 
     }
 

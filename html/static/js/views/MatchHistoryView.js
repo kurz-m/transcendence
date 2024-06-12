@@ -1,5 +1,5 @@
 import { getUsername } from "../authentication.js";
-import { getDefaultHeader, getUserCache } from "../shared.js";
+import { getDefaultHeader, getUserCache, toastErrorMessage } from "../shared.js";
 import AbstractView from "./AbstractView.js";
 
 const TROPHY_IMAGES = {
@@ -58,7 +58,7 @@ export default class extends AbstractView {
 
     getHtml = async () => {
     return `
-    <div id="wrapper" class="window hidden">
+    <div id="wrapper" class="window make-opaque">
         <div class="topbar">
             <button id="back-button" onclick="history.back()" class="icon-button">
                 <i class="bi bi-caret-left-fill"></i>
@@ -123,14 +123,17 @@ export default class extends AbstractView {
         try {
             const response = await fetch(`${GET_SCORE_API}/${playerId}`, {
                 method: 'GET',
-                headers: getDefaultHeader()
+                headers: getDefaultHeader(),
+                signal: AbortSignal.timeout(5000)
             });
 
             if (response.ok) {
                 return await response.json();
             }
         } catch (error) {
+            toastErrorMessage('Could not fetch match history');
             console.error('error fetching games:', error);
+            return [];
         }
     }
 
@@ -139,7 +142,7 @@ export default class extends AbstractView {
             this.loader.classList.add('loader-hidden');
         }, 250);
         setTimeout(() => {
-            this.wrapper.classList.remove('hidden');
+            this.wrapper.classList.remove('make-opaque');
         }, 250);
         this.cache = await getUserCache();
         this.wrapper = document.getElementById('wrapper');
@@ -154,7 +157,7 @@ export default class extends AbstractView {
             if (matches.length === 0) {
                 const emptyMessage = document.createElement('div');
                 emptyMessage.classList.add('list-item');
-                emptyMessage.textContent = 'No matches';
+                emptyMessage.textContent = 'No items';
                 this.matchListContainer.appendChild(emptyMessage);
                 return;
             }

@@ -1,6 +1,6 @@
 import { setLoggedIn } from "../authentication.js";
 import { navigateTo } from "../index.js";
-import { getDefaultHeader } from "../shared.js";
+import { getDefaultHeader, toastErrorMessage } from "../shared.js";
 import AbstractView from "./AbstractView.js";
 
 const POST_MFA_LOGIN_API = 'https://transcendence.myprojekt.tech/api/auth/mfalogin'
@@ -10,7 +10,7 @@ export default class extends AbstractView {
         super();
         this.setTitle("Two Factor");
         this.controller = new AbortController();
-        document.getElementById('login-button').classList.add('hidden');
+        document.getElementById('login-button').classList.add('make-opaque');
     }
 
     getHtml = async () => {
@@ -29,9 +29,8 @@ export default class extends AbstractView {
                 <div class="small-text">To login, please enter the 6-digit verification code from your authenticator app:</div>
                 <div class="input-segment twoFA-input-style">
                     <input class="twoFA-input" type="text" maxlength="6" pattern="\d{6}" />
-                    <button id="verify-button" class="small-button-green">Verify</button>
+                    <button id="verify-button" class="small-button-red">Verify</button>
                 </div>
-                <div id="error" class="small-text"></div>
             </div>
         </div>
         `;
@@ -49,7 +48,8 @@ export default class extends AbstractView {
                 const response = await fetch(POST_MFA_LOGIN_API, {
                     method: 'POST',
                     headers: getDefaultHeader(),
-                    body: raw
+                    body: raw,
+                    signal: AbortSignal.timeout(5000)
                 });
                 const data = await response.json();
                 if (response.ok) {
@@ -57,9 +57,12 @@ export default class extends AbstractView {
                     navigateTo('/');
                     return
                 } else {
-                    this.error.innerHTML = data[0];
+                    toastErrorMessage(data[0]);
                 }
             } catch (error) {
+                if (error.name === 'TimeoutError') {
+                    toastErrorMessage('Timeout during sending of 2FA code.');
+                }
                 console.error('error', error);
             }
         }
@@ -70,6 +73,7 @@ export default class extends AbstractView {
             this.sendVerifyCode().catch(error => {
                 console.error('error sending verify code:', error);
             });
+            this.twoFAInput.focus();
         }
         this.verifyButton.addEventListener('click', this.handleSendVerifyCode, {
             signal: this.controller.signal
@@ -87,13 +91,17 @@ export default class extends AbstractView {
             signal: this.controller.signal
         })
         this.handleNumerics = () => {
-            if (this.twoFAInput.value.lengt !== 6) {
-                this.verifyButton.disable = true;
-            } else {
-                this.verifyButton.disable = false;
-            }
-            this.error.innerHTML = '';
             this.twoFAInput.value = this.twoFAInput.value.replace(/[^0-9]/g, '');
+
+            const isValid = this.twoFAInput.value.length === 6;
+
+            if (isValid) {
+                this.verifyButton.classList.add('small-button-green');
+                this.verifyButton.classList.remove('small-button-red');
+            } else {    
+                this.verifyButton.classList.add('small-button-red');
+                this.verifyButton.classList.remove('small-button-green');
+            }
         }
         this.twoFAInput.addEventListener('input', this.handleNumerics, {
             signal: this.controller.signal
@@ -103,7 +111,6 @@ export default class extends AbstractView {
     afterRender = async () => {
         this.verifyButton = document.getElementById('verify-button');
         this.twoFAInput = document.querySelector('.twoFA-input');
-        this.error = document.getElementById('error');
         this.twoFAInput.focus();
 
         await this.attachEventListeners();
