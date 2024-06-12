@@ -1,4 +1,3 @@
-import { navigateTo } from "../index.js";
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
@@ -53,7 +52,7 @@ export default class extends AbstractView {
                         </div>
                     </div>
                 </div>
-                <button id="play-button" class="large-button-green" data-link>Play</button>
+                <a id="play-button" href="/pong-game" class="large-button-green" data-link>Play</a>
             </div>
         </div>
         `
@@ -68,8 +67,14 @@ export default class extends AbstractView {
             if (this.opponentInput.value.length === 0) {
                 return;
             }
+            // let input = this.opponentInput.value;
+            // if (!input && !localStorage.getItem('username')) {
+            //     sessionStorage.setItem('opponent_name', "");
+            // } else {
+            //     sessionStorage.setItem('opponent_name', input || "Guest");
+            // }
             if (!localStorage.getItem('username')) {
-                this.announceLeft.innerHTML = 'Anonymous';
+                this.announceLeft.innerHTML = 'Me';
             } else {
                 this.announceLeft.innerHTML = localStorage.getItem('username');
             }
@@ -100,11 +105,7 @@ export default class extends AbstractView {
         });
 
         this.handleStartGame = () => {
-            if (!navigator.onLine) {
-                navigateTo('/error?statuscode=0');
-            } else {
-                navigateTo('/pong-game');
-            }
+            navigateTo('/pong-game');
         }
 
         this.startGameButton.addEventListener('click', this.handleStartGame, {
