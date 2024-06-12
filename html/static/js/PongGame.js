@@ -654,8 +654,8 @@ const createNewSingleGame = async () => {
         }
         return await response.json();
     } catch (error) {
-        // navigateTo('/error?statuscode=000');
-        throw new Error('could not create single game');
+        console.error('Error creating single game:', error);
+        throw error;
     }
 }
 

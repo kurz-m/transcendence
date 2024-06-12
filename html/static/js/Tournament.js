@@ -216,8 +216,10 @@ class TournamentGame {
                 return;
             }
             try {
-                if (getLoggedIn() && navigator.onLine()) {
+                if (getLoggedIn()) {
                     this.gameObject = await this.createNewTournamentId();
+                } else {
+                    this.gameObject = mockObject;
                 }
             } catch (error) {
                 console.error('Error starting tournament:', error);

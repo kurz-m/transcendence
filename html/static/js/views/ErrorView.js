@@ -14,7 +14,7 @@ export default class extends AbstractView {
     getHtml = async () => {
         this.urlParams = new URLSearchParams(location.search);
         const statusCode = this.urlParams.get('statuscode');
-
+        
         if (this.isNumber(statusCode)) {
             if ((Number(statusCode) !== 0) && Number(statusCode) < 100 || Number(statusCode) > 599) {
                 statusCode = '418';
@@ -29,9 +29,9 @@ export default class extends AbstractView {
             404: 'Not Found',
             418: `I'm a teapot`,
             503: 'Service Unavailable'
-        };
+        }; 
         const statusCodeText = STATUS_CODE[statusCode] || 'Unknown Error';
-
+            
         return `
         <div class="window">
             <div class="topbar">
