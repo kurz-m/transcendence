@@ -1,11 +1,15 @@
 import { navigateTo } from "./index.js";
 import { getCookie, getDefaultHeader, getPlayerData, getUserCache, toggleDropdown, toggleLoginButtonStyle } from "./shared.js";
 
+let isLoggedIn = false;
+
 export const getLoggedIn = () => {
-    return sessionStorage.getItem('logged_in') === 'true';
+    return isLoggedIn;
+    // return sessionStorage.getItem('logged_in') === 'true';
 }
-export const setLoggedIn = bool => {
-    sessionStorage.setItem('logged_in', bool.toString());
+export const setLoggedIn = newState => {
+    isLoggedIn = newState;
+    // sessionStorage.setItem('logged_in', bool.toString());
 }
 export const getUsername = () => localStorage.getItem('username');
 export const setUsername = name => {

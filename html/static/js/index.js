@@ -14,6 +14,19 @@ import ErrorView from "./views/ErrorView.js";
 import TwoFactorView from "./views/TwoFactorView.js";
 
 let currentViewCleanup = null;
+let isOnline = navigator.onLine;
+
+setInterval(() => {
+    const newStatus = navigator.onLine;
+    if (newStatus !== isOnline) {
+        isOnline = newStatus;
+        if (!isOnline) {
+            /* TODO: show popup when offline */
+        } else {
+            /* TODO: show popup for being online again */
+        }
+    }
+}, 3000);
 
 const router = async () => {
     const routes = [
@@ -101,9 +114,12 @@ const handleNavBar = () => {
 window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", async () => {
-    handleNavBar();
-    await checkLoginStatus();
-    updateLoginState();
+    /* Used of offline handling of the website */
+    if (navigator.onLine) {
+        handleNavBar();
+        await checkLoginStatus();
+        updateLoginState();
+    }
 
     document.body.addEventListener('click', e => {
         const link = e.target.closest('[data-link]');

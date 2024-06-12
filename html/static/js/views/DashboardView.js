@@ -24,7 +24,7 @@ export default class extends AbstractView {
     }
 
     afterRender = async () => {
-        if (getLoggedIn()) {
+        if (navigator.onLine && getLoggedIn()) {
             await getPlayerData();
             await checkLoginStatus();
             updateLoginState();

@@ -52,11 +52,13 @@ export default class extends AbstractView {
     constructor() {
         super();
         this.setTitle("Match History");
+        this.loader = document.querySelector('.loader');
+        this.loader.classList.remove('loader-hidden');
     }
 
     getHtml = async () => {
     return `
-    <div class="window">
+    <div id="wrapper" class="window hidden">
         <div class="topbar">
             <button id="back-button" onclick="history.back()" class="icon-button">
                 <i class="bi bi-caret-left-fill"></i>
@@ -133,7 +135,14 @@ export default class extends AbstractView {
     }
 
     afterRender = async () => {
+        setTimeout(() => {
+            this.loader.classList.add('loader-hidden');
+        }, 250);
+        setTimeout(() => {
+            this.wrapper.classList.remove('hidden');
+        }, 250);
         this.cache = await getUserCache();
+        this.wrapper = document.getElementById('wrapper');
         this.matchListContainer = document.querySelector('.scroll-matches');
         this.matchListContainer.innerHTML = '';
         if (!this.cache) {

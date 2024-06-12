@@ -67,12 +67,6 @@ export default class extends AbstractView {
             if (this.opponentInput.value.length === 0) {
                 return;
             }
-            // let input = this.opponentInput.value;
-            // if (!input && !localStorage.getItem('username')) {
-            //     sessionStorage.setItem('opponent_name', "");
-            // } else {
-            //     sessionStorage.setItem('opponent_name', input || "Guest");
-            // }
             if (!localStorage.getItem('username')) {
                 this.announceLeft.innerHTML = 'Me';
             } else {
@@ -101,14 +95,6 @@ export default class extends AbstractView {
             this.opponentInput.value = this.opponentInput.value.replace(/[^a-zA-Z0-9_-]/g, '');
         }
         this.opponentInput.addEventListener('input', this.handleOpponentName, {
-            signal: this.controller.signal
-        });
-
-        this.handleStartGame = () => {
-            navigateTo('/pong-game');
-        }
-
-        this.startGameButton.addEventListener('click', this.handleStartGame, {
             signal: this.controller.signal
         });
     }

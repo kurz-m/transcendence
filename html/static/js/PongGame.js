@@ -677,7 +677,9 @@ export const startPongGame = async (options) => {
                 };
             } catch (error) {
                 console.error('Error starting single game:', error);
-                return;
+                gameOptions = {
+                    game_type: 'single'
+                };
             }
         } else {
             gameOptions = {

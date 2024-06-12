@@ -14,11 +14,13 @@ export default class extends AbstractView {
         this.setTitle("Account");
         this.controller = new AbortController();
         this.qrRefreshIntervalId = null;
+        this.loader = document.querySelector('.loader');
+        this.loader.classList.remove('loader-hidden');
     }
 
     getHtml = async () => {
         return `
-        <div id="account-window" class="window">
+        <div id="account-window" class="window hidden">
             <div class="topbar">
                 <button id="back-button" onclick="history.back()" class="icon-button">
                     <i class="bi bi-caret-left-fill"></i>
@@ -161,6 +163,8 @@ export default class extends AbstractView {
                     this.refreshQR();
                 } catch (error) {
                     console.error('error', error);
+                    navigateTo('/error?statuscode=0');
+                    return;
                 }
                 this.twoFactorWindow.classList.remove('hidden');
                 this.accountWindow.classList.add('hidden');
@@ -231,6 +235,10 @@ export default class extends AbstractView {
 
     afterRender = async () => {
         /* elements for 2fa */
+
+        setTimeout(() => {
+            this.loader.classList.add('loader-hidden');
+        }, 250);
         this.twoFactorWindow = document.getElementById('twoFA-window');
         this.accountWindow = document.getElementById('account-window');
         this.twoFAButton = document.getElementById('enable-button');
@@ -258,6 +266,9 @@ export default class extends AbstractView {
         }
 
         await this.attachEventListeners();
+        setTimeout(() => {
+            this.accountWindow.classList.remove('hidden');
+        }, 250);
         return () => {
             this.controller.abort();
             clearInterval(this.qrRefreshIntervalId);
