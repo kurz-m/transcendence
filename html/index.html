@@ -3,7 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./static/css/style.css">
+    <link
+     rel="preload"
+     as="style"
+     onload="this.rel = 'stylesheet'"
+     href="./static/css/style.css">
+     <noscript>
+        <link
+            rel="stylesheet"
+            href="./static/css/style.css">
+     </noscript>
     <link
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@100..900"
@@ -28,9 +37,10 @@
             </div>
         </div>       
         <div id="app" class="app-style"></div>
+        <div id="toastBox"></div>
     </div>
     <script defer type="module" src="/static/js/authentication.js"></script>
     <script defer type="module" src="/static/js/shared.js"></script>
-    <script defer type="module" src="/static/js/index.js"></script>
+    <script type="module" src="/static/js/index.js"></script>
 </body>
 </html>
