@@ -9,7 +9,6 @@ import PongTournamentView from "./views/PongTournamentView.js";
 import MatchHistoryView from "./views/MatchHistoryView.js";
 import { startPongGame } from "./PongGame.js";
 import { startTournament } from "./Tournament.js";
-import TestView from "./views/TestView.js";
 import ErrorView from "./views/ErrorView.js";
 import TwoFactorView from "./views/TwoFactorView.js";
 
