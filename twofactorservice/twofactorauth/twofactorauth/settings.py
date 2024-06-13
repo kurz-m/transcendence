@@ -23,12 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-m2ade+&r4xk2o$uti!r!j3a5!ourhsw-hq(gy2yi(fc%)has-4'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+DEBUG = False
 
 
 # Application definition
@@ -143,18 +141,16 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'mfaauthenticator.authentication.RemoteJWTAUthentication',
     )
 }
 
-ALLOWED_HOSTS = ['twofactorservice', 'localhost', '127.0.0.1', '159.223.18.127', 'transcendence.myprojekt.tech']
+ALLOWED_HOSTS = ['twofactorservice', 'localhost', '127.0.0.1', 'transcendence.myprojekt.tech']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
 STATIC_URL = 'static-django/'
 STATIC_ROOT = os.getenv("STATIC_DIRECTORY")
-
 
 
 MEDIA_URL = '/media/'
