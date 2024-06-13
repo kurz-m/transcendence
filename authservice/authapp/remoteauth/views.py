@@ -113,12 +113,14 @@ class mfaLogin(APIView):
         middleware_instance = LogstashMiddleware(get_response=None)
         mfa_token = request.data.get('token', None)
         user_id = request.data.get('user_id', None)
+        if not mfa_token:
+            return HttpResponseBadRequest("Missing MFA token")
         encrypted_oauth_token = request.data.get('oauth_token', None)
         if settings.ENCRYPTION_KEY and encrypted_oauth_token:
             try:
                 oauth_token = decrypt_token(encrypted_oauth_token, settings.ENCRYPTION_KEY)
             except:
-                return Response("Token decryption failed", status=status.HTTP_400_BAD_REQUEST)
+                return HttpResponseBadRequest("Token decryption failed")
         else:
             return HttpResponseBadRequest("Missing ENCRYPTION_KEY or Oauth Key")
         mfa_verify_url = 'http://twofactorservice:8000/api-mfa/verify'
@@ -126,11 +128,13 @@ class mfaLogin(APIView):
         response = requests.post(mfa_verify_url, json=data, headers={'Content-Type': 'application/json'})
         if response.status_code is status.HTTP_200_OK:
             player = Players.objects.get(user__id=user_id)
+            if not player:
+                return HttpResponseBadRequest("invalid player")
             middleware_instance.log_info(request, "Valid MFA Token!")
             return success_login(player, oauth_token)
         else:
             middleware_instance.log_info(request, "Invalid MFA Token!")
-            return Response({'Invalid mfa token.'}, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponseBadRequest('Invalid mfa token.')
 
 
 class callbackCode(APIView):
@@ -162,9 +166,12 @@ class callbackCode(APIView):
                     else:
                         return HttpResponseBadRequest("Missing ENCRYPTION_KEY or Oauth Key")
                     return Response({'two_factor': "true", 'user_id': player.user.id, 'oauth_token': oauth_token}, status=status.HTTP_200_OK)
-                middleware_instance.log_info(request, "User logged in successfully.")
-                return success_login(player, oauth_token)
+                elif player:
+                    middleware_instance.log_info(request, "User logged in successfully.")
+                    return success_login(player, oauth_token)
+                else:
+                    return HttpResponseBadRequest('Invalid Authorization Request to 42 oauth.')
             else:
                 return HttpResponseBadRequest('Invalid Authorization Request to 42 oauth.')
         else:
-            return Response({'Missing code or state parameter'}, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponseBadRequest('Missing code or state parameter')
