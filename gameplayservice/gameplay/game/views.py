@@ -20,14 +20,6 @@ class GameViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Game.objects.filter(user=user)
 
-    # @action(detail=False, methods=['get'])
-    # def user_games(self, request, user_id=None):
-    #     games = Game.objects.filter(score__user_id=user_id).distinct().prefetch_related(
-    #         Prefetch('score_set', queryset=Score.objects.filter(user_id=user_id))
-    #     )
-    #     serializer = self.get_serializer(games, many=True)
-    #     return Response(serializer.data)
-
 class ScoreViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to view Score.
