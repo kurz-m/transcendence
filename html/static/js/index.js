@@ -53,7 +53,6 @@ setInterval(() => {
             setTimeout(() => {
                 toast.remove();
             }, 6000);
-            /* TODO: show popup for being online again */     
             clearTimeout(reloadIconTimeout);
             reloadIconTimeout = setTimeout(() => {
                 const bootstrapIconsLink = document.querySelector('link[href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"]');
@@ -152,6 +151,11 @@ const handleNavBar = () => {
 window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", async () => {
+    const loader = document.querySelector('.loader');
+
+    setTimeout(() => {
+        loader.classList.add('loader-hidden');
+    }, 500);
     /* Used of offline handling of the website */
     if (navigator.onLine) {
         handleNavBar();
@@ -168,12 +172,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     router();
-})
-
-window.addEventListener('load', () => {
-    const loader = document.querySelector('.loader');
-
-    setTimeout(() => {
-        loader.classList.add('loader-hidden');
-    }, 500);
 })
