@@ -54,6 +54,8 @@ export default class extends AbstractView {
         this.setTitle("Match History");
         this.loader = document.querySelector('.loader');
         this.loader.classList.remove('loader-hidden');
+        this.wins = 0;
+        this.losses = 0;
     }
 
     getHtml = async () => {
@@ -63,12 +65,21 @@ export default class extends AbstractView {
             <button id="back-button" onclick="history.back()" class="icon-button">
                 <i class="bi bi-caret-left-fill"></i>
             </button>
-            <div class="title">Match History</div>
+            <div class="title">My Dashboard</div>
             <a href="/" class="icon-button" (dragstart)="false;" draggable="false" data-link>
                 <i class="bi bi-house-fill"></i>
             </a>
         </div>
         <div class="content">
+            <div class="my-stats">
+                <i class="bi bi-trophy-fill gold-trophy stats-trophy"></i>
+                <div id="wins" class="medium-text">0</div>
+                <div class="progress-bar">
+                    <div id="win-percentage" class="progress"></div>
+                </div>
+                <div id="losses" class="medium-text">0</div>
+                <i class="bi bi-emoji-tear-fill emoji-tears stats-trophy"></i>
+            </div>
             <div class="match-list">
                 <div class="scroll-matches"></div>
             </div>
@@ -152,6 +163,9 @@ export default class extends AbstractView {
         this.cache = await getUserCache();
         this.wrapper = document.getElementById('wrapper');
         this.matchListContainer = document.querySelector('.scroll-matches');
+        this.winRateBar = document.getElementById('win-percentage');
+        this.winsElement = document.getElementById('wins');
+        this.lossesElement = document.getElementById('losses');
         this.matchListContainer.innerHTML = '';
         if (!this.cache) {
             toastErrorMessage('Could not get user cache');
@@ -170,8 +184,13 @@ export default class extends AbstractView {
 
             /* create virtual DOM for building it up and adding it at once to the visible DOM */
             const fragment = document.createDocumentFragment();
-
+            this.totalMatches = matches.length;
             matches.forEach(match => {
+                if (match.win) {
+                    this.wins++;
+                } else {
+                    this.losses++;
+                }
                 const matchItem = document.createElement('div');
                 matchItem.classList.add('list-item');
                 matchItem.innerHTML = (match.game_type === 'single')
@@ -186,6 +205,9 @@ export default class extends AbstractView {
         } catch (error) {
             console.error('error fetching games:', error);
         }
-
+        const winRate = this.wins / this.totalMatches * 100;
+        this.winRateBar.style.width = winRate + '%';
+        this.winsElement.innerHTML = this.wins;
+        this.lossesElement.innerHTML = this.losses;
     }
 }

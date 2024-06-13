@@ -36,23 +36,47 @@ export default class extends AbstractView {
                 <div class="h-content">
                     <div class="announce-player">
                         <div id="announce-left" class="subheading">Player 1</div>
+                        <div>
                         <div class="controls">
-                            <div class="small-text">Controls:&nbsp</div>
-                            <div class="small-text-bold">WS</div>
+                          <div class="small-text-bold">[W]</div>
+                          <div class="small-text">: up</div>
                         </div>
+                        <div class="controls">
+                          <div class="small-text-bold">[S]</div>
+                          <div class="small-text">: down</div>
+                        </div>
+                      </div>
                     </div>
                     <div class="announce-vs">
                         <div class="subheading">vs.</div>
                     </div>
                     <div class="announce-player">
                         <div id="announce-right" class="subheading">Player 2</div>
-                        <div id="right-control" class="controls">
-                            <div class="small-text">Controls:&nbsp</div>
-                            <div class="small-text-bold">↑↓</div>
+                        <div id="right-control">
+                        <div class="controls">
+                          <div class="small-text-bold">[↑]</div>
+                          <div class="small-text">: up</div>
                         </div>
+                        <div class="controls">
+                          <div class="small-text-bold">[↓]</div>
+                          <div class="small-text">: down</div>
+                        </div>
+                      </div>
                     </div>
                 </div>
-                <a id="play-button" href="/pong-game" class="large-button-green" data-link>Play</a>
+                <div class="content">
+                    <div>
+                    <div class="controls">
+                        <div class="small-text-bold">[escape]</div>
+                        <div class="small-text">: pause the game</div>
+                    </div>
+                    <div class="controls">
+                        <div class="small-text-bold">[enter]</div>
+                        <div class="small-text">: continue after score</div>
+                    </div>
+                    </div>
+                </div>
+                <a id="play-button" href="/pong-game" class="large-button-green" style="max-width:180px;margin-top:21px;" data-link>Play</a>
             </div>
         </div>
         `
