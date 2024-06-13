@@ -23,7 +23,7 @@ class RemoteJWTAUthentication(BaseAuthentication):
             user_response = requests.get(user_info_url, cookies=cookies)
             user_response.raise_for_status()
             user_data = user_response.json()
-            user, created = User.objects.get_or_create(
+            user, _ = User.objects.get_or_create(
                 id=user_id,
                 username=user_data['username'],
                 defaults={'email': user_data['email']}
