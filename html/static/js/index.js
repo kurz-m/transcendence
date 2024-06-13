@@ -1,12 +1,12 @@
-import Dashboard from "./views/DashboardView.js";
-import Account from "./views/AccountView.js";
-import PongGame from "./views/PongGameView.js";
+import IndexView from "./views/IndexView.js";
+import AccountView from "./views/AccountView.js";
+import PongGameView from "./views/PongGameView.js";
 import { checkLoginStatus, getLoggedIn, handleAuthenticationCallback, loginCallback, logoutCallback } from "./authentication.js";
 import { toggleDropdown, updateLoginState } from "./shared.js";
 import PongMenuView from "./views/PongMenuView.js";
 import PongSingleView from "./views/PongSingleView.js";
 import PongTournamentView from "./views/PongTournamentView.js";
-import MatchHistoryView from "./views/MatchHistoryView.js";
+import DashboardView from "./views/DashboardView.js";
 import { startPongGame } from "./PongGame.js";
 import { startTournament } from "./Tournament.js";
 import ErrorView from "./views/ErrorView.js";
@@ -66,13 +66,13 @@ setInterval(() => {
 
 const router = async () => {
     const routes = [
-        { path: "/", view: Dashboard, public: true },
-        { path: "/dashboard", view: MatchHistoryView, public: false },
-        { path: "/account", view: Account, public: false },
+        { path: "/", view: IndexView, public: true },
+        { path: "/dashboard", view: DashboardView, public: false },
+        { path: "/account", view: AccountView, public: false },
         { path: "/pong-menu", view: PongMenuView, public: true },
         { path: "/pong-single", view: PongSingleView, public: true },
         { path: "/pong-tournament", view: PongTournamentView, handler: startTournament, public: true },
-        { path: "/pong-game", view: PongGame, handler: startPongGame, public: true },
+        { path: "/pong-game", view: PongGameView, handler: startPongGame, public: true },
         { path: "/callback", handler: handleAuthenticationCallback, public: true },
         { path: "/error", view: ErrorView, public: true },
         { path: "/two-factor", view: TwoFactorView, public: true },

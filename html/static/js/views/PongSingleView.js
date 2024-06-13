@@ -89,7 +89,7 @@ export default class extends AbstractView {
     attachEventListeners() {
         this.handleToAnnounceButton = () => {
             if (this.opponentInput.value.length === 0) {
-                return;
+                this.opponentInput.value = 'Guest';
             }
             if (!localStorage.getItem('username')) {
                 this.announceLeft.innerHTML = 'Me';
