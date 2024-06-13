@@ -2,7 +2,7 @@ import Dashboard from "./views/DashboardView.js";
 import Account from "./views/AccountView.js";
 import PongGame from "./views/PongGameView.js";
 import { checkLoginStatus, getLoggedIn, handleAuthenticationCallback, loginCallback, logoutCallback } from "./authentication.js";
-import { toggleDropdown, toggleLoginButtonStyle, updateLoginState } from "./shared.js";
+import { toggleDropdown, updateLoginState } from "./shared.js";
 import PongMenuView from "./views/PongMenuView.js";
 import PongSingleView from "./views/PongSingleView.js";
 import PongTournamentView from "./views/PongTournamentView.js";
@@ -67,7 +67,7 @@ setInterval(() => {
 const router = async () => {
     const routes = [
         { path: "/", view: Dashboard, public: true },
-        { path: "/match-history", view: MatchHistoryView, public: false },
+        { path: "/dashboard", view: MatchHistoryView, public: false },
         { path: "/account", view: Account, public: false },
         { path: "/pong-menu", view: PongMenuView, public: true },
         { path: "/pong-single", view: PongSingleView, public: true },
