@@ -31,8 +31,5 @@ router.register(r'score', ScoreViewSet, basename='score')
 
 urlpatterns = [
     path('api-game/', include(router.urls)),
-    # path('admin/', admin.site.urls),
-    # path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
-    # path('api-game/score/<user_id>/', ScoreViewSet.as_view({'get': 'user_scores'}), name='user_scores'),
     path('api-game/user_games/<user_id>', ScoreViewSet.as_view({'get': 'user_games'}), name='user_games'),
 ]
