@@ -47,7 +47,7 @@ export default class extends AbstractView {
                 </div>
             </div>
         </div>
-
+        
         <div id="twoFA-window" class="window hidden">
             <div class="topbar">
                 <a href="/account" class="icon-button" data-link>

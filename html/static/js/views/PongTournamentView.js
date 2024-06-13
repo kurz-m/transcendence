@@ -12,7 +12,7 @@ export default class extends AbstractView {
     <div id="paddle_l" class="paddle_l"></div>
     <div id="paddle_r" class="paddle_r"></div>
     <div id="ball" class="ball"></div>
-
+    
     <div id="hud-window" class="hud hidden">
         <div class="hud-main">
             <div id="player_l_name" class="hud-player-left">Player 1</div>
@@ -29,7 +29,7 @@ export default class extends AbstractView {
             <div id="seconds" class="hud-time-right">00</div>
         </div>
     </div>
-
+    
     <div id="pause-window" class="window hidden">
         <div class="title">Paused</div>
         <div class="content">
@@ -37,7 +37,7 @@ export default class extends AbstractView {
             <button id="continue-button" class="large-button">Continue</button>
         </div>
     </div>
-
+    
     <div id="score-window" class="window hidden">
         <div class="title">Game Over</div>
         <div class="game-result-time">
@@ -61,20 +61,26 @@ export default class extends AbstractView {
                     <div id="looser-name" class="subheading">Player 2</div>
                 </div>
             </div>
-
+    
             <button id="next-game-button" class="large-button">Next Game</button>
         </div>
     </div>
-
+    
     <div id="announce-window" class="window hidden">
         <div class="title">Next Game</div>
         <div class="content">
             <div class="h-content">
                 <div class="announce-player">
                     <div id="announce-left" class="subheading">Player 1</div>
-                    <div class="controls">
-                        <div class="small-text">Controls:&nbsp</div>
-                        <div class="small-text-bold">WS</div>
+                    <div>
+                        <div class="controls">
+                            <div class="small-text-bold">[W]</div>
+                            <div class="small-text">: up</div>
+                        </div>
+                        <div class="controls">
+                            <div class="small-text-bold">[S]</div>
+                            <div class="small-text">: down</div>
+                        </div>
                     </div>
                 </div>
                 <div class="announce-vs">
@@ -82,22 +88,40 @@ export default class extends AbstractView {
                 </div>
                 <div class="announce-player">
                     <div id="announce-right" class="subheading">Player 2</div>
-                    <div id="right-control" class="controls">
-                        <div class="small-text">Controls:&nbsp</div>
-                        <div class="small-text-bold">↑↓</div>
+                    <div id="right-control">
+                        <div class="controls">
+                            <div class="small-text-bold">[↑]</div>
+                            <div class="small-text">: up</div>
+                        </div>
+                        <div class="controls">
+                            <div class="small-text-bold">[↓]</div>
+                            <div class="small-text">: down</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div>
+                    <div class="controls">
+                        <div class="small-text-bold">[escape]</div>
+                        <div class="small-text">: pause the game</div>
+                    </div>
+                    <div class="controls">
+                        <div class="small-text-bold">[enter]</div>
+                        <div class="small-text">: continue after score</div>
                     </div>
                 </div>
             </div>
             <button id="announce-play-button" class="large-button-green">Play</button>
         </div>
     </div>
-
+    
     <div id="countdown-window" class="window hidden">
         <div id="countdown-text" class="countdown">5</div>
     </div>
-
+    
     <div id="back-home-button" class="hidden"></div>
-
+    
     <div id="tournament-window" class="window">
         <div class="topbar">
             <button id="back-button" onclick="history.back()" class="icon-button">
@@ -123,8 +147,7 @@ export default class extends AbstractView {
         </div>
         <button id="start-tournament" class="large-button-red">Play</button>
     </div>
-
-
+    
     <div id="final-score-window" class="window hidden">
         <div class="topbar">
             <button style="opacity: 0;">
@@ -143,7 +166,7 @@ export default class extends AbstractView {
                 <div id="match-scroll" class="scroll-tournament-result"></div>
             </div>
         </div>
-    </div>
+    </div>    
     `
     }
 

@@ -13,7 +13,7 @@ export default class extends AbstractView {
         <div id="paddle_l" class="paddle_l"></div>
         <div id="paddle_r" class="paddle_r"></div>
         <div id="ball" class="ball"></div>
-
+        
         <div class="hud">
             <div class="hud-main">
                 <div id="player_l_name" class="hud-player-left">Player 1</div>
@@ -30,7 +30,7 @@ export default class extends AbstractView {
                 <div id="seconds" class="hud-time-right">00</div>
             </div>
         </div>
-
+        
         <div id="pause-window" class="window hidden">
             <div class="title">Paused</div>
             <div class="content">
@@ -38,7 +38,7 @@ export default class extends AbstractView {
                 <button id="continue-button" class="large-button">Continue</button>
             </div>
         </div>
-
+        
         <div id="score-window" class="window hidden">
             <div class="title">Game Over</div>
             <div class="game-result-time">
@@ -67,7 +67,7 @@ export default class extends AbstractView {
         </div>
         <div id="countdown-window" class="window hidden">
             <div id="countdown-text" class="countdown">5</div>
-        </div>
+        </div>        
         `
     }
 }
