@@ -75,7 +75,6 @@ const router = async () => {
         { path: "/pong-tournament", view: PongTournamentView, handler: startTournament, public: true },
         { path: "/pong-game", view: PongGame, handler: startPongGame, public: true },
         { path: "/callback", handler: handleAuthenticationCallback, public: true },
-        { path: "/test", view: TestView, public: false },
         { path: "/error", view: ErrorView, public: true },
         { path: "/two-factor", view: TwoFactorView, public: true },
     ];
