@@ -12,11 +12,3 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-# class PlayerViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows players to be view and edited
-#     """
-#     queryset = Players.objects.all().order_by('-user__date_joined')
-#     serializer_class = PlayerSerializer
-#     permission_classes = [permissions.IsAuthenticated]
