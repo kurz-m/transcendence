@@ -159,8 +159,8 @@ body {
     transform: translateX(0);
   }
 }
-  
-.toast-warning {  
+
+.toast-warning {
   background-color: var(--color-red-bg);
   border: 3px solid var(--color-red);
   color: var(--color-red);
@@ -198,7 +198,7 @@ body {
 }
 
 .toast.error::after {
-  background: var(--color-red); 
+  background: var(--color-red);
 }
 
 @keyframes anim {
@@ -664,23 +664,6 @@ body {
   border-color: var(--color-clear);
 }
 
-.match-button {
-  height: 38px;
-  min-width: 38px;
-  max-width: 38px;
-  cursor: pointer;
-  background: var(--color-dimgray);
-  border: 3px solid var(--color-lightgray);
-  border-radius: var(--br);
-  font-family: var(--font);
-  font-size: 25px;
-  font-weight: var(--font-semibold);
-  color: var(--color-white);
-  line-height: 32px;
-  margin-right: 21px;
-  line-height: 32px;
-}
-
 .logged-out{
   position: fixed;
   top: 21px;
@@ -1135,7 +1118,7 @@ a:active {
   box-sizing: border-box;
 }
 
-.tournament-place {
+.tournament-rank {
   font-weight: var(--font-semibold);
   margin-right: 8px;
 }

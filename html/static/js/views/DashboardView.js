@@ -79,7 +79,7 @@ export default class extends AbstractView {
 
         return `
         <div class="list-item">
-            <button class="match-button">T</button>
+            <div class="match-icon">T</div>
             <div class="match-date">${match.created_date}</div>
             <i class="bi ${icon.join(' ')} trophy"></i>
             <div class="match-result">
@@ -100,7 +100,7 @@ export default class extends AbstractView {
                     headers: getDefaultHeader(),
                     signal: AbortSignal.timeout(5000)
                 });
-    
+
                 if (response.ok) {
                     return await response.json();
                 }
