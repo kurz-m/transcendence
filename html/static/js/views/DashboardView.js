@@ -47,7 +47,7 @@ export default class extends AbstractView {
             </div>
         </div>
     </div>
-        `
+    `
     }
 
     getSingleScoreTemplate(match) {

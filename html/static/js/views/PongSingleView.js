@@ -37,15 +37,15 @@ export default class extends AbstractView {
                     <div class="announce-player">
                         <div id="announce-left" class="subheading">Player 1</div>
                         <div>
-                        <div class="controls">
-                          <div class="small-text-bold">[W]</div>
-                          <div class="small-text">: up</div>
+                            <div class="controls">
+                            <div class="small-text-bold">[W]</div>
+                            <div class="small-text">: up</div>
+                            </div>
+                            <div class="controls">
+                            <div class="small-text-bold">[S]</div>
+                            <div class="small-text">: down</div>
+                            </div>
                         </div>
-                        <div class="controls">
-                          <div class="small-text-bold">[S]</div>
-                          <div class="small-text">: down</div>
-                        </div>
-                      </div>
                     </div>
                     <div class="announce-vs">
                         <div class="subheading">vs.</div>

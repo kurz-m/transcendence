@@ -27,7 +27,9 @@ export default class extends AbstractView {
             401: 'Unauthorized',
             403: 'Forbidden',
             404: 'Not Found',
+            405: 'Method Not Allowed',
             418: `I'm a teapot`,
+            502: 'Bad Gateway',
             503: 'Service Unavailable'
         }; 
         const statusCodeText = STATUS_CODE[statusCode] || 'Unknown Error';
