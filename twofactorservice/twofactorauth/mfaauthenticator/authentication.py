@@ -24,12 +24,12 @@ class RemoteJWTAUthentication(BaseAuthentication):
             user_response = requests.get(user_info_url, cookies=cookies)
             user_response.raise_for_status()
             user_data = user_response.json()
-            user, created = User.objects.get_or_create(
+            user, _ = User.objects.get_or_create(
                 id=user_id,
                 username=user_data['username'],
                 defaults={'email': user_data['email']}
             )
-            player, created = Players.objects.get_or_create(user=user)
+            _, _ = Players.objects.get_or_create(user=user)
             return (user, token)
         except requests.RequestException as e:
             raise AuthenticationFailed('Token validation failed', code='token_not_valid') from e

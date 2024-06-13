@@ -53,7 +53,7 @@ class GenerateTokenView(APIView):
         except requests.exceptions.RequestException as e:
             return HttpResponseBadRequest(f"Failed to verify 42 oauth token: {str(e)}")
         if response.status_code == 200:
-            user, created = User.objects.get_or_create(
+            user, _ = User.objects.get_or_create(
                 id=user_id,
                 username=username,
                 defaults={'email': email}

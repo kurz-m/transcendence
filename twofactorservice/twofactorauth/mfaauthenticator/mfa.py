@@ -1,7 +1,6 @@
 import os
 import pyotp
 import qrcode
-import json
 from datetime import datetime
 from mfaauthenticator.models import Players
 from rest_framework.views import APIView
@@ -11,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.utils.http import urlencode
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseBadRequest
 from mfaauthenticator.permission import IsOwnerAndNotDelete
 from django.contrib.auth.models import User
 
@@ -93,6 +92,8 @@ class DisableMFA(APIView):
     def put(self, request):
         user = request.user
         player = Players.objects.filter(user=user).first()
+        if not player:
+            return HttpResponseBadRequest("cannot disable 2FA: not logged in")
         player.mfa_secret_key = ""
         player.save()
         return Response({'detail': 'Successful operation. 2FA disabled'})
