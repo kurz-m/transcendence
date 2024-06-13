@@ -24,13 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-hvgt7&@5mb0-7wl981!i08p$^x7b%v+*q_^d&es526mcb4-qvj'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-
+SECRET_KEY = os.getenv('SECRET_KEY')
 # Application definition
 
 INSTALLED_APPS = [
@@ -151,7 +148,7 @@ REST_FRAMEWORK = {
     )
 }
 
-ALLOWED_HOSTS = ['jwtservice', 'localhost', '127.0.0.1', '159.223.18.127', 'transcendence.myprojekt.tech']
+ALLOWED_HOSTS = ['jwtservice', 'localhost', '127.0.0.1', 'transcendence.myprojekt.tech']
 
 CORS_ALLOW_ALL_ORIGINS = True
 

@@ -23,15 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#&3z6tp-1j9co(50gng%1@_$43ur!%pq%05%num_9_c&eb^uas'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
-
-
+SECRET_KEY = os.getenv('SECRET_KEY')
 # Application definition
 
 INSTALLED_APPS = [
@@ -143,21 +138,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'game.authentication.RemoteJWTAUthentication',
     ),
-    # 'DEFAULT_RENDERER_CLASSES': [
-    #     'rest_framework.renderers.JSONRenderer',
-    # ],
 }
 
 
 
-ALLOWED_HOSTS = ['gameplayservice', 'localhost', '127.0.0.1', '159.223.18.127', 'transcendence.myprojekt.tech']
+ALLOWED_HOSTS = ['gameplayservice', 'localhost', '127.0.0.1', 'transcendence.myprojekt.tech']
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-
 
 STATIC_URL = 'static-django/'
 STATIC_ROOT = os.getenv("STATIC_DIRECTORY")

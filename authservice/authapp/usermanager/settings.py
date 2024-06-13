@@ -24,15 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-41^97=8zb8on-65))=#7#2(ocb9k&twc(&i0p^ir_-gz)ulk1k'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
-
-
+SECRET_KEY = os.getenv('SECRET_KEY')
 # Application definition
 
 INSTALLED_APPS = [
@@ -86,12 +81,6 @@ WSGI_APPLICATION = 'usermanager.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': {
@@ -166,16 +155,12 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
 }
-# LOGIN_URL = 'two_factor:login'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-ALLOWED_HOSTS = ['authservice', 'localhost', '127.0.0.1', '159.223.18.127', 'transcendence.myprojekt.tech']
+ALLOWED_HOSTS = ['authservice', 'localhost', '127.0.0.1', 'transcendence.myprojekt.tech']
 
-# CORS_ALLOWED_ORIGINS = [
-#     'http://127.0.0.1:5500',
-# ]
 CORS_ALLOW_ALL_ORIGINS = True
 
 APPEND_SLASH = False
