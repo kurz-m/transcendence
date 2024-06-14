@@ -133,7 +133,7 @@ class mfaLogin(APIView):
             middleware_instance.log_info(request, "Valid MFA Token!")
             return success_login(player, oauth_token)
         else:
-            middleware_instance.log_info(request, "Invalid MFA Token!")
+            middleware_instance.log_error(request, "Invalid MFA Token!")
             return HttpResponseBadRequest('Invalid mfa token.')
 
 
