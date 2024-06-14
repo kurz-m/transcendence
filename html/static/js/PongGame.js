@@ -197,9 +197,9 @@ class PongGame {
                 }
             }
             if (event.key == 'Escape') {
-                if (this.countdownWindow.classList.contains('hidden') && 
+                if (this.countdownWindow.classList.contains('hidden') &&
                     this.finalScoreWindow.classList.contains('hidden') &&
-                    (!this.pauseMenu.classList.contains('hidden') || this.loopInterval)) { 
+                    (!this.pauseMenu.classList.contains('hidden') || this.loopInterval)) {
                     this.pauseGame();
                 }
             }
@@ -475,10 +475,14 @@ class PongGame {
         this.aiKeyDuration = (paddleCenterY - newY) / Math.abs(this.paddleSpeed) - 1 + 2 * Math.random();
         this.aiKeyDuration = Math.sign(this.aiKeyDuration) * Math.floor(Math.abs(this.aiKeyDuration));
 
-        // AI gets less accurate in a single round but more accurate the longer the game takes
         let now = new Date().getTime();
         let secPassed = (now - this.startTime) / 1000;
-        let failure = secPassed / 30 - this.timerSeconds / 420;
+        let failure = ((this.scoreRight - this.scoreLeft) / MAX_SCORE) - (this.scoreLeft / MAX_SCORE) + (secPassed / 42);
+        // failure is higher means AI is more likely to fail and easier to win against
+        // first the difference between the scores relative to the MAX_SCORE is calculated, so it's harder the greater the difference
+        // then we subtract the relative left score, so it's harder the higher the players score is
+        // lastly we add a time factor, so the AI gets easier the longer the game takes
+        console.log(failure);
         if (Math.random() < failure) {
             this.aiKeyDuration = -this.aiKeyDuration;
         }
@@ -508,8 +512,8 @@ class PongGame {
     }
 
     startGame() {
-        this.ball.dx = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
-        this.ball.dy = (Math.floor(Math.random() * 4) + 3) * (Math.random() < 0.5 ? -1 : 1);
+        this.ball.dx = (Math.max(this.scoreLeft, this.scoreRight) + 5) * (Math.random() < 0.5 ? -1 : 1);
+        this.ball.dy = (Math.floor(Math.random() * 2) + 1) * (Math.random() < 0.5 ? -1 : 1);
         this.resumeGame()
     }
 
@@ -596,7 +600,7 @@ class PongGame {
                     signal: AbortSignal.timeout(5000)
                 })
                     .then(response => {
-    
+
                         if (!response.ok) {
                             console.error('API error:', response.status, response.statusText);
                             return response.json();
@@ -661,7 +665,7 @@ const createNewSingleGame = async () => {
                 body: raw,
                 signal: AbortSignal.timeout(5000)
             });
-    
+
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
