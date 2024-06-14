@@ -11,10 +11,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - .env
-    # expose:
-    #   - "5432"
-    ports:
-      - "5654:5432"
+    expose:
+      - "5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
@@ -40,10 +38,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
-    # expose:
-    #   - "5432"
-    ports:
-      - "5653:5432"
+    expose:
+      - "5432"
     networks:
       - authnetwork
   
@@ -64,10 +60,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
-    # expose:
-    #   - "5432"
-    ports:
-      - "5652:5432"
+    expose:
+      - "5432"
     networks:
       - authnetwork
   
@@ -88,10 +82,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
-    # expose:
-    #   - "5432"
-    ports:
-      - "5651:5432"
+    expose:
+      - "5432"
     networks:
       - authnetwork
   
@@ -214,6 +206,22 @@ services:
     privileged: true
     env_file:
       - .env
+  
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: alertmanager
+    expose:
+      - "9093"
+    volumes:
+      - prometheus_data:/etc/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+    networks:
+      - authnetwork
+    depends_on:
+      - prometheus
+    env_file:
+      - .env
 
   grafana:
     image: grafana/grafana:11.0.0-ubuntu
@@ -221,8 +229,8 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/config/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
-    ports:
-      - 3000:3000
+    expose:
+      - "3000"
     env_file:
       - .env
     restart: always
@@ -281,8 +289,8 @@ services:
     environment:
       - CLI_JAVA_OPTS=-Xms2g -Xmx2g 
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-    ports:
-      - 9200:9200
+    expose:
+      - "9200"
     networks:
       - authnetwork
     env_file: 
@@ -290,7 +298,6 @@ services:
     depends_on:
       elkcertsetup:
         condition: service_healthy
-    mem_limit: ${ES_MEM_LIMIT}
     healthcheck:
       test:
         [
@@ -317,8 +324,8 @@ services:
       - XPACK_SECURITY_ENCRYPTIONKEY=${ENCRYPTION_KEY}
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${ENCRYPTION_KEY}
       - XPACK_REPORTING_ENCRYPTIONKEY=${ENCRYPTION_KEY}
-    ports:
-      - 5601:5601
+    expose:
+      - "5601"
     networks:
       - authnetwork
     depends_on:
@@ -326,7 +333,6 @@ services:
         condition: service_healthy
     env_file:
       - .env
-    mem_limit: ${KB_MEM_LIMIT}
     healthcheck:
       test:
         [
@@ -352,7 +358,6 @@ services:
       - "./elk/logstash/logstash_ingest_data/:/usr/share/logstash/ingest_data/"
       - "./elk/logstash/conf/logstash.conf:/usr/share/logstash/pipeline/logstash.conf"
       - "./elk/logstash/conf/logstash.yml:/usr/share/logstash/config/logstash.yml"
-    mem_limit: ${LS_MEM_LIMIT}
     environment:
       - CLI_JAVA_OPTS=-Xms256m -Xmx256m 
       - xpack.monitoring.enabled=true
@@ -360,8 +365,8 @@ services:
       - ELASTIC_USER=elastic
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - ELASTIC_HOSTS=https://elasticsearch:9200
-    ports:
-      - 5959:5959
+    expose:
+      - "5959"
     networks:
       - authnetwork
     restart: always
