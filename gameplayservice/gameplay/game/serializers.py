@@ -39,6 +39,6 @@ class ScoreSerializer(serializers.ModelSerializer):
         request = self.context.get('request', None)
         for char in value:
             if not (char.isalnum() or char == '-' or char == '_'):
-                middleware_instance.log_info(request, "ERROR: opponent name invalid!")
+                middleware_instance.log_error(request, "ERROR: opponent name invalid!")
                 raise serializers.ValidationError("opponent name contains forbidden characters!")
         return value
