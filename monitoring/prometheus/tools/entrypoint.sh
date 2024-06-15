@@ -22,7 +22,7 @@ route:
 receivers:
   - name: 'email-notifications'
     email_configs:
-      - to: 'sanjok.bhatta@gmail.com'
+      - to: '${ALERT_RECEIVER_EMAIL}'
         from: 'alerts@myprojekt.tech'
         smarthost: '${MAILJET_HOST}'
         auth_username: '${MAILJET_API_KEY}'
