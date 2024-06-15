@@ -13,3 +13,4 @@ xpack.security.transport.ssl.certificate: certs/elasticsearch/elasticsearch.crt
 xpack.security.transport.ssl.certificate_authorities: certs/ca/ca.crt
 xpack.security.transport.ssl.verification_mode: certificate
 xpack.license.self_generated.type: basic
+path.repo: ["/usr/share/elasticsearch/snapshots"]

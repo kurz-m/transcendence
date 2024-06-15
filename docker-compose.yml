@@ -266,6 +266,9 @@ services:
     volumes:
       - elkcerts:/usr/share/elasticsearch/config/certs
       - ./elk/elkcertsetup/config/instances.yml:/usr/share/elasticsearch/config/certs/instances.yml
+      - ./elk/elkcertsetup/config/logs-policy.json:/usr/share/elasticsearch/config/logs-policy.json
+      - ./elk/elkcertsetup/config/snapshot-repo.json:/usr/share/elasticsearch/config/snapshot-repo.json
+      - ./elk/elkcertsetup/config/snapshot-policy.json:/usr/share/elasticsearch/config/snapshot-policy.json
       - ./elk/elkcertsetup/tools/certinit.sh:/tmp/certinit.sh
     user: root
     env_file: 

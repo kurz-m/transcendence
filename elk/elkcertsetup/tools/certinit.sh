@@ -28,4 +28,13 @@ echo "Waiting for Elasticsearch availability";
 until curl -s --cacert config/certs/ca/ca.crt https://elasticsearch:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
 echo "Setting password of default kibana user 'kibana_system'";
 until curl -s -X POST --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" https://elasticsearch:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
-echo "Setup is done!";
+echo "Setup is done!"
+
+echo "Setting log retention policy"
+curl -s -X PUT --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}"  -H "Content-Type: application/json" https://elasticsearch:9200/_ilm/policy/logs_policy -d @/usr/share/elasticsearch/config/logs-policy.json
+
+echo "Set Snapshot Repo"
+curl -s -X PUT --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}"  -H "Content-Type: application/json" https://elasticsearch:9200/_snapshot/transcendence_logbackup -d @/usr/share/elasticsearch/config/snapshot-repo.json
+
+echo "Set Snapshot Policy"
+curl -s -X PUT --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}"  -H "Content-Type: application/json" https://elasticsearch:9200/_slm/policy/daily-snapshots -d @/usr/share/elasticsearch/config/snapshot-repo.json
