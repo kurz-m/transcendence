@@ -1,6 +1,7 @@
 import os
 import pyotp
 import qrcode
+import requests
 from datetime import datetime
 from mfaauthenticator.models import Players
 from rest_framework.views import APIView
@@ -74,6 +75,14 @@ class EnableMFA(APIView):
     def post(self, request):
         user = request.user
         player = Players.objects.filter(user=user).first()
+        player_data_url = f'http://authservice:8000/api/player/{player.id}'
+        jwt_token = request.COOKIES.get('access_token')
+        cookies = {'access_token': jwt_token}
+        player_response = requests.get(player_data_url, cookies=cookies)
+        player_response.raise_for_status()
+        player_data = player_response.json()
+        if player_data['two_factor']:
+            return Response({'detail': '2FA is already enabled for the user.'})
         mfa_secret_key = generate_secret_key()
         player.mfa_secret_key = mfa_secret_key
         player.save()
