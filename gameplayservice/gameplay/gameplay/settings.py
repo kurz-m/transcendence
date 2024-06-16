@@ -128,8 +128,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SECRET_KEY = 'your_secret_key_here'
-
 SIMPLE_JWT = {
     'SIGNING_KEY': os.getenv("JWT_SECRET_KEY"),
 }
@@ -140,8 +138,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'game.authentication.RemoteJWTAUthentication',
     ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
 }
-
 
 
 ALLOWED_HOSTS = ['gameplayservice', 'localhost', '127.0.0.1', 'transcendence.myprojekt.tech']
