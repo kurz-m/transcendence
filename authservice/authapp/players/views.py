@@ -8,7 +8,7 @@ from rest_framework import status
 from players.permission import IsOwnerAndNotDelete, IsOwnerAndNotDeleteUsers, IsOwnerAndFriends
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -30,6 +30,10 @@ class PlayerViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Players.objects.filter(user=user).order_by('-user__date_joined')
+    
+    def create(self, request, *args, **kwargs):
+        return Response({"detail": "Method 'POST' not allowed on this endpoint."},
+                        status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 

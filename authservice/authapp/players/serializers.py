@@ -24,12 +24,6 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
             'url': {'view_name': 'players-detail'},
             'user': {'view_name': 'user-detail'}
         }
-    
-    def create(self, validated_data):
-        user_data = validated_data.pop('user')
-        user = User.objects.create(**user_data)
-        player = Players.objects.create(user=user, **validated_data)
-        return player
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop('user', None)
