@@ -15,14 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from players import views
-from django.contrib import admin
-from rest_framework import routers
-from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 from remoteauth.views import callbackCode, authorizeCall, loggedIn, logOut, mfaLogin
-from remoteauth.utils import ServeMedia
-from players.friendrequest import FriendRequestSendView, AcceptFriendRequestView, FriendRequestsAPIView
 from rest_framework.routers import DefaultRouter
 
 class CustomRouter(DefaultRouter):
@@ -41,13 +36,4 @@ urlpatterns = [
     path('api/auth/logout', logOut.as_view(), name='auth-logout'),
     path('api/auth/callback', callbackCode.as_view(), name='auth-callback'),
     path('api/auth/loggedin', loggedIn.as_view(), name='auth-loggedin'),
-    # path('api/media/<path:filename>', ServeMedia.as_view(), name='serve_media'),
-    # path('api/friends/sendrequest', FriendRequestSendView.as_view(), name='send_friend_request'),
-    # path('api/friends/acceptrequest', AcceptFriendRequestView.as_view(), name='accept_friend_request'),
-    # path('api/friends/requests', FriendRequestsAPIView.as_view(), name='list_friend_requests'),
-    # path('api/friends', views.FriendsApiView.as_view(), name='list_friends'),
-    # path('api/friends/<str:username>', views.FriendsApiView.as_view(), name='delete_or_get_friend'),
 ]
-
-if not settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
