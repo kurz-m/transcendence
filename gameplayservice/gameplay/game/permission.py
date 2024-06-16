@@ -9,5 +9,8 @@ class IsOwnerAndNotDelete(permissions.BasePermission):
         if request.method == 'DELETE':
             return False
 
+        if request.method == 'PUT':
+            return False
+
         return obj.user == request.user
 
