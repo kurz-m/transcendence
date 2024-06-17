@@ -116,7 +116,7 @@ export const logoutCallback = async () => {
             sessionStorage.clear();
             setLoggedIn(false);
         } else {
-            navigateTo('/error?statuscode=503');
+            navigateTo(`/error?statuscode=${response.status}`);
             return;
         }
 
