@@ -106,7 +106,7 @@ export default class extends AbstractView {
                 }
             } catch (error) {
                 toastErrorMessage('Could not fetch match history');
-                console.error('error fetching games:', error);
+                // console.error('error fetching games:', error);
                 return [];
             }
         } else {
@@ -130,7 +130,7 @@ export default class extends AbstractView {
         this.lossesElement = document.getElementById('losses');
         this.matchListContainer.innerHTML = '';
         if (!this.cache) {
-            toastErrorMessage('Could not get user cache');
+            toastErrorMessage('Could not get user cache.');
             return;
         }
         try {
@@ -165,7 +165,7 @@ export default class extends AbstractView {
             this.matchListContainer.appendChild(fragment);
 
         } catch (error) {
-            console.error('error fetching games:', error);
+            // console.error('error fetching games:', error);
         }
         const winRate = this.wins / this.totalMatches * 100;
         this.winRateBar.style.width = winRate + '%';
