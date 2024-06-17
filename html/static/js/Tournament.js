@@ -113,7 +113,7 @@ class TournamentGame {
         if (playerName) {
             const check = this.playersArray.find(p => p.name === playerName);
             if (check) {
-                alert('please provide a unique name');
+                toastErrorMessage('Please provide a unique name.');
                 this.inputPlayer.value = '';
                 this.inputPlayer.focus();
                 return;
@@ -176,7 +176,7 @@ class TournamentGame {
         this.handleAddPlayerOnEnter = e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                if (this.inputPlayer.value === 'AI') {
+                if (this.inputPlayer.value.trim(' ') === 'AI') {
                     return;
                 }
                 this.addPlayer(this.inputPlayer.value.trim());
@@ -187,6 +187,7 @@ class TournamentGame {
         });
 
         this.handlePlayerName = () => {
+            this.inputPlayer.value = this.inputPlayer.value.replace(/[^a-zA-Z0-9_-]/g, '');
             if (this.inputPlayer.value === 'AI') {
                 this.addPlayerButton.disabled = true;
             } else {
