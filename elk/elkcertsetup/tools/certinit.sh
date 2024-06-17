@@ -37,4 +37,4 @@ echo "Set Snapshot Repo"
 curl -s -X PUT --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}"  -H "Content-Type: application/json" https://elasticsearch:9200/_snapshot/transcendence_logbackup -d @/usr/share/elasticsearch/config/snapshot-repo.json
 
 echo "Set Snapshot Policy"
-curl -s -X PUT --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}"  -H "Content-Type: application/json" https://elasticsearch:9200/_slm/policy/daily-snapshots -d @/usr/share/elasticsearch/config/snapshot-repo.json
+curl -s -X PUT --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}"  -H "Content-Type: application/json" https://elasticsearch:9200/_slm/policy/daily-snapshots -d @/usr/share/elasticsearch/config/snapshot-policy.json
