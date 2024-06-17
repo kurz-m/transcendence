@@ -76,7 +76,8 @@ export default class extends AbstractView {
             try {
                 const response = await fetch(POST_MFA_QR_API, {
                     method: 'POST',
-                    headers: getDefaultHeader()
+                    headers: getDefaultHeader(),
+                    signal: AbortSignal.timeout(5000)
                 });
     
                 if (response.ok) {
@@ -84,11 +85,12 @@ export default class extends AbstractView {
                     this.twoFAImg.src = data.mfa_qrimage_url
                 } else {
                     clearInterval(this.qrRefreshIntervalId);
-                    navigateTo(`/error?statuscode=${response.status}`)
+                    navigateTo(`/error?statuscode=${response.status}`);
+                    return;
                 }
             } catch (error) {
                 clearInterval(this.qrRefreshIntervalId);
-                console.error('error', error);
+                toastErrorMessage('Failed to fetch QR-code');
             }
         }, refreshInterval);
     }
@@ -102,13 +104,18 @@ export default class extends AbstractView {
                 headers: getDefaultHeader(),
                 body: JSON.stringify({
                     "two_factor": this.cache.data.two_factor
-                })
+                }),
+                signal: AbortSignal.timeout(5000)
             });
             if (!response.ok) {
                 navigateTo(`/error?statuscode=${response.status}`)
             }
         } catch (error) {
-            console.error('error', error);
+            if (error.name === 'TimeoutError') {
+                toastErrorMessage('Timeout during sending of 2FA code.');
+            } else {
+                toastErrorMessage('Could not update player entry.');
+            }
         }
     }
 
@@ -122,7 +129,8 @@ export default class extends AbstractView {
                 const response = await fetch(POST_MFA_VERIFY_API, {
                     method: 'POST',
                     headers: getDefaultHeader(),
-                    body: raw
+                    body: raw,
+                    signal: AbortSignal.timeout(5000)
                 });
                 const data = await response.json();
                 if (response.ok) {
@@ -138,8 +146,11 @@ export default class extends AbstractView {
                     toastErrorMessage(data.detail);
                 }
             } catch (error) {
-                console.error('error', error);
-            }
+                if (error.name === 'TimeoutError') {
+                    toastErrorMessage('Timeout during sending of 2FA code.');
+                } else {
+                    toastErrorMessage('Could not send verification code');
+                }            }
         } else {
             this.twoFAInput.focus();
         }
@@ -152,20 +163,26 @@ export default class extends AbstractView {
                 try {
                     const response = await fetch(POST_MFA_QR_API, {
                         method: 'POST',
-                        headers: getDefaultHeader()
+                        headers: getDefaultHeader(),
+                        signal: AbortSignal.timeout(5000)
                     });
     
                     if (response.ok) {
                         const data = await response.json();
                         this.twoFAImg.src = data.mfa_qrimage_url
                     } else {
-                        navigateTo(`/error?statuscode=${response.status}`)
+                        navigateTo(`/error?statuscode=${response.status}`);
+                        return;
                     }
                     this.refreshQR();
                 } catch (error) {
-                    console.error('error', error);
-                    navigateTo('/error?statuscode=0');
-                    return;
+                    if (error.name === 'TimeoutError') {
+                        navigateTo('/error?statuscode=408');
+                        return;
+                    } else {
+                        navigateTo('/error?statuscode=400');
+                        return;
+                    }
                 }
                 this.twoFactorWindow.classList.remove('hidden');
                 this.accountWindow.classList.add('hidden');
@@ -174,13 +191,20 @@ export default class extends AbstractView {
                 try {
                     const response = await fetch(DELETE_MFA_API, {
                         method: 'PUT',
-                        headers: getDefaultHeader()
+                        headers: getDefaultHeader(),
+                        signal: AbortSignal.timeout(5000)
                     });
                     if (!response.ok) {
                         navigateTo(`/error?statuscode=${response.status}`)
                     }
                 } catch (error) {
-                    navigateTo('/error?statuscode=500');
+                    if (error.name === 'TimeoutError') {
+                        navigateTo('/error?statuscode=408');
+                        return;
+                    } else {
+                        navigateTo('/error?statuscode=400');
+                        return;
+                    }
                 }
                 await this.updatePlayerEntry(false);
                 this.setButtonStyle();  
@@ -194,7 +218,7 @@ export default class extends AbstractView {
 
         this.handleSendVerifyCode = () => {
             this.sendVerifyCode().catch(error => {
-                console.error('error sending verify code:', error);
+                // console.error('error sending verify code:', error);
             });
         }
         this.verifyButton.addEventListener('click', this.handleSendVerifyCode, {
@@ -205,7 +229,7 @@ export default class extends AbstractView {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 this.sendVerifyCode().catch(error => {
-                    console.error('error sending verify code:', error);
+                    // console.error('error sending verify code:', error);
                 });
             }
         }
