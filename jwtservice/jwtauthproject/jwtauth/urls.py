@@ -15,9 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from jwtapp.jwt import CustomTokenVerifyView, GenerateTokenView
+from jwtapp.jwt import CustomTokenVerifyView, GenerateTokenView, BlacklistTokenView
 
 urlpatterns = [
     path('api-jwt/token/verify', CustomTokenVerifyView.as_view(), name='token_verify'),
     path('api-jwt/token/generate', GenerateTokenView.as_view(), name='token_generate'),
+    path('api-jwt/token/blacklist', BlacklistTokenView.as_view(), name='token_blacklist'),
 ]
