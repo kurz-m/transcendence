@@ -57,13 +57,13 @@ export default class extends AbstractView {
                     navigateTo('/');
                     return
                 } else {
-                    toastErrorMessage(data[0]);
+                    toastErrorMessage(data.detail);
                 }
             } catch (error) {
                 if (error.name === 'TimeoutError') {
                     toastErrorMessage('Timeout during sending of 2FA code.');
                 }
-                console.error('error', error);
+                // console.error('error', error);
             }
         }
     }
@@ -71,7 +71,7 @@ export default class extends AbstractView {
     attachEventListeners = async () => {
         this.handleSendVerifyCode = () => {
             this.sendVerifyCode().catch(error => {
-                console.error('error sending verify code:', error);
+                // console.error('error sending verify code:', error);
             });
             this.twoFAInput.focus();
         }
@@ -83,7 +83,7 @@ export default class extends AbstractView {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 this.sendVerifyCode().catch(error => {
-                    console.error('error sending verify code:', error);
+                    // console.error('error sending verify code:', error);
                 });
             }
         }
