@@ -95,8 +95,8 @@ class TournamentGame {
             }
             return await response.json();
         } catch (error) {
-            console.error('Error creating a tournament:', error);
-            throw error;
+            // console.error('Error creating a tournament:', error);
+            throw new Error('Could not create tournament ID');
         }
     }
 
@@ -227,7 +227,7 @@ class TournamentGame {
                 }
             } catch (error) {
                 toastErrorMessage('Could not create tournament ID.');
-                console.error('Could not create tournament ID:', error);
+                // console.error('Could not create tournament ID:', error);
                 this.gameObject = {
                     game_type: 'tournament',
                     id: -1
@@ -313,7 +313,7 @@ class TournamentGame {
                 this.showFinalScore();
                 break;
             default:
-                console.log('invalid state');
+                // console.log('invalid state');
         }
     }
 
@@ -354,7 +354,7 @@ class TournamentGame {
             this.currentMatch.score = await startPongGame(this.options);
             this.transition(states.SHOW_SCORE);
         } catch (error) {
-            console.error('error:', error);
+            // console.error('error:', error);
         }
     }
 
@@ -428,7 +428,7 @@ class TournamentGame {
         })
             .then(response => {
                 if (!response.ok) {
-                    console.error('API error:', response.status, response.statusText);
+                    // console.error('API error:', response.status, response.statusText);
                     return response.json();
                 }
             })
@@ -439,7 +439,7 @@ class TournamentGame {
             })
             .catch(error => {
                 toastErrorMessage('Could not post game score.');
-                console.log('error', error)
+                // console.log('error', error)
             });
 
     }

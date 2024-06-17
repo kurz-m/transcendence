@@ -88,7 +88,7 @@ export const getPlayerData = async () => {
             updateCache(CACHE_KEY, extractedData);
         }
     } catch (error) {
-        console.error('error', error);
+        // console.error('error', error);
     }
 }
 
