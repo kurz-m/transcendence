@@ -62,7 +62,7 @@ export const handleAuthenticationCallback = async () => {
             return;
         }
     } catch (error) {
-        console.error('Error fetching data:', error);
+        // console.error('Error fetching data:', error);
     }
     await getPlayerData();
     const cache = await getUserCache();
@@ -122,7 +122,7 @@ export const logoutCallback = async () => {
 
     } catch (error) {
         toastErrorMessage('Could not logout.')
-        console.error('Error:', error);
+        // console.error('Error:', error);
     }
     navigateTo('/');
 }

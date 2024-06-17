@@ -482,7 +482,7 @@ class PongGame {
         // first the difference between the scores relative to the MAX_SCORE is calculated, so it's harder the greater the difference
         // then we subtract the relative left score, so it's harder the higher the players score is
         // lastly we add a time factor, so the AI gets easier the longer the game takes
-        console.log(failure);
+        // console.log(failure);
         if (Math.random() < failure) {
             this.aiKeyDuration = -this.aiKeyDuration;
         }
@@ -602,7 +602,7 @@ class PongGame {
                     .then(response => {
 
                         if (!response.ok) {
-                            console.error('API error:', response.status, response.statusText);
+                            // console.error('API error:', response.status, response.statusText);
                             return response.json();
                         }
                     })
@@ -613,7 +613,7 @@ class PongGame {
                     })
                     .catch(error => {
                         toastErrorMessage('Could not post game score.');
-                        console.log('error', error);
+                        // console.log('error', error);
                     });
             } else {
                 toastErrorMessage('Could not post game score.');
@@ -672,7 +672,7 @@ const createNewSingleGame = async () => {
             return await response.json();
         } catch (error) {
             toastErrorMessage('Timeout for creating a new game ID');
-            console.error('Error creating single game:', error);
+            // console.error('Error creating single game:', error);
             throw error;
         }
     } else {
@@ -697,7 +697,7 @@ export const startPongGame = async (options) => {
                     game_id: gameObject.id
                 };
             } catch (error) {
-                console.error('Error creating game ID:', error);
+                // console.error('Error creating game ID:', error);
                 gameOptions = {
                     game_type: 'single'
                 };
