@@ -245,6 +245,9 @@ class PongGame {
         }
 
         this.handleResize = () => {
+            if (!this.loopInterval) {
+                this.resetBall();
+            }
             this.board.update();
         }
 
