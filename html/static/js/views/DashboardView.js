@@ -55,10 +55,12 @@ export default class extends AbstractView {
             ? TROPHY_IMAGES[1]
             : TROPHY_IMAGES[4];
 
+        const date = new Date(match.created_date + ' UTC');
+
         return `
         <div class="list-item">
             <div class="match-icon">S</div>
-            <div class="match-date">${match.created_date}</div>
+            <div class="match-date">${date.toLocaleString('sv-SV')}</div>
             <i class="bi ${icon.join(' ')} trophy"></i>
             <div class="match-result">
                 <div class="left-player">${this.cache.data.user.username}</div>
@@ -77,10 +79,12 @@ export default class extends AbstractView {
     getTournamentScoreTemplate(match) {
         const icon = TROPHY_IMAGES[match.rank] || TROPHY_IMAGES[4];
 
+        const date = new Date(match.created_date + ' UTC');
+
         return `
         <div class="list-item">
             <div class="match-icon">T</div>
-            <div class="match-date">${match.created_date}</div>
+            <div class="match-date">${date.toLocaleString('sv-SV')}</div>
             <i class="bi ${icon.join(' ')} trophy"></i>
             <div class="match-result">
                 <div class="tournament-rank">${match.rank}.&nbsp</div>
