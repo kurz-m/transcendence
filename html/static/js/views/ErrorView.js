@@ -28,6 +28,7 @@ export default class extends AbstractView {
             403: 'Forbidden',
             404: 'Not Found',
             405: 'Method Not Allowed',
+            408: 'Request Timeout',
             418: `I'm a teapot`,
             502: 'Bad Gateway',
             503: 'Service Unavailable'
