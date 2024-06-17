@@ -98,6 +98,15 @@ class loggedIn(APIView):
 class logOut(APIView):
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request, format=None):
+        token = request.COOKIES.get('access_token')
+        if token:
+            auth_service_url = 'http://jwtservice:8000/api-jwt/token/blacklist'
+            try:
+                cookies = {'access_token': token}
+                response = requests.post(auth_service_url, cookies=cookies)
+                response.raise_for_status()
+            except:
+                return response({"detail": "Failed to add access_token to blacklist."})
         middleware_instance = LogstashMiddleware(get_response=None)
         oauth_response = HttpResponse("Successful operation. User logged out and cookies cleared.")
         oauth_response.delete_cookie('access_token', path='/', domain=None, samesite='Lax')

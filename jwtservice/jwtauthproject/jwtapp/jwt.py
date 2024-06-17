@@ -9,6 +9,8 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import HttpResponseBadRequest
+from rest_framework.permissions import IsAuthenticated
+from jwtapp.models import BlacklistedToken
 
 class CustomTokenVerifySerializer(TokenVerifySerializer):
     def validate(self, attrs):
@@ -19,6 +21,8 @@ class CustomTokenVerifySerializer(TokenVerifySerializer):
 
         try:
             access_token = AccessToken(token)
+            if BlacklistedToken.objects.filter(token=str(access_token)).exists():
+                raise serializers.ValidationError('Token is blacklisted')
             user_id = access_token.payload['user_id']
             user = User.objects.get(id=user_id)
         except TokenError:
@@ -63,3 +67,15 @@ class GenerateTokenView(APIView):
         else:
             return HttpResponseBadRequest("Failed to verify 42 oauth token.")
 
+
+class BlacklistTokenView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            access_token = request.COOKIES.get('access_token')
+            token = AccessToken(access_token)
+            BlacklistedToken.objects.create(token=str(token))
+            return Response(status=204)
+        except Exception as e:
+            return Response(status=400, data={'detail': str(e)})
