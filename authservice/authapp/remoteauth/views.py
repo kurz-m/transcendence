@@ -114,27 +114,27 @@ class mfaLogin(APIView):
         mfa_token = request.data.get('token', None)
         user_id = request.data.get('user_id', None)
         if not mfa_token:
-            return HttpResponseBadRequest("Missing MFA token")
+            return Response({'detail': 'Missing MFA token.'}, status=status.HTTP_400_BAD_REQUEST)
         encrypted_oauth_token = request.data.get('oauth_token', None)
         if settings.ENCRYPTION_KEY and encrypted_oauth_token:
             try:
                 oauth_token = decrypt_token(encrypted_oauth_token, settings.ENCRYPTION_KEY)
             except:
-                return HttpResponseBadRequest("Token decryption failed")
+                return Response({'detail': 'Token decryption failed.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return HttpResponseBadRequest("Missing ENCRYPTION_KEY or Oauth Key")
+            return Response({'detail': 'Missing ENCRYPTION_KEY or Oauth Key.'}, status=status.HTTP_400_BAD_REQUEST)
         mfa_verify_url = 'http://twofactorservice:8000/api-mfa/verify'
         data = {'token': mfa_token, 'user_id': user_id}
         response = requests.post(mfa_verify_url, json=data, headers={'Content-Type': 'application/json'})
         if response.status_code is status.HTTP_200_OK:
             player = Players.objects.get(user__id=user_id)
             if not player:
-                return HttpResponseBadRequest("invalid player")
+                return Response({'detail': 'Invalid player.'}, status=status.HTTP_400_BAD_REQUEST)
             middleware_instance.log_info(request, "Valid MFA Token!")
             return success_login(player, oauth_token)
         else:
             middleware_instance.log_error(request, "Invalid MFA Token!")
-            return HttpResponseBadRequest('Invalid mfa token.')
+            return Response({'detail': 'Invalid MFA token.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class callbackCode(APIView):
