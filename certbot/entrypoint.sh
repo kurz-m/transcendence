@@ -30,6 +30,7 @@ if [ -f "$CERT_FILE" ]; then
 else
     # create certificates with certbot
     until certbot certonly \
+            --test-cert \
             --preferred-challenges=dns \
             --non-interactive \
             --agree-tos \
